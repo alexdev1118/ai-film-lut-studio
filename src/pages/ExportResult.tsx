@@ -84,6 +84,10 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             <Info aria-hidden="true" />
             <p>{result === null ? "系统正在模拟生成 .cube LUT 文件信息。" : `状态：${result.status}。文件已按当前 mock 参数准备完成。`}</p>
           </div>
+          <div className="export-note creative-lut-note">
+            <Info aria-hidden="true" />
+            <p>当前导出的是基础创意风格 LUT，适合 Rec.709 / 标准显示空间风格测试，不等同于 S-Log3、C-Log、D-Log 等专业相机 Log 技术转换 LUT。</p>
+          </div>
         </article>
 
         <article className="download-card glass-panel glow-border">

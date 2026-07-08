@@ -1,4 +1,5 @@
-import type { ColorPreviewResult, GenerateColorPreviewParams } from "../types";
+import type { ColorPreviewResult, GenerateColorPreviewParams, RgbColor } from "../types";
+import { applyLookToRgb } from "./cubeExport";
 
 interface LoadedImage {
   readonly image: HTMLImageElement;
@@ -124,6 +125,16 @@ const loadAverageColor = async (imageUrl: string, maxSize: number): Promise<Aver
   return calculateAverageColor(imageData, 6);
 };
 
+export const getAverageColorFromImageUrl = async (imageUrl: string, maxSize = 480): Promise<RgbColor> => {
+  const averageColor = await loadAverageColor(imageUrl, maxSize);
+
+  return {
+    r: averageColor.r / 255,
+    g: averageColor.g / 255,
+    b: averageColor.b / 255
+  };
+};
+
 const canvasToObjectUrl = async (canvas: HTMLCanvasElement): Promise<string> => {
   try {
     const blob = await new Promise<Blob>((resolve, reject) => {
@@ -165,91 +176,22 @@ export const generateColorPreview = async ({
     const { canvas, context } = drawScaledImage(loadedTarget, maxSize);
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
-    const targetAverage = calculateAverageColor(imageData, 10);
-    const referenceAverage = referenceImageUrl === undefined ? undefined : await loadAverageColor(referenceImageUrl, maxSize);
-    const intensity = clamp(adjustments.intensity, 0, 100) / 100;
-    const contrastValue = clamp(adjustments.contrast, -100, 100) * 1.8;
-    const contrastFactor = (259 * (contrastValue + 255)) / (255 * (259 - contrastValue));
-    const saturationFactor = 1 + clamp(adjustments.saturation, -100, 100) / 100;
-    const temperatureShift = clamp(adjustments.temperature, -50, 50) * 1.15;
-    const tintShift = clamp(adjustments.tint, -50, 50) * 0.9;
-    const shadowShift = clamp(adjustments.shadowMatch, 0, 100) / 100;
-    const midtoneShift = clamp(adjustments.midtoneMatch, 0, 100) / 100;
-    const highlightShift = clamp(adjustments.highlightMatch, 0, 100) / 100;
-    const referenceStrength = referenceAverage === undefined ? 0 : Math.min(0.24, 0.08 + intensity * 0.16);
-    const lumaPreserveStrength = adjustments.preserveLuma ? 0.52 : 0.18;
-    const saturationCeiling = adjustments.preventOversaturation ? 246 : 255;
+    const referenceAverage = referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(referenceImageUrl, maxSize);
 
     for (let index = 0; index < data.length; index += 4) {
-      const originalR = data[index];
-      const originalG = data[index + 1];
-      const originalB = data[index + 2];
-      const originalLuma = 0.299 * originalR + 0.587 * originalG + 0.114 * originalB;
-      let r = originalR;
-      let g = originalG;
-      let b = originalB;
+      const output = applyLookToRgb(
+        {
+          r: data[index] / 255,
+          g: data[index + 1] / 255,
+          b: data[index + 2] / 255
+        },
+        adjustments,
+        referenceAverage
+      );
 
-      r = contrastFactor * (r - 128) + 128;
-      g = contrastFactor * (g - 128) + 128;
-      b = contrastFactor * (b - 128) + 128;
-
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-      r = gray + (r - gray) * saturationFactor;
-      g = gray + (g - gray) * saturationFactor;
-      b = gray + (b - gray) * saturationFactor;
-
-      r += temperatureShift;
-      b -= temperatureShift;
-
-      r += tintShift * 0.55;
-      b += tintShift * 0.55;
-      g -= tintShift;
-
-      const luma = originalLuma / 255;
-
-      if (luma < 0.33) {
-        r += (shadowShift - 0.5) * 15;
-        b += (0.5 - shadowShift) * 9;
-        g += (shadowShift - 0.5) * 4;
-      } else if (luma < 0.66) {
-        r += (midtoneShift - 0.5) * 13;
-        g += (midtoneShift - 0.5) * 7;
-        b -= (midtoneShift - 0.5) * 5;
-      } else {
-        r += (highlightShift - 0.5) * 9;
-        g += (highlightShift - 0.5) * 5;
-        b -= (highlightShift - 0.5) * 7;
-      }
-
-      if (referenceAverage !== undefined) {
-        r += (referenceAverage.r - targetAverage.r) * referenceStrength;
-        g += (referenceAverage.g - targetAverage.g) * referenceStrength;
-        b += (referenceAverage.b - targetAverage.b) * referenceStrength;
-      }
-
-      if (adjustments.skinToneProtection) {
-        const maxChannel = Math.max(originalR, originalG, originalB);
-        const minChannel = Math.min(originalR, originalG, originalB);
-        const isWarmMidtone = originalR > originalB && originalR > originalG * 0.9 && originalG > originalB * 0.72 && maxChannel - minChannel > 18;
-
-        if (isWarmMidtone && luma > 0.22 && luma < 0.82) {
-          r = originalR * 0.34 + r * 0.66;
-          g = originalG * 0.28 + g * 0.72;
-          b = originalB * 0.34 + b * 0.66;
-        }
-      }
-
-      if (adjustments.preserveLuma) {
-        const adjustedLuma = 0.299 * r + 0.587 * g + 0.114 * b;
-        const lumaDelta = originalLuma - adjustedLuma;
-        r += lumaDelta * lumaPreserveStrength;
-        g += lumaDelta * lumaPreserveStrength;
-        b += lumaDelta * lumaPreserveStrength;
-      }
-
-      data[index] = clamp(originalR * (1 - intensity) + r * intensity, 0, saturationCeiling);
-      data[index + 1] = clamp(originalG * (1 - intensity) + g * intensity, 0, saturationCeiling);
-      data[index + 2] = clamp(originalB * (1 - intensity) + b * intensity, 0, saturationCeiling);
+      data[index] = clamp(output.r * 255);
+      data[index + 1] = clamp(output.g * 255);
+      data[index + 2] = clamp(output.b * 255);
     }
 
     context.putImageData(imageData, 0, 0);

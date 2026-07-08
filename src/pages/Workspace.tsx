@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
 import { lutStyles } from "../data/styles";
 import { previewImages } from "../data/mockImages";
-import { generateLocalColorPreview } from "../services/lutService";
+import { exportCubeLut, generateLocalColorPreview } from "../services/lutService";
 import type {
   ColorSpace,
   LutParameters,
@@ -55,6 +55,18 @@ const getNextActiveId = (items: readonly MediaItem[], deletedIndex: number): str
   return items[deletedIndex]?.id ?? items[deletedIndex - 1]?.id ?? items[0]?.id;
 };
 
+const getLutSizeFromPrecision = (precision: LutPrecision): number => {
+  switch (precision) {
+    case "17x17x17":
+      return 17;
+    case "65x65x65":
+      return 65;
+    case "33x33x33":
+    default:
+      return 33;
+  }
+};
+
 export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => {
   const selectedStyle = useMemo(() => {
     const styleKey = selectedStyleName.trim();
@@ -76,6 +88,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const [result, setResult] = useState<PreviewResult | null>(null);
   const [sessionPreviewResults, setSessionPreviewResults] = useState<readonly PreviewResult[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExportingCube, setIsExportingCube] = useState(false);
   const [message, setMessage] = useState("AI 就绪");
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -298,6 +311,27 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     }
   };
 
+  const handleExportCube = async () => {
+    try {
+      setIsExportingCube(true);
+      const exportResult = await exportCubeLut({
+        lutName,
+        lutSize: getLutSizeFromPrecision(parameters.precision),
+        parameters,
+        skinToneProtection: skinProtect,
+        preserveLuma,
+        preventOversaturation: avoidOversaturation,
+        referenceImageUrl: activeReference?.url
+      });
+      setMessage(`.cube LUT 已生成并开始下载：${exportResult.fileName}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "LUT 导出失败，请稍后重试";
+      setMessage(errorMessage);
+    } finally {
+      setIsExportingCube(false);
+    }
+  };
+
   const setNumberParameter = (
     key: keyof Pick<
       LutParameters,
@@ -500,8 +534,8 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
           <Button variant="ghost" onClick={resetParameters}>
             重置参数
           </Button>
-          <Button variant="secondary" onClick={() => onNavigate("/export")}>
-            导出 .cube
+          <Button disabled={isExportingCube} variant="secondary" onClick={handleExportCube}>
+            {isExportingCube ? "正在导出..." : "导出 .cube"}
           </Button>
         </div>
       </section>

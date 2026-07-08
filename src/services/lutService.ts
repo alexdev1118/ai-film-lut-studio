@@ -1,9 +1,12 @@
 import { colorAnalysisReport } from "../data/analysis";
 import { previewImages } from "../data/mockImages";
-import { generateColorPreview } from "../utils/colorPreview";
+import { generateColorPreview, getAverageColorFromImageUrl } from "../utils/colorPreview";
+import { downloadCubeLut, generateCubeLut } from "../utils/cubeExport";
 import type {
   ColorAnalysisInput,
   ColorAnalysisReport,
+  CubeExportResult,
+  ExportCubeLutParams,
   ExportLutParams,
   ExportLutResult,
   GenerateLocalPreviewParams,
@@ -107,6 +110,36 @@ export const exportLutMock = async (params: ExportLutParams): Promise<ExportLutR
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown LUT export failure";
     throw new Error(`导出 LUT 失败：${message}`);
+  }
+};
+
+export const exportCubeLut = async (params: ExportCubeLutParams): Promise<CubeExportResult> => {
+  try {
+    const referenceAverageColor =
+      params.referenceAverageColor ?? (params.referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(params.referenceImageUrl));
+    const result = generateCubeLut({
+      lutName: params.lutName,
+      lutSize: params.lutSize,
+      adjustments: {
+        intensity: params.parameters.intensity,
+        contrast: params.parameters.contrast,
+        saturation: params.parameters.saturation,
+        temperature: params.parameters.temperature,
+        tint: params.parameters.tint,
+        shadowMatch: params.parameters.shadowMatch,
+        midtoneMatch: params.parameters.midtoneMatch,
+        highlightMatch: params.parameters.highlightMatch,
+        skinToneProtection: params.skinToneProtection,
+        preserveLuma: params.preserveLuma,
+        preventOversaturation: params.preventOversaturation
+      },
+      referenceAverageColor
+    });
+    downloadCubeLut(result);
+    return result;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown cube export failure";
+    throw new Error(`LUT 导出失败，请稍后重试。${message}`);
   }
 };
 

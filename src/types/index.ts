@@ -116,6 +116,12 @@ export interface ColorPreviewAdjustments {
   readonly preventOversaturation: boolean;
 }
 
+export interface RgbColor {
+  readonly r: number;
+  readonly g: number;
+  readonly b: number;
+}
+
 export interface GenerateColorPreviewParams {
   readonly targetImageUrl: string;
   readonly referenceImageUrl?: string;
@@ -137,6 +143,30 @@ export interface GenerateLocalPreviewParams {
   readonly skinToneProtection: boolean;
   readonly preserveLuma: boolean;
   readonly preventOversaturation: boolean;
+}
+
+export interface LutExportOptions {
+  readonly lutName: string;
+  readonly lutSize: number;
+  readonly adjustments: ColorPreviewAdjustments;
+  readonly referenceAverageColor?: RgbColor;
+}
+
+export interface CubeExportResult {
+  readonly fileName: string;
+  readonly content: string;
+  readonly lutSize: number;
+}
+
+export interface ExportCubeLutParams {
+  readonly lutName: string;
+  readonly lutSize: number;
+  readonly parameters: LutParameters;
+  readonly skinToneProtection: boolean;
+  readonly preserveLuma: boolean;
+  readonly preventOversaturation: boolean;
+  readonly referenceImageUrl?: string;
+  readonly referenceAverageColor?: RgbColor;
 }
 
 export interface PreviewResult {
