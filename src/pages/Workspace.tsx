@@ -1,360 +1,448 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Upload, Info, ZoomIn, Maximize, Sparkles, HelpCircle, Download, ChevronsLeftRight } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { MOCK_STYLES } from '../types';
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChevronsLeftRight,
+  Download,
+  HelpCircle,
+  Info,
+  Maximize,
+  Sparkles,
+  Upload,
+  ZoomIn
+} from "lucide-react";
+import { lutStyles } from "../data/styles";
+import { previewImages } from "../data/mockImages";
+import { generatePreviewMock } from "../services/lutService";
+import type { ColorSpace, LutParameters, LutPrecision, PreviewResult, RoutePath, UploadedImage } from "../types";
+import { colorSpaceOptions, defaultLutParameters, precisionOptions } from "../utils/lutMock";
+import {
+  formatFileSize,
+  getImageMetadata,
+  getReadableImageType,
+  revokeUploadedImage,
+  toUploadedImage
+} from "../utils/image";
+import { Button } from "../components/ui/Button";
+import { SliderControl } from "../components/ui/SliderControl";
+import { ToggleSwitch } from "../components/ui/ToggleSwitch";
+import { UploadPanel } from "../components/ui/UploadPanel";
 
-export default function Workspace() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const styleId = searchParams.get('style');
-  
-  const defaultStyle = MOCK_STYLES.find(s => s.id === styleId) || MOCK_STYLES[0];
+interface WorkspaceProps {
+  readonly selectedStyleName: string;
+  readonly onNavigate: (path: RoutePath) => void;
+}
 
+const acceptedImageTypes = "image/jpeg,image/png,image/webp,image/tiff,.jpg,.jpeg,.png,.webp,.tif,.tiff";
+
+const createImageBackground = (url: string): string => {
+  return `url("${url}") center / cover no-repeat`;
+};
+
+const getImageDimensionsLabel = (image: UploadedImage): string => {
+  if (typeof image.width === "number" && typeof image.height === "number") {
+    return `${image.width}x${image.height}`;
+  }
+
+  return "读取中";
+};
+
+export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => {
+  const selectedStyle = useMemo(() => {
+    const styleKey = selectedStyleName.trim();
+
+    if (styleKey.length === 0) {
+      return lutStyles[0];
+    }
+
+    return lutStyles.find((style) => style.id === styleKey || style.name === styleKey) ?? lutStyles[0];
+  }, [selectedStyleName]);
+
+  const [targetFrameName, setTargetFrameName] = useState("target-frame-rec709.jpg");
+  const [referenceImageName, setReferenceImageName] = useState("reference-style.jpg");
+  const [targetImage, setTargetImage] = useState<UploadedImage | null>(null);
+  const [referenceImage, setReferenceImage] = useState<UploadedImage | null>(null);
+  const [targetImageError, setTargetImageError] = useState("");
+  const [referenceImageError, setReferenceImageError] = useState("");
+  const [parameters, setParameters] = useState<LutParameters>({
+    ...defaultLutParameters,
+    intensity: selectedStyle.recommendedIntensity
+  });
+  const [result, setResult] = useState<PreviewResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [hasGenerated, setHasGenerated] = useState(false);
+  const [message, setMessage] = useState("AI 就绪");
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const splitContainerRef = useRef<HTMLDivElement>(null);
-
-  // Settings State
-  const [intensity, setIntensity] = useState(defaultStyle.intensity);
-  const [contrast, setContrast] = useState(0);
-  const [saturation, setSaturation] = useState(0);
-  const [shadowMatch, setShadowMatch] = useState(60);
-  const [midtoneMatch, setMidtoneMatch] = useState(70);
-  const [highlightMatch, setHighlightMatch] = useState(50);
-  
-  const [skinProtection, setSkinProtection] = useState(true);
+  const [skinProtect, setSkinProtect] = useState(true);
   const [preserveLuma, setPreserveLuma] = useState(true);
-  const [preventOversat, setPreventOversat] = useState(false);
-  
-  const [lutName, setLutName] = useState('Cyber_Neon_Warm_V1');
-  const [precision, setPrecision] = useState<'17'|'33'|'65'>('33');
+  const [avoidOversaturation, setAvoidOversaturation] = useState(false);
+  const [lutName, setLutName] = useState(`${selectedStyle.name}_Studio_V1`);
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+  const targetImageRef = useRef<UploadedImage | null>(null);
+  const referenceImageRef = useRef<UploadedImage | null>(null);
 
-  // Handle Split Dragging
   useEffect(() => {
-    const handleMove = (e: MouseEvent | TouchEvent) => {
-      if (!isDragging || !splitContainerRef.current) return;
-      
-      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setParameters((current) => ({ ...current, intensity: selectedStyle.recommendedIntensity }));
+
+    if (referenceImageRef.current === null) {
+      setLutName(`${selectedStyle.name}_Studio_V1`);
+      setMessage(`已选择风格：${selectedStyle.name}`);
+    }
+  }, [selectedStyle]);
+
+  useEffect(() => {
+    return () => {
+      revokeUploadedImage(targetImageRef.current);
+      revokeUploadedImage(referenceImageRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleMove = (event: MouseEvent | TouchEvent) => {
+      if (!isDragging || splitContainerRef.current === null) {
+        return;
+      }
+
+      const clientX = "touches" in event ? event.touches[0]?.clientX : event.clientX;
+
+      if (typeof clientX !== "number") {
+        return;
+      }
+
       const rect = splitContainerRef.current.getBoundingClientRect();
-      let pos = ((clientX - rect.left) / rect.width) * 100;
-      pos = Math.min(Math.max(pos, 0), 100);
-      setSplitPosition(pos);
+      const nextPosition = ((clientX - rect.left) / rect.width) * 100;
+      setSplitPosition(Math.min(Math.max(nextPosition, 0), 100));
     };
 
-    const handleUp = () => setIsDragging(false);
+    const handleEnd = () => setIsDragging(false);
 
     if (isDragging) {
-      window.addEventListener('mousemove', handleMove);
-      window.addEventListener('mouseup', handleUp);
-      window.addEventListener('touchmove', handleMove);
-      window.addEventListener('touchend', handleUp);
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("mouseup", handleEnd);
+      window.addEventListener("touchmove", handleMove);
+      window.addEventListener("touchend", handleEnd);
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('mouseup', handleUp);
-      window.removeEventListener('touchmove', handleMove);
-      window.removeEventListener('touchend', handleUp);
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleEnd);
+      window.removeEventListener("touchmove", handleMove);
+      window.removeEventListener("touchend", handleEnd);
     };
   }, [isDragging]);
 
-  const handleGenerate = () => {
-    setIsGenerating(true);
-    setHasGenerated(false);
-    // Simulate AI Generation
-    setTimeout(() => {
-      setIsGenerating(false);
-      setHasGenerated(true);
-    }, 2000);
+  const replaceTargetImage = (image: UploadedImage | null) => {
+    revokeUploadedImage(targetImageRef.current);
+    targetImageRef.current = image;
+    setTargetImage(image);
   };
 
-  const handleExport = () => {
-    navigate('/export');
+  const replaceReferenceImage = (image: UploadedImage | null) => {
+    revokeUploadedImage(referenceImageRef.current);
+    referenceImageRef.current = image;
+    setReferenceImage(image);
   };
+
+  const handleTargetImageFileChange = async (file: File) => {
+    try {
+      setTargetImageError("");
+      const metadata = await getImageMetadata(file);
+      const uploadedImage = toUploadedImage(file, metadata);
+      replaceTargetImage(uploadedImage);
+      setTargetFrameName(uploadedImage.name);
+      setResult(null);
+      setMessage("目标素材已载入");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "图片读取失败，请更换图片";
+      setTargetImageError(errorMessage);
+    }
+  };
+
+  const handleReferenceImageFileChange = async (file: File) => {
+    try {
+      setReferenceImageError("");
+      const metadata = await getImageMetadata(file);
+      const uploadedImage = toUploadedImage(file, metadata);
+      replaceReferenceImage(uploadedImage);
+      setReferenceImageName(uploadedImage.name);
+      setResult(null);
+      setLutName("自定义参考图_Studio_V1");
+      setMessage("已选择风格：自定义参考图");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "图片读取失败，请更换图片";
+      setReferenceImageError(errorMessage);
+    }
+  };
+
+  const handleClearTargetImage = () => {
+    replaceTargetImage(null);
+    setTargetImageError("");
+    setTargetFrameName("target-frame-rec709.jpg");
+    setResult(null);
+    setMessage("目标素材已清除");
+  };
+
+  const handleClearReferenceImage = () => {
+    replaceReferenceImage(null);
+    setReferenceImageError("");
+    setReferenceImageName("reference-style.jpg");
+    setResult(null);
+    setLutName(`${selectedStyle.name}_Studio_V1`);
+    setMessage(`已选择风格：${selectedStyle.name}`);
+  };
+
+  const handleGenerate = async () => {
+    try {
+      setIsGenerating(true);
+      setMessage("AI 正在分析参考图色彩、影调与对比度...");
+      const previewResult = await generatePreviewMock({
+        targetFrameName,
+        referenceImageName,
+        selectedStyleName: referenceImage === null ? selectedStyle.name : "自定义参考图",
+        parameters
+      });
+      setResult(previewResult);
+      setMessage("预览已生成");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "生成预览时发生未知错误。";
+      setMessage(errorMessage);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const setNumberParameter = (
+    key: keyof Pick<
+      LutParameters,
+      "intensity" | "contrast" | "saturation" | "temperature" | "tint" | "shadowMatch" | "midtoneMatch" | "highlightMatch"
+    >,
+    value: number
+  ) => {
+    setParameters({ ...parameters, [key]: value });
+  };
+
+  const resetParameters = () => {
+    setParameters({ ...defaultLutParameters, intensity: selectedStyle.recommendedIntensity });
+    setSkinProtect(true);
+    setPreserveLuma(true);
+    setAvoidOversaturation(false);
+  };
+
+  const activeStyleName = referenceImage === null ? selectedStyle.name : "自定义参考图";
+  const sourceBackground = targetImage === null ? previewImages.sourceFrame : createImageBackground(targetImage.url);
+  const referenceBackground = referenceImage === null ? selectedStyle.previewImage : createImageBackground(referenceImage.url);
+  const afterBackground = result?.previewImage ?? selectedStyle.previewImage;
+  const aiStatus = isGenerating ? "AI 正在分析参考图色彩、影调与对比度..." : result === null ? "AI 就绪" : "预览已生成";
 
   return (
     <>
-      {/* Left Column: Source */}
-      <section className="w-sidebar-width flex flex-col glass-panel h-full relative z-10">
-        <div className="p-4 border-b border-outline-variant/30 flex justify-between items-center">
-          <h2 className="font-display text-xl font-bold text-on-surface">目标素材</h2>
-          <Info className="w-4 h-4 text-outline" />
+      <section className="studio-source-column glass-panel">
+        <div className="panel-title-row">
+          <h1>目标素材</h1>
+          <Info aria-hidden="true" />
         </div>
-        <div className="p-4 flex-1 overflow-y-auto flex flex-col gap-6">
-          {/* Upload Area */}
-          <div className="border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:border-primary/50 transition-colors cursor-pointer bg-surface-container/30">
-            <Upload className="w-10 h-10 text-outline" />
-            <div>
-              <p className="font-medium text-sm">拖拽或点击上传目标静帧</p>
-              <p className="text-xs text-outline mt-1">支持 JPG、PNG、TIFF</p>
-            </div>
-          </div>
 
-          {/* Source Thumbnail */}
-          <div className="rounded-xl overflow-hidden border border-outline-variant/30 relative group">
-            <img 
-              alt="Cinematic urban street scene" 
-              className="w-full h-40 object-cover" 
-              src="https://images.unsplash.com/photo-1555616654-e053db3bb084?auto=format&fit=crop&w=800&q=80"
-            />
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button className="btn-glass px-4 py-2 rounded-lg text-sm font-medium text-primary">替换</button>
-            </div>
-          </div>
+        <UploadPanel
+          accept={acceptedImageTypes}
+          className="studio-upload-dropzone"
+          description="支持 JPG、PNG、WebP、TIFF，单张不超过 20MB"
+          fileName={targetImage?.name ?? ""}
+          icon={<Upload aria-hidden="true" />}
+          inputMode="file"
+          title="拖拽或点击上传目标静帧"
+          onFileChange={handleTargetImageFileChange}
+        />
+        {targetImageError.length > 0 ? <p className="upload-error">{targetImageError}</p> : null}
 
-          {/* Input Color Space */}
-          <div className="flex flex-col gap-2">
-            <label className="font-mono text-xs text-on-surface-variant uppercase">输入色彩空间</label>
-            <select className="w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none appearance-none">
-              <option>Rec.709</option>
-              <option>S-Log3</option>
-              <option>D-Log M</option>
-              <option>C-Log3</option>
-              <option>V-Log</option>
-              <option>F-Log</option>
-              <option>Unknown</option>
-            </select>
-            <p className="text-xs text-primary/70 mt-1 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              V1 建议使用 Rec.709 或已还原素材
-            </p>
-          </div>
+        <div className="source-thumbnail" style={{ background: sourceBackground }}>
+          {targetImage === null ? null : (
+            <button type="button" onClick={handleClearTargetImage}>
+              清除图片
+            </button>
+          )}
+        </div>
 
-          {/* Metadata */}
-          <div className="bg-surface-container-low rounded-lg p-3 border border-outline-variant/20 flex flex-col gap-2">
-            <div className="flex justify-between text-xs">
-              <span className="text-outline">分辨率</span>
-              <span className="font-mono text-on-surface">3840x2160</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-outline">格式</span>
-              <span className="font-mono text-on-surface">16-bit TIFF</span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-outline">色彩配置文件</span>
-              <span className="font-mono text-on-surface">sRGB IEC61966-2.1</span>
-            </div>
-          </div>
+        <label className="studio-select-control">
+          <span>输入色彩空间</span>
+          <select
+            value={parameters.inputColorSpace}
+            onChange={(event) => setParameters({ ...parameters, inputColorSpace: event.currentTarget.value as ColorSpace })}
+          >
+            {colorSpaceOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <p className="source-hint">
+          <Sparkles aria-hidden="true" />
+          V1 建议使用 Rec.709 或已还原素材
+        </p>
+
+        <div className="metadata-card">
+          <p>
+            <span>文件名</span>
+            <strong>{targetImage?.name ?? targetFrameName}</strong>
+          </p>
+          <p>
+            <span>分辨率</span>
+            <strong>{targetImage === null ? "3840x2160" : getImageDimensionsLabel(targetImage)}</strong>
+          </p>
+          <p>
+            <span>格式</span>
+            <strong>{targetImage === null ? "JPG" : getReadableImageType(targetImage.type)}</strong>
+          </p>
+          <p>
+            <span>文件大小</span>
+            <strong>{targetImage === null ? "2.8 MB" : formatFileSize(targetImage.size)}</strong>
+          </p>
         </div>
       </section>
 
-      {/* Center Column: Preview */}
-      <section className="flex-1 flex flex-col glass-panel relative z-0 h-full overflow-hidden">
-        {/* Top Toolbar */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex gap-2 bg-surface/40 backdrop-blur-xl p-1.5 rounded-full border border-outline-variant/40">
-          <button className="px-4 py-1.5 rounded-full text-sm font-medium bg-surface-variant text-on-surface hover:bg-surface-bright transition-colors">原图</button>
-          <button className="px-4 py-1.5 rounded-full text-sm font-medium btn-glass text-primary">效果图</button>
-        </div>
-        <div className="absolute top-4 right-4 z-20 flex gap-2">
-          <button className="w-10 h-10 rounded-full bg-surface/40 backdrop-blur-xl border border-outline-variant/40 flex items-center justify-center text-on-surface hover:text-primary transition-colors"><ZoomIn className="w-5 h-5" /></button>
-          <button className="w-10 h-10 rounded-full bg-surface/40 backdrop-blur-xl border border-outline-variant/40 flex items-center justify-center text-on-surface hover:text-primary transition-colors"><Maximize className="w-5 h-5" /></button>
-        </div>
-        <div className="absolute top-4 left-4 z-20">
-          <div className="bg-surface/40 backdrop-blur-xl border border-outline-variant/40 px-3 py-1.5 rounded-lg flex items-center gap-2">
-            <div className={cn("w-2 h-2 rounded-full", isGenerating ? "bg-secondary-container animate-pulse shadow-[0_0_8px_rgba(255,138,0,0.8)]" : "bg-primary shadow-[0_0_8px_rgba(164,230,255,0.8)]")}></div>
-            <span className={cn("font-mono text-xs", isGenerating ? "text-secondary-container" : "text-primary")}>
-              {isGenerating ? "AI 正在分析参考图色彩、影调与对比度..." : "AI 就绪"}
-            </span>
-          </div>
+      <section className="studio-canvas-column glass-panel">
+        <div className="floating-ai-status">
+          <span className={isGenerating ? "status-dot generating" : "status-dot"} />
+          <strong>{aiStatus}</strong>
         </div>
 
-        {/* Canvas Area */}
-        <div className="flex-1 relative overflow-hidden flex items-center justify-center p-8">
-          <div 
-            ref={splitContainerRef}
-            className="relative w-full aspect-video max-w-6xl mx-auto rounded-lg overflow-hidden border border-outline-variant/20 shadow-2xl bg-black"
-          >
-            {/* Before Image */}
-            <img 
-              alt="Cinematic urban street scene original" 
-              className="absolute inset-0 w-full h-full object-cover" 
-              src="https://images.unsplash.com/photo-1555616654-e053db3bb084?auto=format&fit=crop&w=1200&q=80"
+        <div className="canvas-toolbar">
+          <button type="button">原图</button>
+          <button className="active" type="button">
+            效果图
+          </button>
+        </div>
+
+        <div className="canvas-tools">
+          <button title="局部放大" type="button">
+            <ZoomIn aria-hidden="true" />
+          </button>
+          <button title="适配屏幕" type="button">
+            <Maximize aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="split-preview-stage">
+          <div ref={splitContainerRef} className="split-preview-frame">
+            <div className="split-image before" style={{ background: sourceBackground }} />
+            <div
+              className="split-image after"
+              style={{
+                background: afterBackground,
+                clipPath: `inset(0 ${100 - splitPosition}% 0 0)`,
+                filter: result === null ? "none" : `sepia(0.18) saturate(${1 + parameters.saturation / 140}) contrast(${1 + parameters.contrast / 160})`
+              }}
             />
-            
-            {/* After Image (Clipped) */}
-            <div 
-              className="absolute inset-0 w-full h-full overflow-hidden" 
-              style={{ clipPath: `inset(0 ${100 - splitPosition}% 0 0)` }}
-            >
-              <img 
-                alt="Cinematic urban street scene graded" 
-                className="absolute inset-0 w-full h-full object-cover max-w-none" 
-                src="https://images.unsplash.com/photo-1555616654-e053db3bb084?auto=format&fit=crop&w=1200&q=80"
-                style={hasGenerated ? { filter: `sepia(0.3) saturate(${1 + saturation/100}) contrast(${1 + contrast/100}) hue-rotate(-10deg)` } : {}}
-              />
-            </div>
-
-            {/* Split Handle */}
-            <div 
-              className="split-handle" 
+            <button
+              aria-label="拖动对比线"
+              className="split-handle"
               style={{ left: `${splitPosition}%` }}
+              type="button"
               onMouseDown={() => setIsDragging(true)}
               onTouchStart={() => setIsDragging(true)}
             >
-              <ChevronsLeftRight className="w-4 h-4 text-white z-11 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-
-            {/* Labels */}
-            <div className="absolute bottom-4 left-4 font-mono text-xs text-white/70 bg-black/50 px-2 py-1 rounded backdrop-blur-md">原图</div>
-            <div className="absolute bottom-4 right-4 font-mono text-xs text-primary bg-black/50 px-2 py-1 rounded backdrop-blur-md">效果图</div>
-          </div>
-        </div>
-
-        {/* Bottom Status */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
-          <span className="font-mono text-sm text-outline tracking-wider uppercase">选用风格: {defaultStyle.name}</span>
-        </div>
-      </section>
-
-      {/* Right Column: References & Adjustments */}
-      <section className="w-[360px] flex flex-col glass-panel overflow-y-auto h-full relative z-10 pb-16">
-        {/* References Section */}
-        <div className="p-4 border-b border-outline-variant/30">
-          <h2 className="font-display text-xl font-bold text-on-surface mb-4">参考图</h2>
-          <div className="rounded-xl overflow-hidden border border-primary/50 relative group mb-3 shadow-[0_0_15px_rgba(0,242,255,0.15)]">
-            <img 
-              alt="Reference style image" 
-              className="w-full h-32 object-cover" 
-              src={defaultStyle.imageUrl} 
-            />
-            <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md rounded px-2 py-0.5 border border-white/10">
-              <span className="text-[10px] font-mono text-primary uppercase">已激活目标风格</span>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button className="flex-1 py-2 rounded-lg bg-surface-container border border-outline-variant text-sm font-medium hover:bg-surface-variant transition-colors">上传</button>
-            <button className="flex-1 py-2 rounded-lg btn-glass text-primary text-sm font-medium">风格库</button>
-          </div>
-        </div>
-
-        {/* Parameters Section */}
-        <div className="p-4 flex-1 flex flex-col gap-6">
-          <h2 className="font-display text-xl font-bold text-on-surface">参数调节</h2>
-          
-          {/* Sliders */}
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-end">
-                <label className="font-mono text-xs text-on-surface-variant">风格强度</label>
-                <span className="font-mono text-xs text-primary">{intensity}</span>
-              </div>
-              <input type="range" min="0" max="100" value={intensity} onChange={(e) => setIntensity(Number(e.target.value))} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-end">
-                <label className="font-mono text-xs text-on-surface-variant">对比度</label>
-                <span className="font-mono text-xs text-outline">{contrast}</span>
-              </div>
-              <input type="range" min="-100" max="100" value={contrast} onChange={(e) => setContrast(Number(e.target.value))} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-end">
-                <label className="font-mono text-xs text-on-surface-variant">饱和度</label>
-                <span className="font-mono text-xs text-outline">{saturation}</span>
-              </div>
-              <input type="range" min="-100" max="100" value={saturation} onChange={(e) => setSaturation(Number(e.target.value))} />
-            </div>
-            
-            <div className="h-px bg-outline-variant/30 my-2"></div>
-            
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-end">
-                <label className="font-mono text-xs text-on-surface-variant">阴影匹配</label>
-                <span className="font-mono text-xs text-primary">{shadowMatch}</span>
-              </div>
-              <input type="range" min="0" max="100" value={shadowMatch} onChange={(e) => setShadowMatch(Number(e.target.value))} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-end">
-                <label className="font-mono text-xs text-on-surface-variant">中间调匹配</label>
-                <span className="font-mono text-xs text-primary">{midtoneMatch}</span>
-              </div>
-              <input type="range" min="0" max="100" value={midtoneMatch} onChange={(e) => setMidtoneMatch(Number(e.target.value))} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between items-end">
-                <label className="font-mono text-xs text-on-surface-variant">高光匹配</label>
-                <span className="font-mono text-xs text-primary">{highlightMatch}</span>
-              </div>
-              <input type="range" min="0" max="100" value={highlightMatch} onChange={(e) => setHighlightMatch(Number(e.target.value))} />
-            </div>
-          </div>
-
-          {/* Advanced Switches */}
-          <div className="bg-surface-container-low rounded-xl p-4 border border-outline-variant/20 flex flex-col gap-3">
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm text-on-surface">肤色保护</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only peer" checked={skinProtection} onChange={() => setSkinProtection(!skinProtection)} />
-                <div className="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-outline after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container peer-checked:after:bg-on-primary-container"></div>
-              </div>
-            </label>
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm text-on-surface">保留亮度结构</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only peer" checked={preserveLuma} onChange={() => setPreserveLuma(!preserveLuma)} />
-                <div className="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-outline after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container peer-checked:after:bg-on-primary-container"></div>
-              </div>
-            </label>
-            <label className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm text-on-surface">防止过度饱和</span>
-              <div className="relative">
-                <input type="checkbox" className="sr-only peer" checked={preventOversat} onChange={() => setPreventOversat(!preventOversat)} />
-                <div className="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-outline after:border-outline after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container peer-checked:after:bg-on-primary-container"></div>
-              </div>
-            </label>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="mt-auto flex flex-col gap-3 pt-4 mb-8">
-            <button 
-              onClick={handleGenerate}
-              disabled={isGenerating}
-              className="w-full py-3 rounded-lg btn-primary shadow-[0_0_20px_rgba(0,242,255,0.3)] transition-all flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Sparkles className="w-5 h-5" />
-              {isGenerating ? "正在分析色彩..." : "生成仿色预览"}
+              <ChevronsLeftRight aria-hidden="true" />
             </button>
-            <div className="flex gap-2">
-              <button className="flex-1 py-2 rounded-lg bg-surface-container border border-outline-variant text-sm font-medium hover:bg-surface-variant transition-colors">重置参数</button>
-              <button onClick={handleExport} className="flex-1 py-2 rounded-lg btn-glass text-primary text-sm font-medium">导出 .cube</button>
-            </div>
+            <span className="preview-label before-label">原图</span>
+            <span className="preview-label after-label">效果图</span>
+          </div>
+        </div>
+
+        <div className="selected-style-strip">选用风格: {activeStyleName}</div>
+      </section>
+
+      <section className="studio-control-column glass-panel">
+        <div className="reference-section">
+          <h2>参考图</h2>
+          <div className="reference-preview" style={{ background: referenceBackground }}>
+            <span>{referenceImage === null ? "已激活目标风格" : "自定义参考图"}</span>
+          </div>
+          <div className="reference-actions">
+            <UploadPanel
+              accept={acceptedImageTypes}
+              className="reference-upload-panel"
+              description="点击选择参考图"
+              fileName={referenceImage?.name ?? ""}
+              inputMode="file"
+              title="上传参考图"
+              onFileChange={handleReferenceImageFileChange}
+            />
+            <Button variant="ghost" onClick={() => onNavigate("/styles")}>
+              风格库
+            </Button>
+          </div>
+          {referenceImageError.length > 0 ? <p className="upload-error">{referenceImageError}</p> : null}
+          {referenceImage === null ? null : (
+            <button className="clear-reference-button" type="button" onClick={handleClearReferenceImage}>
+              清除图片
+            </button>
+          )}
+        </div>
+
+        <div className="parameter-section">
+          <h2>参数调节</h2>
+          <SliderControl label="风格强度" value={parameters.intensity} onChange={(value) => setNumberParameter("intensity", value)} />
+          <SliderControl label="对比度" min={-100} max={100} value={parameters.contrast} onChange={(value) => setNumberParameter("contrast", value)} />
+          <SliderControl label="饱和度" min={-100} max={100} value={parameters.saturation} onChange={(value) => setNumberParameter("saturation", value)} />
+          <SliderControl label="色温" min={-50} max={50} value={parameters.temperature} onChange={(value) => setNumberParameter("temperature", value)} />
+          <SliderControl label="Tint / 色调" min={-50} max={50} value={parameters.tint} onChange={(value) => setNumberParameter("tint", value)} />
+          <SliderControl label="阴影匹配" value={parameters.shadowMatch} onChange={(value) => setNumberParameter("shadowMatch", value)} />
+          <SliderControl label="中间调匹配" value={parameters.midtoneMatch} onChange={(value) => setNumberParameter("midtoneMatch", value)} />
+          <SliderControl label="高光匹配" value={parameters.highlightMatch} onChange={(value) => setNumberParameter("highlightMatch", value)} />
+        </div>
+
+        <div className="toggle-card">
+          <ToggleSwitch checked={skinProtect} label="肤色保护" onChange={setSkinProtect} />
+          <ToggleSwitch checked={preserveLuma} label="保留亮度结构" onChange={setPreserveLuma} />
+          <ToggleSwitch checked={avoidOversaturation} label="防止过度饱和" onChange={setAvoidOversaturation} />
+        </div>
+
+        <div className="workspace-actions">
+          <Button disabled={isGenerating} onClick={handleGenerate}>
+            <Sparkles aria-hidden="true" />
+            {isGenerating ? "正在分析色彩..." : "生成仿色预览"}
+          </Button>
+          <div>
+            <Button variant="ghost" onClick={resetParameters}>
+              重置参数
+            </Button>
+            <Button variant="secondary" onClick={() => onNavigate("/export")}>
+              导出 .cube
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Bottom Export Bar (Fixed to bottom) */}
-      <footer className="fixed bottom-0 left-[64px] right-0 z-50 h-16 bg-surface/40 backdrop-blur-xl border-t border-outline-variant/30 flex items-center justify-between px-gutter">
-        <div className="flex items-center gap-4">
-          <span className="font-mono text-xs text-outline">LUT 名称</span>
-          <input 
-            type="text" 
-            value={lutName} 
-            onChange={(e) => setLutName(e.target.value)}
-            className="bg-surface-container border border-outline-variant/50 rounded px-3 py-1.5 text-sm font-mono text-on-surface focus:border-primary outline-none w-64" 
-          />
-          <div className="h-6 w-px bg-outline-variant/50 mx-2"></div>
-          <span className="font-mono text-xs text-outline uppercase">LUT 精度</span>
-          <div className="flex bg-surface-container rounded border border-outline-variant/50 overflow-hidden">
-            <button onClick={() => setPrecision('17')} className={cn("px-3 py-1.5 text-xs font-mono transition-colors", precision === '17' ? "bg-primary/20 text-primary" : "text-outline hover:bg-surface-variant")}>17</button>
-            <button onClick={() => setPrecision('33')} className={cn("px-3 py-1.5 text-xs font-mono border-x border-outline-variant/50 transition-colors", precision === '33' ? "bg-primary/20 text-primary" : "text-outline hover:bg-surface-variant")}>33</button>
-            <button onClick={() => setPrecision('65')} className={cn("px-3 py-1.5 text-xs font-mono transition-colors", precision === '65' ? "bg-primary/20 text-primary" : "text-outline hover:bg-surface-variant")}>65</button>
-          </div>
+      <footer className="workspace-export-footer">
+        <div className="export-footer-left">
+          <label>
+            <span>LUT 名称</span>
+            <input value={lutName} onChange={(event) => setLutName(event.currentTarget.value)} />
+          </label>
+          <label>
+            <span>LUT 精度</span>
+            <select
+              value={parameters.precision}
+              onChange={(event) => setParameters({ ...parameters, precision: event.currentTarget.value as LutPrecision })}
+            >
+              {precisionOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option.replace("x", " / ").split(" / ")[0]}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-[10px] text-on-surface-variant mr-4 hidden xl:block uppercase">© 2024 LUMINANCE STUDIO. HIGH-FIDELITY EXPORT ENGINE ACTIVE.</span>
-          <button className="px-4 py-2 rounded text-sm font-medium border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors flex items-center gap-2">
-            <HelpCircle className="w-4 h-4" /> 使用说明
+        <div className="export-footer-actions">
+          <button type="button">
+            <HelpCircle aria-hidden="true" />
+            使用说明
           </button>
-          <button onClick={handleExport} className="px-6 py-2 rounded btn-glass text-primary text-sm font-bold flex items-center gap-2">
-            <Download className="w-4 h-4" /> 导出 LUT
+          <button type="button" onClick={() => onNavigate("/export")}>
+            <Download aria-hidden="true" />
+            导出 LUT
           </button>
         </div>
       </footer>
     </>
   );
-}
+};

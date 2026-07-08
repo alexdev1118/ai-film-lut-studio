@@ -1,6 +1,0 @@
-{
-  "name": "AI Film LUT Studio",
-  "description": "An AI-powered color grading and LUT generation tool for creating cinematic film styles.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
