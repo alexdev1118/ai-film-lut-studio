@@ -102,12 +102,52 @@ export interface GeneratePreviewParams {
   readonly parameters: LutParameters;
 }
 
+export interface ColorPreviewAdjustments {
+  readonly intensity: number;
+  readonly contrast: number;
+  readonly saturation: number;
+  readonly temperature: number;
+  readonly tint: number;
+  readonly shadowMatch: number;
+  readonly midtoneMatch: number;
+  readonly highlightMatch: number;
+  readonly skinToneProtection: boolean;
+  readonly preserveLuma: boolean;
+  readonly preventOversaturation: boolean;
+}
+
+export interface GenerateColorPreviewParams {
+  readonly targetImageUrl: string;
+  readonly referenceImageUrl?: string;
+  readonly adjustments: ColorPreviewAdjustments;
+  readonly maxSize?: number;
+}
+
+export interface ColorPreviewResult {
+  readonly previewUrl: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+export interface GenerateLocalPreviewParams {
+  readonly targetImageUrl: string;
+  readonly referenceImageUrl?: string;
+  readonly selectedStyleName: string;
+  readonly parameters: LutParameters;
+  readonly skinToneProtection: boolean;
+  readonly preserveLuma: boolean;
+  readonly preventOversaturation: boolean;
+}
+
 export interface PreviewResult {
   readonly id: string;
-  readonly status: "预览已生成";
+  readonly status: string;
   readonly styleName: string;
   readonly previewImage: string;
   readonly generatedAt: string;
+  readonly width?: number;
+  readonly height?: number;
+  readonly isCanvasPreview?: boolean;
 }
 
 export interface ExportLutParams {

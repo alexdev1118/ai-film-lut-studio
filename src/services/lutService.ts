@@ -1,10 +1,12 @@
 import { colorAnalysisReport } from "../data/analysis";
 import { previewImages } from "../data/mockImages";
+import { generateColorPreview } from "../utils/colorPreview";
 import type {
   ColorAnalysisInput,
   ColorAnalysisReport,
   ExportLutParams,
   ExportLutResult,
+  GenerateLocalPreviewParams,
   GeneratePreviewParams,
   PhotoPresetParams,
   PhotoPresetResult,
@@ -44,6 +46,47 @@ export const generatePreviewMock = async (params: GeneratePreviewParams): Promis
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown preview generation failure";
     throw new Error(`生成仿色预览失败：${message}`);
+  }
+};
+
+export const generateLocalColorPreview = async (params: GenerateLocalPreviewParams): Promise<PreviewResult> => {
+  try {
+    if (params.targetImageUrl.trim().length === 0) {
+      throw new Error("缺少目标图片。");
+    }
+
+    const colorPreview = await generateColorPreview({
+      targetImageUrl: params.targetImageUrl,
+      referenceImageUrl: params.referenceImageUrl,
+      adjustments: {
+        intensity: params.parameters.intensity,
+        contrast: params.parameters.contrast,
+        saturation: params.parameters.saturation,
+        temperature: params.parameters.temperature,
+        tint: params.parameters.tint,
+        shadowMatch: params.parameters.shadowMatch,
+        midtoneMatch: params.parameters.midtoneMatch,
+        highlightMatch: params.parameters.highlightMatch,
+        skinToneProtection: params.skinToneProtection,
+        preserveLuma: params.preserveLuma,
+        preventOversaturation: params.preventOversaturation
+      },
+      maxSize: 1600
+    });
+
+    return {
+      id: `canvas-preview-${Date.now()}`,
+      status: "预览已生成",
+      styleName: params.selectedStyleName,
+      previewImage: colorPreview.previewUrl,
+      generatedAt: new Date().toISOString(),
+      width: colorPreview.width,
+      height: colorPreview.height,
+      isCanvasPreview: true
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown local preview generation failure";
+    throw new Error(message);
   }
 };
 

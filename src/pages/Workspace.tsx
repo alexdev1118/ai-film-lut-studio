@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
 import { lutStyles } from "../data/styles";
 import { previewImages } from "../data/mockImages";
-import { generatePreviewMock } from "../services/lutService";
+import { generateLocalColorPreview } from "../services/lutService";
 import type {
   ColorSpace,
   LutParameters,
@@ -13,6 +13,7 @@ import type {
   WorkspaceMediaState
 } from "../types";
 import { colorSpaceOptions, defaultLutParameters, precisionOptions } from "../utils/lutMock";
+import { revokeColorPreviewUrl } from "../utils/colorPreview";
 import {
   formatFileSize,
   getImageMetadata,
@@ -84,6 +85,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const [lutName, setLutName] = useState(`${selectedStyle.name}_Studio_V1`);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const mediaStateRef = useRef<WorkspaceMediaState>(defaultMediaState);
+  const previewUrlRef = useRef<string | null>(null);
 
   const activeTarget = useMemo(
     () => mediaState.targetItems.find((item) => item.id === mediaState.activeTargetId) ?? null,
@@ -112,6 +114,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     return () => {
       mediaStateRef.current.targetItems.forEach((item) => revokeMediaItem(item));
       mediaStateRef.current.referenceItems.forEach((item) => revokeMediaItem(item));
+      revokeColorPreviewUrl(previewUrlRef.current);
     };
   }, []);
 
@@ -149,6 +152,12 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     };
   }, [isDragging]);
 
+  const clearCanvasPreview = () => {
+    revokeColorPreviewUrl(previewUrlRef.current);
+    previewUrlRef.current = null;
+    setResult(null);
+  };
+
   const handleTargetImageFileChange = async (file: File) => {
     try {
       setTargetImageError("");
@@ -159,7 +168,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         targetItems: [mediaItem, ...current.targetItems],
         activeTargetId: mediaItem.id
       }));
-      setResult(null);
+      clearCanvasPreview();
       setMessage("目标素材已加入素材箱");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "图片读取失败，请更换图片";
@@ -177,7 +186,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         referenceItems: [mediaItem, ...current.referenceItems],
         activeReferenceId: mediaItem.id
       }));
-      setResult(null);
+      clearCanvasPreview();
       setLutName("自定义参考图_Studio_V1");
       setMessage("已选择风格：自定义参考图");
     } catch (error) {
@@ -188,13 +197,13 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
 
   const handleSelectTarget = (itemId: string) => {
     setMediaState((current) => ({ ...current, activeTargetId: itemId }));
-    setResult(null);
+    clearCanvasPreview();
     setMessage("已切换目标素材");
   };
 
   const handleSelectReference = (itemId: string) => {
     setMediaState((current) => ({ ...current, activeReferenceId: itemId }));
-    setResult(null);
+    clearCanvasPreview();
     setLutName("自定义参考图_Studio_V1");
     setMessage("已选择风格：自定义参考图");
   };
@@ -222,7 +231,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     });
 
     if (isActiveDeleted) {
-      setResult(null);
+      clearCanvasPreview();
       setMessage(nextItems.length === 0 ? "已回到默认目标图" : "已切换到下一张目标素材");
     }
   };
@@ -251,7 +260,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     });
 
     if (isActiveDeleted) {
-      setResult(null);
+      clearCanvasPreview();
 
       if (nextActiveReferenceId === undefined) {
         setLutName(`${selectedStyle.name}_Studio_V1`);
@@ -267,17 +276,22 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     try {
       setIsGenerating(true);
       setMessage("AI 正在分析参考图色彩、影调与对比度...");
-      const previewResult = await generatePreviewMock({
-        targetFrameName: activeTarget?.name ?? defaultTargetName,
-        referenceImageName: activeReference?.name ?? defaultReferenceName,
+      const previewResult = await generateLocalColorPreview({
+        targetImageUrl: sourceImageUrl,
+        referenceImageUrl: activeReference?.url,
         selectedStyleName: activeReference === null ? selectedStyle.name : "自定义参考图",
-        parameters
+        parameters,
+        skinToneProtection: skinProtect,
+        preserveLuma,
+        preventOversaturation: avoidOversaturation
       });
+      revokeColorPreviewUrl(previewUrlRef.current);
+      previewUrlRef.current = previewResult.previewImage;
       setResult(previewResult);
       setSessionPreviewResults((current) => [previewResult, ...current].slice(0, 20));
       setMessage("预览已生成");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "生成预览时发生未知错误。";
+      const errorMessage = error instanceof Error ? error.message : "预览生成失败，请更换图片或降低图片尺寸";
       setMessage(errorMessage);
     } finally {
       setIsGenerating(false);
@@ -309,9 +323,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
       ? activeTarget === null
         ? getImageSourceFromCssBackground(selectedStyle.previewImage)
         : undefined
-      : activeTarget === null
-        ? getImageSourceFromCssBackground(result.previewImage)
-        : sourceImageUrl;
+      : result.previewImage;
   const aiStatus = isGenerating ? "AI 正在分析参考图色彩、影调与对比度..." : result === null ? "AI 就绪" : "预览已生成";
   const previewFilter =
     result === null ? "none" : `sepia(0.18) saturate(${1 + parameters.saturation / 140}) contrast(${1 + parameters.contrast / 160})`;
