@@ -1,4 +1,4 @@
-import type { ImageMetadataResult, UploadedImage } from "../types";
+import type { ImageMetadataResult, MediaItem, MediaSourceType, UploadedImage } from "../types";
 
 const MAX_IMAGE_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -47,7 +47,14 @@ const readImageDimensions = async (objectURL: string, mimeType: string): Promise
 
     await new Promise<void>((resolve, reject) => {
       image.onload = () => resolve();
-      image.onerror = () => reject(new Error(TIFF_TYPES.has(mimeType) ? "当前浏览器可能无法预览 TIFF，建议使用 JPG、PNG 或 WebP" : "图片读取失败，请更换图片"));
+      image.onerror = () =>
+        reject(
+          new Error(
+            TIFF_TYPES.has(mimeType)
+              ? "当前浏览器可能无法预览 TIFF，建议使用 JPG、PNG 或 WebP"
+              : "图片读取失败，请更换图片"
+          )
+        );
     });
 
     if (image.naturalWidth <= 0 || image.naturalHeight <= 0) {
@@ -111,6 +118,41 @@ export const toUploadedImage = (file: File, metadata: ImageMetadataResult): Uplo
   };
 };
 
+const createMediaId = (sourceType: MediaSourceType): string => {
+  try {
+    return `${sourceType}-${crypto.randomUUID()}`;
+  } catch (error) {
+    console.warn("生成素材 ID 失败，已使用时间戳回退", error);
+    return `${sourceType}-${Date.now()}-${Math.round(Math.random() * 100000)}`;
+  }
+};
+
+export const toUploadedMediaItem = (file: File, metadata: ImageMetadataResult, sourceType: MediaSourceType): MediaItem => {
+  return {
+    id: createMediaId(sourceType),
+    sourceType,
+    file,
+    url: metadata.objectURL,
+    name: metadata.fileName,
+    size: metadata.fileSize,
+    type: metadata.mimeType,
+    width: metadata.width,
+    height: metadata.height,
+    createdAt: new Date().toISOString(),
+    origin: "upload"
+  };
+};
+
+export const getImageSourceFromCssBackground = (background: string): string => {
+  const match = background.match(/url\((['"]?)(.*?)\1\)/);
+
+  if (match === null || match[2].trim().length === 0) {
+    return background;
+  }
+
+  return match[2];
+};
+
 export const formatFileSize = (bytes: number): string => {
   if (bytes < 1024) {
     return `${bytes} B`;
@@ -145,5 +187,15 @@ export const revokeUploadedImage = (image: UploadedImage | null): void => {
     }
   } catch (error) {
     console.warn("释放本地图片预览 URL 失败", error);
+  }
+};
+
+export const revokeMediaItem = (item: MediaItem | null | undefined): void => {
+  try {
+    if (item !== null && item !== undefined && item.origin === "upload") {
+      URL.revokeObjectURL(item.url);
+    }
+  } catch (error) {
+    console.warn("释放本地素材预览 URL 失败", error);
   }
 };

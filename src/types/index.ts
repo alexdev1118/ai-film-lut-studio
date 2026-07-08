@@ -48,6 +48,31 @@ export interface UploadedImage {
   readonly height?: number;
 }
 
+export type MediaSourceType = "target" | "reference";
+
+export type MediaOrigin = "upload" | "mock" | "style-library";
+
+export interface MediaItem {
+  readonly id: string;
+  readonly sourceType: MediaSourceType;
+  readonly file?: File;
+  readonly url: string;
+  readonly name: string;
+  readonly size?: number;
+  readonly type?: string;
+  readonly width?: number;
+  readonly height?: number;
+  readonly createdAt: string;
+  readonly origin: MediaOrigin;
+}
+
+export interface WorkspaceMediaState {
+  readonly targetItems: readonly MediaItem[];
+  readonly referenceItems: readonly MediaItem[];
+  readonly activeTargetId?: string;
+  readonly activeReferenceId?: string;
+}
+
 export interface ImageMetadataResult {
   readonly objectURL: string;
   readonly width?: number;

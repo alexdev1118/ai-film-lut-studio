@@ -41,7 +41,8 @@ export const UploadPanel = ({
       <span className="upload-description">{description}</span>
       {inputMode === "file" ? (
         <>
-          <input aria-label={title} accept={accept} type="file" onChange={handleFileInputChange} />
+          <span className="upload-chooser">选择图片</span>
+          <input className="upload-file-input" aria-label={title} accept={accept} type="file" onChange={handleFileInputChange} />
           {fileName.length > 0 ? <span className="upload-file-name">{fileName}</span> : null}
         </>
       ) : (

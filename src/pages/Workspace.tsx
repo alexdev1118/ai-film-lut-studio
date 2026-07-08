@@ -1,26 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ChevronsLeftRight,
-  Download,
-  HelpCircle,
-  Info,
-  Maximize,
-  Sparkles,
-  Upload,
-  ZoomIn
-} from "lucide-react";
+import { Download, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
 import { lutStyles } from "../data/styles";
 import { previewImages } from "../data/mockImages";
 import { generatePreviewMock } from "../services/lutService";
-import type { ColorSpace, LutParameters, LutPrecision, PreviewResult, RoutePath, UploadedImage } from "../types";
+import type {
+  ColorSpace,
+  LutParameters,
+  LutPrecision,
+  MediaItem,
+  PreviewResult,
+  RoutePath,
+  WorkspaceMediaState
+} from "../types";
 import { colorSpaceOptions, defaultLutParameters, precisionOptions } from "../utils/lutMock";
 import {
   formatFileSize,
   getImageMetadata,
+  getImageSourceFromCssBackground,
   getReadableImageType,
-  revokeUploadedImage,
-  toUploadedImage
+  revokeMediaItem,
+  toUploadedMediaItem
 } from "../utils/image";
+import { BeforeAfterPreview } from "../components/lut/BeforeAfterPreview";
+import { MediaBin } from "../components/lut/MediaBin";
 import { Button } from "../components/ui/Button";
 import { SliderControl } from "../components/ui/SliderControl";
 import { ToggleSwitch } from "../components/ui/ToggleSwitch";
@@ -32,17 +34,24 @@ interface WorkspaceProps {
 }
 
 const acceptedImageTypes = "image/jpeg,image/png,image/webp,image/tiff,.jpg,.jpeg,.png,.webp,.tif,.tiff";
+const defaultTargetName = "target-frame-rec709.jpg";
+const defaultReferenceName = "reference-style.jpg";
 
-const createImageBackground = (url: string): string => {
-  return `url("${url}") center / cover no-repeat`;
+const defaultMediaState: WorkspaceMediaState = {
+  targetItems: [],
+  referenceItems: []
 };
 
-const getImageDimensionsLabel = (image: UploadedImage): string => {
+const getImageDimensionsLabel = (image: MediaItem): string => {
   if (typeof image.width === "number" && typeof image.height === "number") {
     return `${image.width}x${image.height}`;
   }
 
   return "读取中";
+};
+
+const getNextActiveId = (items: readonly MediaItem[], deletedIndex: number): string | undefined => {
+  return items[deletedIndex]?.id ?? items[deletedIndex - 1]?.id ?? items[0]?.id;
 };
 
 export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => {
@@ -56,10 +65,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     return lutStyles.find((style) => style.id === styleKey || style.name === styleKey) ?? lutStyles[0];
   }, [selectedStyleName]);
 
-  const [targetFrameName, setTargetFrameName] = useState("target-frame-rec709.jpg");
-  const [referenceImageName, setReferenceImageName] = useState("reference-style.jpg");
-  const [targetImage, setTargetImage] = useState<UploadedImage | null>(null);
-  const [referenceImage, setReferenceImage] = useState<UploadedImage | null>(null);
+  const [mediaState, setMediaState] = useState<WorkspaceMediaState>(defaultMediaState);
   const [targetImageError, setTargetImageError] = useState("");
   const [referenceImageError, setReferenceImageError] = useState("");
   const [parameters, setParameters] = useState<LutParameters>({
@@ -67,6 +73,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     intensity: selectedStyle.recommendedIntensity
   });
   const [result, setResult] = useState<PreviewResult | null>(null);
+  const [sessionPreviewResults, setSessionPreviewResults] = useState<readonly PreviewResult[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [message, setMessage] = useState("AI 就绪");
   const [splitPosition, setSplitPosition] = useState(50);
@@ -75,14 +82,27 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const [preserveLuma, setPreserveLuma] = useState(true);
   const [avoidOversaturation, setAvoidOversaturation] = useState(false);
   const [lutName, setLutName] = useState(`${selectedStyle.name}_Studio_V1`);
-  const splitContainerRef = useRef<HTMLDivElement>(null);
-  const targetImageRef = useRef<UploadedImage | null>(null);
-  const referenceImageRef = useRef<UploadedImage | null>(null);
+  const splitContainerRef = useRef<HTMLDivElement | null>(null);
+  const mediaStateRef = useRef<WorkspaceMediaState>(defaultMediaState);
+
+  const activeTarget = useMemo(
+    () => mediaState.targetItems.find((item) => item.id === mediaState.activeTargetId) ?? null,
+    [mediaState.activeTargetId, mediaState.targetItems]
+  );
+
+  const activeReference = useMemo(
+    () => mediaState.referenceItems.find((item) => item.id === mediaState.activeReferenceId) ?? null,
+    [mediaState.activeReferenceId, mediaState.referenceItems]
+  );
+
+  useEffect(() => {
+    mediaStateRef.current = mediaState;
+  }, [mediaState]);
 
   useEffect(() => {
     setParameters((current) => ({ ...current, intensity: selectedStyle.recommendedIntensity }));
 
-    if (referenceImageRef.current === null) {
+    if (mediaStateRef.current.activeReferenceId === undefined) {
       setLutName(`${selectedStyle.name}_Studio_V1`);
       setMessage(`已选择风格：${selectedStyle.name}`);
     }
@@ -90,8 +110,8 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
 
   useEffect(() => {
     return () => {
-      revokeUploadedImage(targetImageRef.current);
-      revokeUploadedImage(referenceImageRef.current);
+      mediaStateRef.current.targetItems.forEach((item) => revokeMediaItem(item));
+      mediaStateRef.current.referenceItems.forEach((item) => revokeMediaItem(item));
     };
   }, []);
 
@@ -129,27 +149,18 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     };
   }, [isDragging]);
 
-  const replaceTargetImage = (image: UploadedImage | null) => {
-    revokeUploadedImage(targetImageRef.current);
-    targetImageRef.current = image;
-    setTargetImage(image);
-  };
-
-  const replaceReferenceImage = (image: UploadedImage | null) => {
-    revokeUploadedImage(referenceImageRef.current);
-    referenceImageRef.current = image;
-    setReferenceImage(image);
-  };
-
   const handleTargetImageFileChange = async (file: File) => {
     try {
       setTargetImageError("");
       const metadata = await getImageMetadata(file);
-      const uploadedImage = toUploadedImage(file, metadata);
-      replaceTargetImage(uploadedImage);
-      setTargetFrameName(uploadedImage.name);
+      const mediaItem = toUploadedMediaItem(file, metadata, "target");
+      setMediaState((current) => ({
+        ...current,
+        targetItems: [mediaItem, ...current.targetItems],
+        activeTargetId: mediaItem.id
+      }));
       setResult(null);
-      setMessage("目标素材已载入");
+      setMessage("目标素材已加入素材箱");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "图片读取失败，请更换图片";
       setTargetImageError(errorMessage);
@@ -160,9 +171,12 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     try {
       setReferenceImageError("");
       const metadata = await getImageMetadata(file);
-      const uploadedImage = toUploadedImage(file, metadata);
-      replaceReferenceImage(uploadedImage);
-      setReferenceImageName(uploadedImage.name);
+      const mediaItem = toUploadedMediaItem(file, metadata, "reference");
+      setMediaState((current) => ({
+        ...current,
+        referenceItems: [mediaItem, ...current.referenceItems],
+        activeReferenceId: mediaItem.id
+      }));
       setResult(null);
       setLutName("自定义参考图_Studio_V1");
       setMessage("已选择风格：自定义参考图");
@@ -172,21 +186,81 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     }
   };
 
-  const handleClearTargetImage = () => {
-    replaceTargetImage(null);
-    setTargetImageError("");
-    setTargetFrameName("target-frame-rec709.jpg");
+  const handleSelectTarget = (itemId: string) => {
+    setMediaState((current) => ({ ...current, activeTargetId: itemId }));
     setResult(null);
-    setMessage("目标素材已清除");
+    setMessage("已切换目标素材");
   };
 
-  const handleClearReferenceImage = () => {
-    replaceReferenceImage(null);
-    setReferenceImageError("");
-    setReferenceImageName("reference-style.jpg");
+  const handleSelectReference = (itemId: string) => {
+    setMediaState((current) => ({ ...current, activeReferenceId: itemId }));
     setResult(null);
-    setLutName(`${selectedStyle.name}_Studio_V1`);
-    setMessage(`已选择风格：${selectedStyle.name}`);
+    setLutName("自定义参考图_Studio_V1");
+    setMessage("已选择风格：自定义参考图");
+  };
+
+  const handleDeleteTarget = (itemId: string) => {
+    const current = mediaStateRef.current;
+    const deletedIndex = current.targetItems.findIndex((item) => item.id === itemId);
+    const item = current.targetItems[deletedIndex];
+
+    if (item === undefined) {
+      return;
+    }
+
+    if (!window.confirm(`确定从目标素材箱删除“${item.name}”？`)) {
+      return;
+    }
+
+    const nextItems = current.targetItems.filter((mediaItem) => mediaItem.id !== itemId);
+    const isActiveDeleted = current.activeTargetId === itemId;
+    revokeMediaItem(item);
+    setMediaState({
+      ...current,
+      targetItems: nextItems,
+      activeTargetId: isActiveDeleted ? getNextActiveId(nextItems, deletedIndex) : current.activeTargetId
+    });
+
+    if (isActiveDeleted) {
+      setResult(null);
+      setMessage(nextItems.length === 0 ? "已回到默认目标图" : "已切换到下一张目标素材");
+    }
+  };
+
+  const handleDeleteReference = (itemId: string) => {
+    const current = mediaStateRef.current;
+    const deletedIndex = current.referenceItems.findIndex((item) => item.id === itemId);
+    const item = current.referenceItems[deletedIndex];
+
+    if (item === undefined) {
+      return;
+    }
+
+    if (!window.confirm(`确定从参考素材箱删除“${item.name}”？`)) {
+      return;
+    }
+
+    const nextItems = current.referenceItems.filter((mediaItem) => mediaItem.id !== itemId);
+    const isActiveDeleted = current.activeReferenceId === itemId;
+    const nextActiveReferenceId = isActiveDeleted ? getNextActiveId(nextItems, deletedIndex) : current.activeReferenceId;
+    revokeMediaItem(item);
+    setMediaState({
+      ...current,
+      referenceItems: nextItems,
+      activeReferenceId: nextActiveReferenceId
+    });
+
+    if (isActiveDeleted) {
+      setResult(null);
+
+      if (nextActiveReferenceId === undefined) {
+        setLutName(`${selectedStyle.name}_Studio_V1`);
+        setMessage(`已选择风格：${selectedStyle.name}`);
+      } else {
+        setLutName("自定义参考图_Studio_V1");
+        setMessage("已切换参考图");
+      }
+    }
   };
 
   const handleGenerate = async () => {
@@ -194,12 +268,13 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
       setIsGenerating(true);
       setMessage("AI 正在分析参考图色彩、影调与对比度...");
       const previewResult = await generatePreviewMock({
-        targetFrameName,
-        referenceImageName,
-        selectedStyleName: referenceImage === null ? selectedStyle.name : "自定义参考图",
+        targetFrameName: activeTarget?.name ?? defaultTargetName,
+        referenceImageName: activeReference?.name ?? defaultReferenceName,
+        selectedStyleName: activeReference === null ? selectedStyle.name : "自定义参考图",
         parameters
       });
       setResult(previewResult);
+      setSessionPreviewResults((current) => [previewResult, ...current].slice(0, 20));
       setMessage("预览已生成");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "生成预览时发生未知错误。";
@@ -226,17 +301,28 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     setAvoidOversaturation(false);
   };
 
-  const activeStyleName = referenceImage === null ? selectedStyle.name : "自定义参考图";
-  const sourceBackground = targetImage === null ? previewImages.sourceFrame : createImageBackground(targetImage.url);
-  const referenceBackground = referenceImage === null ? selectedStyle.previewImage : createImageBackground(referenceImage.url);
-  const afterBackground = result?.previewImage ?? selectedStyle.previewImage;
+  const activeStyleName = activeReference === null ? selectedStyle.name : "自定义参考图";
+  const sourceImageUrl = activeTarget?.url ?? getImageSourceFromCssBackground(previewImages.sourceFrame);
+  const referencePreviewUrl = activeReference?.url ?? getImageSourceFromCssBackground(selectedStyle.previewImage);
+  const afterImageUrl =
+    result === null
+      ? activeTarget === null
+        ? getImageSourceFromCssBackground(selectedStyle.previewImage)
+        : undefined
+      : activeTarget === null
+        ? getImageSourceFromCssBackground(result.previewImage)
+        : sourceImageUrl;
   const aiStatus = isGenerating ? "AI 正在分析参考图色彩、影调与对比度..." : result === null ? "AI 就绪" : "预览已生成";
+  const previewFilter =
+    result === null ? "none" : `sepia(0.18) saturate(${1 + parameters.saturation / 140}) contrast(${1 + parameters.contrast / 160})`;
+  const previewWidth = activeTarget?.width ?? 16;
+  const previewHeight = activeTarget?.height ?? 9;
 
   return (
     <>
       <section className="studio-source-column glass-panel">
         <div className="panel-title-row">
-          <h1>目标素材</h1>
+          <h1>目标素材箱</h1>
           <Info aria-hidden="true" />
         </div>
 
@@ -244,21 +330,22 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
           accept={acceptedImageTypes}
           className="studio-upload-dropzone"
           description="支持 JPG、PNG、WebP、TIFF，单张不超过 20MB"
-          fileName={targetImage?.name ?? ""}
+          fileName={activeTarget?.name ?? ""}
           icon={<Upload aria-hidden="true" />}
           inputMode="file"
-          title="拖拽或点击上传目标静帧"
+          title="上传目标静帧"
           onFileChange={handleTargetImageFileChange}
         />
         {targetImageError.length > 0 ? <p className="upload-error">{targetImageError}</p> : null}
 
-        <div className="source-thumbnail" style={{ background: sourceBackground }}>
-          {targetImage === null ? null : (
-            <button type="button" onClick={handleClearTargetImage}>
-              清除图片
-            </button>
-          )}
-        </div>
+        <MediaBin
+          activeItemId={mediaState.activeTargetId}
+          emptyLabel="还没有上传目标图，当前使用默认 mock 静帧。"
+          items={mediaState.targetItems}
+          title="当前会话目标素材"
+          onDelete={handleDeleteTarget}
+          onSelect={handleSelectTarget}
+        />
 
         <label className="studio-select-control">
           <span>输入色彩空间</span>
@@ -282,19 +369,19 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         <div className="metadata-card">
           <p>
             <span>文件名</span>
-            <strong>{targetImage?.name ?? targetFrameName}</strong>
+            <strong>{activeTarget?.name ?? defaultTargetName}</strong>
           </p>
           <p>
             <span>分辨率</span>
-            <strong>{targetImage === null ? "3840x2160" : getImageDimensionsLabel(targetImage)}</strong>
+            <strong>{activeTarget === null ? "3840x2160" : getImageDimensionsLabel(activeTarget)}</strong>
           </p>
           <p>
             <span>格式</span>
-            <strong>{targetImage === null ? "JPG" : getReadableImageType(targetImage.type)}</strong>
+            <strong>{activeTarget?.type === undefined ? "JPG" : getReadableImageType(activeTarget.type)}</strong>
           </p>
           <p>
             <span>文件大小</span>
-            <strong>{targetImage === null ? "2.8 MB" : formatFileSize(targetImage.size)}</strong>
+            <strong>{activeTarget?.size === undefined ? "2.8 MB" : formatFileSize(activeTarget.size)}</strong>
           </p>
         </div>
       </section>
@@ -321,47 +408,45 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
           </button>
         </div>
 
-        <div className="split-preview-stage">
-          <div ref={splitContainerRef} className="split-preview-frame">
-            <div className="split-image before" style={{ background: sourceBackground }} />
-            <div
-              className="split-image after"
-              style={{
-                background: afterBackground,
-                clipPath: `inset(0 ${100 - splitPosition}% 0 0)`,
-                filter: result === null ? "none" : `sepia(0.18) saturate(${1 + parameters.saturation / 140}) contrast(${1 + parameters.contrast / 160})`
-              }}
-            />
-            <button
-              aria-label="拖动对比线"
-              className="split-handle"
-              style={{ left: `${splitPosition}%` }}
-              type="button"
-              onMouseDown={() => setIsDragging(true)}
-              onTouchStart={() => setIsDragging(true)}
-            >
-              <ChevronsLeftRight aria-hidden="true" />
-            </button>
-            <span className="preview-label before-label">原图</span>
-            <span className="preview-label after-label">效果图</span>
-          </div>
+        <BeforeAfterPreview
+          afterAlt={`${activeStyleName} 效果图`}
+          afterImageUrl={afterImageUrl}
+          beforeAlt={activeTarget?.name ?? "默认目标静帧"}
+          beforeImageUrl={sourceImageUrl}
+          containerRef={splitContainerRef}
+          effectFilter={previewFilter}
+          imageHeight={previewHeight}
+          imageWidth={previewWidth}
+          isWaitingForPreview={activeTarget !== null && result === null}
+          splitPosition={splitPosition}
+          onSplitStart={() => setIsDragging(true)}
+        />
+
+        <div className="preview-action-dock">
+          <Button disabled={isGenerating} onClick={handleGenerate}>
+            <Sparkles aria-hidden="true" />
+            {isGenerating ? "正在分析色彩..." : "生成仿色预览"}
+          </Button>
         </div>
 
-        <div className="selected-style-strip">选用风格: {activeStyleName}</div>
+        <div className="selected-style-strip">
+          选用风格: {activeStyleName} / 生成记录 {sessionPreviewResults.length}
+        </div>
       </section>
 
       <section className="studio-control-column glass-panel">
         <div className="reference-section">
-          <h2>参考图</h2>
-          <div className="reference-preview" style={{ background: referenceBackground }}>
-            <span>{referenceImage === null ? "已激活目标风格" : "自定义参考图"}</span>
+          <h2>参考素材箱</h2>
+          <div className="reference-preview">
+            <img src={referencePreviewUrl} alt={activeReference?.name ?? selectedStyle.name} />
+            <span>{activeReference === null ? "已激活目标风格" : "自定义参考图"}</span>
           </div>
           <div className="reference-actions">
             <UploadPanel
               accept={acceptedImageTypes}
               className="reference-upload-panel"
-              description="点击选择参考图"
-              fileName={referenceImage?.name ?? ""}
+              description="支持 JPG、PNG、WebP、TIFF，单张不超过 20MB"
+              fileName={activeReference?.name ?? ""}
               inputMode="file"
               title="上传参考图"
               onFileChange={handleReferenceImageFileChange}
@@ -371,11 +456,14 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
             </Button>
           </div>
           {referenceImageError.length > 0 ? <p className="upload-error">{referenceImageError}</p> : null}
-          {referenceImage === null ? null : (
-            <button className="clear-reference-button" type="button" onClick={handleClearReferenceImage}>
-              清除图片
-            </button>
-          )}
+          <MediaBin
+            activeItemId={mediaState.activeReferenceId}
+            emptyLabel="还没有上传参考图，当前使用风格库参考。"
+            items={mediaState.referenceItems}
+            title="当前会话参考素材"
+            onDelete={handleDeleteReference}
+            onSelect={handleSelectReference}
+          />
         </div>
 
         <div className="parameter-section">
@@ -397,18 +485,12 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         </div>
 
         <div className="workspace-actions">
-          <Button disabled={isGenerating} onClick={handleGenerate}>
-            <Sparkles aria-hidden="true" />
-            {isGenerating ? "正在分析色彩..." : "生成仿色预览"}
+          <Button variant="ghost" onClick={resetParameters}>
+            重置参数
           </Button>
-          <div>
-            <Button variant="ghost" onClick={resetParameters}>
-              重置参数
-            </Button>
-            <Button variant="secondary" onClick={() => onNavigate("/export")}>
-              导出 .cube
-            </Button>
-          </div>
+          <Button variant="secondary" onClick={() => onNavigate("/export")}>
+            导出 .cube
+          </Button>
         </div>
       </section>
 
