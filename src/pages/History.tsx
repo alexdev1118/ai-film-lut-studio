@@ -7,29 +7,34 @@ export const History = () => {
       <header className="page-header">
         <p className="eyebrow">导出记录</p>
         <h1>历史 LUT 导出</h1>
-        <p>这里展示 mock 导出记录，后续可替换为真实账户或本地项目历史。</p>
+        <p>这里展示当前会话可扩展的 LUT 记录结构，后续可替换为本地项目历史或云端“我的 LUT 库”。</p>
       </header>
       <GlassCard>
         <div className="history-table">
           <div className="history-row history-head">
             <span>文件名</span>
-            <span>风格</span>
-            <span>色彩空间</span>
+            <span>类型</span>
+            <span>输入假设</span>
             <span>精度</span>
+            <span>数据行</span>
+            <span>校验</span>
             <span>时间</span>
-            <span>状态</span>
           </div>
           {exportHistoryRecords.map((record) => (
             <div className="history-row" key={record.id}>
-              <span>{record.lutName}</span>
-              <span>{record.styleName}</span>
-              <span>{record.colorSpace}</span>
+              <span>{record.fileName}</span>
+              <span>{record.lutType}</span>
+              <span>{record.inputType}</span>
               <span>{record.precision}</span>
+              <span>{record.dataLineCount}</span>
+              <span>{record.passedValidation ? "通过" : "未通过"}</span>
               <span>{record.createdAt}</span>
-              <span>{record.status}</span>
             </div>
           ))}
         </div>
+        <p className="muted-copy">
+          当前导出的是基础创意风格 LUT，适合 Rec.709 / 已还原素材的风格测试，不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。
+        </p>
       </GlassCard>
     </div>
   );

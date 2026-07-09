@@ -156,6 +156,10 @@ export interface CubeExportResult {
   readonly fileName: string;
   readonly content: string;
   readonly lutSize: number;
+  readonly dataLineCount?: number;
+  readonly isValid?: boolean;
+  readonly validationErrors?: readonly string[];
+  readonly validationWarnings?: readonly string[];
 }
 
 export interface ExportCubeLutParams {
@@ -226,9 +230,15 @@ export interface ColorAnalysisReport {
 export interface ExportHistoryRecord {
   readonly id: string;
   readonly lutName: string;
+  readonly fileName: string;
   readonly styleName: string;
   readonly colorSpace: ColorSpace;
   readonly precision: LutPrecision;
+  readonly inputType: string;
+  readonly lutType: string;
+  readonly styleIntensity: number;
+  readonly passedValidation: boolean;
+  readonly dataLineCount: number;
   readonly createdAt: string;
   readonly status: "已导出" | "可重新生成";
 }

@@ -143,7 +143,8 @@ export const generateCubeLut = ({ lutName, lutSize, adjustments, referenceAverag
   return {
     fileName: sanitizeFileName(lutName),
     content: `${lines.join("\n")}\n`,
-    lutSize: normalizedSize
+    lutSize: normalizedSize,
+    dataLineCount: normalizedSize * normalizedSize * normalizedSize
   };
 };
 

@@ -323,9 +323,9 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         preventOversaturation: avoidOversaturation,
         referenceImageUrl: activeReference?.url
       });
-      setMessage(`.cube LUT 已生成并开始下载：${exportResult.fileName}`);
+      setMessage(`.cube LUT 已生成并通过基础格式校验：${exportResult.fileName}`);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "LUT 导出失败，请稍后重试";
+      const errorMessage = error instanceof Error ? error.message : "LUT 文件校验失败，请检查参数后重试";
       setMessage(errorMessage);
     } finally {
       setIsExportingCube(false);

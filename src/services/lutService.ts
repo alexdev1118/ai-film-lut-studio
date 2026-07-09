@@ -2,6 +2,7 @@ import { colorAnalysisReport } from "../data/analysis";
 import { previewImages } from "../data/mockImages";
 import { generateColorPreview, getAverageColorFromImageUrl } from "../utils/colorPreview";
 import { downloadCubeLut, generateCubeLut } from "../utils/cubeExport";
+import { validateCubeLut } from "../utils/cubeValidate";
 import type {
   ColorAnalysisInput,
   ColorAnalysisReport,
@@ -135,11 +136,24 @@ export const exportCubeLut = async (params: ExportCubeLutParams): Promise<CubeEx
       },
       referenceAverageColor
     });
-    downloadCubeLut(result);
-    return result;
+    const validation = validateCubeLut(result.content);
+
+    if (!validation.isValid) {
+      throw new Error(`LUT 文件校验失败，请检查参数后重试：${validation.errors.join(" ")}`);
+    }
+
+    const validatedResult: CubeExportResult = {
+      ...result,
+      dataLineCount: validation.dataLineCount,
+      isValid: validation.isValid,
+      validationErrors: validation.errors,
+      validationWarnings: validation.warnings
+    };
+    downloadCubeLut(validatedResult);
+    return validatedResult;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown cube export failure";
-    throw new Error(`LUT 导出失败，请稍后重试。${message}`);
+    throw new Error(message.startsWith("LUT 文件校验失败") ? message : `LUT 导出失败，请稍后重试。${message}`);
   }
 };
 
