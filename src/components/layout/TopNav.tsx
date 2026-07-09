@@ -8,7 +8,7 @@ interface TopNavProps {
 }
 
 export const TopNav = ({ currentPath, onNavigate }: TopNavProps) => {
-  const actionLabel = currentPath === "/workspace" ? "导出 LUT" : "开始生成 LUT";
+  const actionLabel = currentPath === "/workspace" ? "导出结果" : "开始生成 LUT";
   const actionPath: RoutePath = currentPath === "/workspace" ? "/export" : "/workspace";
 
   return (

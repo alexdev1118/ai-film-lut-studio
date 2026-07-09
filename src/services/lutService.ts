@@ -134,7 +134,8 @@ export const exportCubeLut = async (params: ExportCubeLutParams): Promise<CubeEx
         preserveLuma: params.preserveLuma,
         preventOversaturation: params.preventOversaturation
       },
-      referenceAverageColor
+      referenceAverageColor,
+      inputColorConfig: params.inputColorConfig
     });
     const validation = validateCubeLut(result.content);
 

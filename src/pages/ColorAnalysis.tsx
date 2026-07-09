@@ -9,14 +9,14 @@ import { UploadPanel } from "../components/ui/UploadPanel";
 export const ColorAnalysis = () => {
   const [imageName, setImageName] = useState("night-street-frame.jpg");
   const [report, setReport] = useState<ColorAnalysisReportType>(colorAnalysisReport);
-  const [message, setMessage] = useState("已加载示例色彩分析报告。");
+  const [message, setMessage] = useState("当前结果为示例数据。");
 
   const handleAnalyze = async () => {
     try {
-      setMessage("正在模拟分析主色、冷暖倾向与饱和度...");
+      setMessage("正在刷新示例分析数据...");
       const nextReport = await analyzeColorMock({ imageName });
       setReport(nextReport);
-      setMessage("色彩分析报告已更新。");
+      setMessage("示例色彩分析报告已更新，当前尚未接入真实图片分析。");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "色彩分析时发生未知错误。";
       setMessage(errorMessage);
@@ -27,17 +27,21 @@ export const ColorAnalysis = () => {
     <div className="stack-page">
       <header className="page-header">
         <p className="eyebrow">色彩分析</p>
-        <h1>mock 色彩分析报告</h1>
-        <p>{message}</p>
+        <h1>示例色彩分析报告</h1>
+        <p>当前为示例分析页面，真实色彩分析功能尚未接入。</p>
       </header>
+      <div className="analysis-mock-notice glass-card">
+        <strong>当前结果为示例数据</strong>
+        <span>{message} 后续真实开发可基于 Canvas 读取平均色、直方图、明暗分布等信息。</span>
+      </div>
       <GlassCard>
         <UploadPanel
-          description="选择一张静帧用于模拟分析"
+          description="当前只更新示例文件名，不会真实分析图片"
           fileName={imageName}
-          title="拖拽或点击上传分析图片"
+          title="示例分析图片"
           onFileNameChange={setImageName}
         />
-        <Button onClick={handleAnalyze}>分析色彩</Button>
+        <Button onClick={handleAnalyze}>刷新示例分析</Button>
       </GlassCard>
       <div className="analysis-grid">
         <GlassCard>

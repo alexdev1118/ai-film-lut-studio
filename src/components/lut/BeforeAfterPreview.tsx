@@ -12,14 +12,73 @@ interface BeforeAfterPreviewProps {
   readonly imageWidth?: number;
   readonly imageHeight?: number;
   readonly containerRef: RefObject<HTMLDivElement | null>;
+  readonly stageRef?: RefObject<HTMLDivElement | null>;
   readonly onSplitStart: () => void;
 }
 
+const getFrameMode = (imageWidth?: number, imageHeight?: number): "portrait" | "landscape" | "square" | "ultrawide" => {
+  if (typeof imageWidth !== "number" || typeof imageHeight !== "number" || imageWidth <= 0 || imageHeight <= 0) {
+    return "landscape";
+  }
+
+  const widthToHeight = imageWidth / imageHeight;
+  const heightToWidth = imageHeight / imageWidth;
+
+  if (widthToHeight >= 2) {
+    return "ultrawide";
+  }
+
+  if (heightToWidth >= 1.2) {
+    return "portrait";
+  }
+
+  if (widthToHeight >= 1.2) {
+    return "landscape";
+  }
+
+  return "square";
+};
+
+const getFrameModeLabel = (mode: ReturnType<typeof getFrameMode>): string => {
+  switch (mode) {
+    case "portrait":
+      return "竖屏素材";
+    case "square":
+      return "方图素材";
+    case "ultrawide":
+      return "宽画幅";
+    case "landscape":
+    default:
+      return "横屏素材";
+  }
+};
+
 const getFrameStyle = (imageWidth?: number, imageHeight?: number): CSSProperties => {
   if (typeof imageWidth === "number" && typeof imageHeight === "number" && imageWidth > 0 && imageHeight > 0) {
-    const ratio = imageWidth / imageHeight;
+    const mode = getFrameMode(imageWidth, imageHeight);
 
-    if (ratio > 1.2) {
+    if (mode === "portrait") {
+      return {
+        aspectRatio: `${imageWidth} / ${imageHeight}`,
+        height: "min(100%, 62vh)"
+      };
+    }
+
+    if (mode === "square") {
+      return {
+        aspectRatio: `${imageWidth} / ${imageHeight}`,
+        height: "min(100%, 60vh)"
+      };
+    }
+
+    if (mode === "ultrawide") {
+      return {
+        aspectRatio: `${imageWidth} / ${imageHeight}`,
+        width: "min(100%, 1180px)"
+      };
+    }
+
+    if (mode === "landscape") {
       return {
         aspectRatio: `${imageWidth} / ${imageHeight}`,
         width: "min(100%, 1120px)"
@@ -38,6 +97,10 @@ const getFrameStyle = (imageWidth?: number, imageHeight?: number): CSSProperties
   };
 };
 
+const getFrameModeClass = (imageWidth?: number, imageHeight?: number): string => {
+  return `${getFrameMode(imageWidth, imageHeight)}-mode`;
+};
+
 export const BeforeAfterPreview = ({
   beforeImageUrl,
   afterImageUrl,
@@ -49,13 +112,17 @@ export const BeforeAfterPreview = ({
   imageWidth,
   imageHeight,
   containerRef,
+  stageRef,
   onSplitStart
 }: BeforeAfterPreviewProps) => {
   const hasAfterImage = afterImageUrl !== undefined;
+  const modeClass = getFrameModeClass(imageWidth, imageHeight);
+  const modeLabel = getFrameModeLabel(getFrameMode(imageWidth, imageHeight));
 
   return (
-    <div className="split-preview-stage">
+    <div className={`split-preview-stage ${modeClass}`.trim()} ref={stageRef}>
       <div className="preview-stage-surface">
+        <span className="preview-ratio-badge">{modeLabel}</span>
         <div ref={containerRef} className={hasAfterImage ? "split-preview-frame has-after" : "split-preview-frame"} style={getFrameStyle(imageWidth, imageHeight)}>
           <div className="split-image before">
             <img src={beforeImageUrl} alt={beforeAlt} />

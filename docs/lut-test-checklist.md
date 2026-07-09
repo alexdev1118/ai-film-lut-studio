@@ -60,7 +60,32 @@ For Log footage:
 3. Apply this LUT after the technical transform.
 4. Reduce LUT strength if colors clip or skin tones shift too far.
 
-## 6. Troubleshooting Preview Differences
+## 6. Browser Video Frame Capture Limits
+
+The video frame capture tool depends on the browser's local decoding support. It is intended for quick frame extraction from common web-playable files, not for decoding every camera master format.
+
+Recommended input for browser frame capture:
+
+- MP4 container.
+- H.264 codec.
+- 8bit Rec.709 or already-normalized video.
+
+Files that may fail to preview in the browser:
+
+- MOV files containing H.265 / HEVC.
+- ProRes.
+- 10bit or 12bit camera files.
+- Log or HDR high-spec camera originals.
+- Proprietary camera recording formats.
+
+If a video does not preview, treat it as a browser decoding limit rather than a failed upload. Recommended alternate flow:
+
+1. Export the current frame as JPG, PNG, or TIFF from DaVinci Resolve, Premiere Pro, Final Cut Pro, CapCut Pro, or camera utility software.
+2. Return to `/workspace`.
+3. Use `选择图片` in the target media bin to upload the exported still frame.
+4. Generate the creative LUT from that still frame.
+
+## 7. Troubleshooting Preview Differences
 
 If the web preview and editing software do not match exactly, check:
 

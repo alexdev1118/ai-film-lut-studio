@@ -4,6 +4,7 @@ import type { PhotoPresetResult } from "../types";
 import { lutStyles } from "../data/styles";
 import { Button } from "../components/ui/Button";
 import { GlassCard } from "../components/ui/GlassCard";
+import { SelectControl } from "../components/ui/SelectControl";
 import { SliderControl } from "../components/ui/SliderControl";
 import { UploadPanel } from "../components/ui/UploadPanel";
 
@@ -38,16 +39,12 @@ export const PhotoPreset = () => {
             title="拖拽或点击上传图片"
             onFileNameChange={setSourceImageName}
           />
-          <label className="select-control">
-            <span>预设风格</span>
-            <select value={styleName} onChange={(event) => setStyleName(event.currentTarget.value)}>
-              {lutStyles.map((style) => (
-                <option key={style.id} value={style.name}>
-                  {style.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <SelectControl
+            label="预设风格"
+            options={lutStyles.map((style) => ({ value: style.name, label: style.name }))}
+            value={styleName}
+            onChange={setStyleName}
+          />
           <SliderControl label="风格强度" value={intensity} onChange={setIntensity} />
           <Button onClick={handleGenerate}>生成图片预览</Button>
           <p className="status-line">{message}</p>

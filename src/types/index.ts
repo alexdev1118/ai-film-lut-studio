@@ -21,6 +21,36 @@ export type ColorSpace = "Rec.709" | "S-Log3" | "D-Log M" | "C-Log3" | "V-Log" |
 
 export type LutPrecision = "17x17x17" | "33x33x33" | "65x65x65";
 
+export type CameraBrand =
+  | "generic"
+  | "sony"
+  | "canon"
+  | "dji"
+  | "panasonic"
+  | "fujifilm"
+  | "nikon"
+  | "blackmagic"
+  | "gopro"
+  | "apple"
+  | "arri"
+  | "red"
+  | "kinefinity"
+  | "zcam"
+  | "leica"
+  | "sigma"
+  | "insta360"
+  | "olympus"
+  | "ricoh"
+  | "unknown";
+
+export type InputType = "rec709" | "log" | "hdr" | "flat" | "unknown";
+
+export type CameraProfileCategory = "mirrorless" | "cinema" | "drone" | "action" | "mobile" | "generic" | "unknown";
+
+export type CameraProfileDataStatus = "built-in" | "placeholder" | "needs-official-confirmation";
+
+export type CameraProfileSourceStatus = "official-needed" | "community-reference" | "user-confirmed" | "unknown";
+
 export interface NavigationItem {
   readonly label: string;
   readonly path: RoutePath;
@@ -38,6 +68,43 @@ export interface LutStyle {
   readonly description: string;
 }
 
+export interface CameraProfile {
+  readonly id: string;
+  readonly brandId: CameraBrand;
+  readonly brand: string;
+  readonly brandLabel: string;
+  readonly modelFamily?: string;
+  readonly label: string;
+  readonly gamma: string;
+  readonly gamut: string;
+  readonly inputType: InputType;
+  readonly category: CameraProfileCategory;
+  readonly recommendedWorkflow: string;
+  readonly canUseDirectly: boolean;
+  readonly warning: string;
+  readonly davinciTip: string;
+  readonly premiereTip?: string;
+  readonly finalCutTip?: string;
+  readonly exportNote: string;
+  readonly dataStatus: CameraProfileDataStatus;
+  readonly sourceStatus?: CameraProfileSourceStatus;
+}
+
+export interface InputColorConfig {
+  readonly brandId: CameraBrand;
+  readonly brand?: string;
+  readonly brandLabel?: string;
+  readonly profileId: string;
+  readonly inputType: InputType;
+  readonly category?: CameraProfileCategory;
+  readonly gamma?: string;
+  readonly gamut?: string;
+  readonly recommendedWorkflow: string;
+  readonly canUseCreativeLutDirectly: boolean;
+  readonly dataStatus?: CameraProfileDataStatus;
+  readonly sourceStatus?: CameraProfileSourceStatus;
+}
+
 export interface UploadedImage {
   readonly file: File;
   readonly url: string;
@@ -50,7 +117,7 @@ export interface UploadedImage {
 
 export type MediaSourceType = "target" | "reference";
 
-export type MediaOrigin = "upload" | "mock" | "style-library";
+export type MediaOrigin = "upload" | "mock" | "style-library" | "video-frame";
 
 export interface MediaItem {
   readonly id: string;
@@ -64,6 +131,28 @@ export interface MediaItem {
   readonly height?: number;
   readonly createdAt: string;
   readonly origin: MediaOrigin;
+}
+
+export interface VideoSource {
+  readonly file: File;
+  readonly url: string;
+  readonly name: string;
+  readonly size: number;
+  readonly type: string;
+  readonly duration: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+export interface CapturedFrame {
+  readonly url: string;
+  readonly name: string;
+  readonly width: number;
+  readonly height: number;
+  readonly sourceVideoName: string;
+  readonly timestamp: number;
+  readonly size: number;
+  readonly type: string;
 }
 
 export interface WorkspaceMediaState {
@@ -150,6 +239,7 @@ export interface LutExportOptions {
   readonly lutSize: number;
   readonly adjustments: ColorPreviewAdjustments;
   readonly referenceAverageColor?: RgbColor;
+  readonly inputColorConfig?: InputColorConfig;
 }
 
 export interface CubeExportResult {
@@ -171,6 +261,7 @@ export interface ExportCubeLutParams {
   readonly preventOversaturation: boolean;
   readonly referenceImageUrl?: string;
   readonly referenceAverageColor?: RgbColor;
+  readonly inputColorConfig?: InputColorConfig;
 }
 
 export interface PreviewResult {
@@ -235,7 +326,11 @@ export interface ExportHistoryRecord {
   readonly colorSpace: ColorSpace;
   readonly precision: LutPrecision;
   readonly inputType: string;
+  readonly cameraBrand: string;
+  readonly gamma: string;
+  readonly gamut: string;
   readonly lutType: string;
+  readonly workflowSummary: string;
   readonly styleIntensity: number;
   readonly passedValidation: boolean;
   readonly dataLineCount: number;

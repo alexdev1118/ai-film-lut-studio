@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { ArrowLeft, CheckCircle2, Copy, Download, FileText, Film, Grid3X3, Info, Lightbulb, Palette, Video } from "lucide-react";
-import { exportLutMock } from "../services/lutService";
-import type { ExportLutResult, RoutePath } from "../types";
+import { defaultCameraProfile, getCameraProfileById, toInputColorConfig } from "../data/cameraProfiles";
+import { useWorkspaceState } from "../state/WorkspaceContext";
+import type { InputColorConfig, LutPrecision, RoutePath } from "../types";
 import { defaultLutParameters } from "../utils/lutMock";
 
 interface ExportResultProps {
@@ -9,7 +9,9 @@ interface ExportResultProps {
   readonly onNavigate: (path: RoutePath) => void;
 }
 
-const getDataLineCount = (precision: string): number => {
+const inputColorConfigStorageKey = "ai-film-lut-studio-input-color-config";
+
+const getDataLineCount = (precision: LutPrecision): number => {
   if (precision === "17x17x17") {
     return 4913;
   }
@@ -21,40 +23,46 @@ const getDataLineCount = (precision: string): number => {
   return 35937;
 };
 
+const readInputColorConfig = (): InputColorConfig => {
+  try {
+    const rawValue = window.localStorage.getItem(inputColorConfigStorageKey);
+
+    if (rawValue === null) {
+      return toInputColorConfig(defaultCameraProfile);
+    }
+
+    const parsedValue: unknown = JSON.parse(rawValue);
+
+    if (typeof parsedValue === "object" && parsedValue !== null && "profileId" in parsedValue && typeof parsedValue.profileId === "string") {
+      return toInputColorConfig(getCameraProfileById(parsedValue.profileId));
+    }
+  } catch (error) {
+    console.warn("读取输入素材配置失败", error);
+  }
+
+  return toInputColorConfig(defaultCameraProfile);
+};
+
+const getPrecisionFromSize = (lutSize: number): LutPrecision => {
+  if (lutSize === 17) {
+    return "17x17x17";
+  }
+
+  if (lutSize === 65) {
+    return "65x65x65";
+  }
+
+  return "33x33x33";
+};
+
 export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProps) => {
-  const [result, setResult] = useState<ExportLutResult | null>(null);
-  const [message, setMessage] = useState("正在准备导出信息...");
-  const precision = result?.precision ?? defaultLutParameters.precision;
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const runExport = async () => {
-      try {
-        const exportResult = await exportLutMock({
-          styleName: selectedStyleName.trim().length > 0 ? selectedStyleName : "青橙电影感",
-          parameters: defaultLutParameters
-        });
-
-        if (isMounted) {
-          setResult(exportResult);
-          setMessage("基础创意 LUT 导出说明");
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "准备导出时发生未知错误。";
-
-        if (isMounted) {
-          setMessage(errorMessage);
-        }
-      }
-    };
-
-    void runExport();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedStyleName]);
+  const { lastExportResult, lutName, parameters } = useWorkspaceState();
+  const inputColorConfig = readInputColorConfig();
+  const selectedProfile = getCameraProfileById(inputColorConfig.profileId);
+  const precision = lastExportResult === null ? parameters.precision : getPrecisionFromSize(lastExportResult.lutSize);
+  const fileName = lastExportResult?.fileName ?? `${lutName || selectedStyleName || "AI_Film_LUT_Studio"}.cube`;
+  const dataLineCount = lastExportResult?.dataLineCount ?? getDataLineCount(precision);
+  const validationPassed = lastExportResult?.isValid ?? true;
 
   return (
     <div className="export-page">
@@ -62,20 +70,20 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
         <div className="export-icon-orbit">
           <Film aria-hidden="true" />
         </div>
-        <h1>{message}</h1>
+        <h1>{lastExportResult === null ? "基础创意 LUT 导出说明" : "最近导出的基础创意 LUT"}</h1>
         <p>当前导出的是基础创意风格 LUT，适合 Rec.709 / 已还原素材的风格测试，不是相机 Log 技术转换 LUT。</p>
       </header>
 
       <section className="export-bento">
         <article className="export-info-card glass-panel glow-border">
           <div className="export-info-title">
-            <h2>{result?.fileName ?? "studio-preview.cube"}</h2>
+            <h2>{fileName}</h2>
             <span>{precision}</span>
           </div>
           <div className="export-metadata-grid">
             <p>
               <span>LUT 名称</span>
-              <strong>{selectedStyleName.trim().length > 0 ? selectedStyleName : "青橙电影感"}</strong>
+              <strong>{lutName}</strong>
             </p>
             <p>
               <span>文件格式</span>
@@ -87,7 +95,7 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             </p>
             <p>
               <span>数据行数</span>
-              <strong>{getDataLineCount(precision)}</strong>
+              <strong>{dataLineCount}</strong>
             </p>
             <p>
               <span>输入假设</span>
@@ -101,56 +109,71 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
               <span>格式校验</span>
               <strong className="success-text">
                 <CheckCircle2 aria-hidden="true" />
-                基础校验通过
+                {validationPassed ? "基础校验通过" : "等待重新校验"}
+              </strong>
+            </p>
+            <p>
+              <span>输入素材配置</span>
+              <strong>
+                {inputColorConfig.brand ?? inputColorConfig.brandId} / {inputColorConfig.gamma ?? "Rec.709"} / {inputColorConfig.gamut ?? "Rec.709"}
               </strong>
             </p>
           </div>
-          <div className="export-note creative-lut-note">
-            <Info aria-hidden="true" />
-            <p>如果素材是 S-Log3 / C-Log / D-Log / V-Log，请先完成基础色彩空间转换和曝光白平衡校正，再叠加本工具导出的创意 LUT。</p>
-          </div>
+          <p className="export-note">{selectedProfile.warning}</p>
         </article>
 
-        <article className="download-card glass-panel glow-border">
-          <button type="button">
-            <Download aria-hidden="true" />
-            下载 LUT (.cube)
-          </button>
-          <div>
-            <button type="button">
-              <FileText aria-hidden="true" />
-              查看导入说明
-            </button>
-            <button type="button">
-              <Copy aria-hidden="true" />
-              复制使用建议
-            </button>
+        <article className="export-info-card glass-panel">
+          <div className="guide-title">
+            <Info aria-hidden="true" />
+            <h2>使用定位</h2>
           </div>
+          <p>当前 LUT 适合用于 Rec.709 或已还原素材。如果是 S-Log3 / C-Log / D-Log / V-Log 等素材，建议先完成基础色彩空间转换，再叠加本 LUT。</p>
+          <p>它不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。</p>
         </article>
       </section>
 
       <section className="export-guides">
-        <article className="glass-panel glow-border">
+        <article className="guide-card glass-panel">
+          <div className="guide-title">
+            <Grid3X3 aria-hidden="true" />
+            <h2>输入素材配置</h2>
+          </div>
+          <div className="export-metadata-grid compact">
+            {[
+              ["相机品牌", inputColorConfig.brand ?? inputColorConfig.brandId],
+              ["Gamma", inputColorConfig.gamma ?? "Rec.709"],
+              ["Gamut", inputColorConfig.gamut ?? "Rec.709"],
+              ["输入类型", inputColorConfig.inputType],
+              ["推荐方式", inputColorConfig.recommendedWorkflow]
+            ].map(([label, value]) => (
+              <p key={label}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </p>
+            ))}
+          </div>
+          {inputColorConfig.inputType === "log" ? <p className="upload-error">请勿将本 LUT 当作 Log 技术转换 LUT 使用。建议先还原到 Rec.709，再叠加本 LUT。</p> : null}
+        </article>
+
+        <article className="guide-card glass-panel">
           <div className="guide-title">
             <Video aria-hidden="true" />
             <h2>软件导入提示</h2>
           </div>
-          <div className="guide-grid">
-            {[
-              ["DaVinci Resolve", "建议放在基础校正或 CST 之后的独立节点上，再用节点 Key Output 控制强度。"],
-              ["Premiere Pro", "可在 Lumetri Color 的 Creative / Look 或 Input LUT 中加载，建议优先作为风格 Look 使用。"],
-              ["剪映", "如果版本支持导入 LUT，可作为风格滤镜使用，并适当降低强度。"],
-              ["Final Cut Pro", "通过自带或第三方 LUT 工具加载，建议先完成曝光和白平衡校正。"]
-            ].map(([name, description]) => (
-              <div className="guide-card" key={name}>
-                <h3>{name}</h3>
-                <p>{description}</p>
-              </div>
-            ))}
-          </div>
+          {[
+            ["DaVinci Resolve", "建议放在基础校正或 CST 之后的独立节点上。"],
+            ["Premiere Pro", "可在 Lumetri Color 的 Creative / Look 或 Input LUT 中加载，建议优先作为风格 Look 使用。"],
+            ["剪映", "如果版本支持导入 LUT，可作为风格滤镜使用，并适当降低强度。"],
+            ["Final Cut Pro", "通过自带或第三方 LUT 工具加载，建议先完成曝光和白平衡校正。"]
+          ].map(([name, description]) => (
+            <p key={name}>
+              <strong>{name}</strong>
+              <span>{description}</span>
+            </p>
+          ))}
         </article>
 
-        <article className="glass-panel glow-border pro-tip-card">
+        <article className="guide-card glass-panel">
           <div className="guide-title">
             <Lightbulb aria-hidden="true" />
             <h2>常见问题</h2>
@@ -163,20 +186,28 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
         </article>
       </section>
 
-      <nav className="export-bottom-actions">
+      <div className="export-bottom-actions">
         <button type="button" onClick={() => onNavigate("/workspace")}>
           <ArrowLeft aria-hidden="true" />
           返回工作台
         </button>
         <button type="button" onClick={() => onNavigate("/workspace")}>
-          <Palette aria-hidden="true" />
-          继续生成新的 LUT
+          <Download aria-hidden="true" />
+          继续导出 LUT
         </button>
         <button type="button" onClick={() => onNavigate("/styles")}>
-          <Grid3X3 aria-hidden="true" />
-          浏览更多风格
+          <Palette aria-hidden="true" />
+          查看风格库
         </button>
-      </nav>
+        <button type="button">
+          <Copy aria-hidden="true" />
+          复制文件名
+        </button>
+        <button type="button">
+          <FileText aria-hidden="true" />
+          使用说明
+        </button>
+      </div>
     </div>
   );
 };

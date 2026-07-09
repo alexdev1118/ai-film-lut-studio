@@ -192,7 +192,7 @@ export const revokeUploadedImage = (image: UploadedImage | null): void => {
 
 export const revokeMediaItem = (item: MediaItem | null | undefined): void => {
   try {
-    if (item !== null && item !== undefined && item.origin === "upload") {
+    if (item !== null && item !== undefined && (item.origin === "upload" || item.origin === "video-frame")) {
       URL.revokeObjectURL(item.url);
     }
   } catch (error) {

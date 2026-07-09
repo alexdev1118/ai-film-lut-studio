@@ -10,6 +10,7 @@ import { PhotoPreset } from "./pages/PhotoPreset";
 import { StyleLibrary } from "./pages/StyleLibrary";
 import { Tutorial } from "./pages/Tutorial";
 import { Workspace } from "./pages/Workspace";
+import { WorkspaceProvider } from "./state/WorkspaceContext";
 
 const readCurrentPath = (): RoutePath => normalizeRoutePath(window.location.pathname);
 
@@ -66,9 +67,11 @@ const App = () => {
   }, [currentPath, navigate, selectedStyleName]);
 
   return (
-    <Layout currentPath={currentPath} onNavigate={navigate}>
-      {page}
-    </Layout>
+    <WorkspaceProvider>
+      <Layout currentPath={currentPath} onNavigate={navigate}>
+        {page}
+      </Layout>
+    </WorkspaceProvider>
   );
 };
 
