@@ -123,6 +123,7 @@ export const exportCubeLut = async (params: ExportCubeLutParams): Promise<CubeEx
       params.referenceAverageColor ?? (params.referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(params.referenceImageUrl));
     const result = generateCubeLut({
       lutName: params.lutName,
+      lookName: params.lookName,
       lutSize: params.lutSize,
       adjustments: {
         intensity: params.parameters.intensity,

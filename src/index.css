@@ -132,7 +132,6 @@ input[type="range"]:focus {
 .top-action-button,
 .canvas-toolbar button,
 .canvas-tools button,
-.workspace-export-footer button,
 .export-bottom-actions button {
   border: 0;
   color: inherit;
@@ -642,8 +641,6 @@ input[type="range"]:focus {
 
 .studio-upload-dropzone input,
 .reference-actions input,
-.workspace-export-footer input,
-.workspace-export-footer select,
 .studio-select-control select,
 .upload-panel input,
 .select-control select {
@@ -726,8 +723,6 @@ input[type="range"]:focus {
 
 .studio-upload-dropzone input:focus,
 .reference-actions input:focus,
-.workspace-export-footer input:focus,
-.workspace-export-footer select:focus,
 .studio-select-control select:focus {
   border-color: var(--primary);
 }
@@ -763,8 +758,7 @@ input[type="range"]:focus {
   gap: 8px;
 }
 
-.studio-select-control span,
-.workspace-export-footer label span {
+.studio-select-control span {
   color: var(--text-muted);
   font-size: 0.74rem;
   font-weight: 800;
@@ -1683,90 +1677,28 @@ input[type="range"]:focus {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: auto;
-  padding-bottom: 12px;
+  padding-bottom: 4px;
 }
 
-.workspace-actions > .btn {
+.workspace-actions > .btn,
+.workspace-action-item .btn {
   width: 100%;
 }
 
-.workspace-export-footer {
-  position: fixed;
-  left: var(--rail-width);
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 64px;
-  padding: 10px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.025);
-  backdrop-filter: blur(24px);
-}
-
-.export-footer-left,
-.export-footer-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.workspace-export-footer label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.workspace-export-footer input {
-  width: 260px;
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.workspace-export-footer select {
-  width: 90px;
-}
-
-.workspace-export-footer .custom-select-control {
-  width: 104px;
-}
-
-.workspace-export-footer .select-control-trigger {
+.workspace-action-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  width: 100%;
-  min-height: 38px;
-  padding: 0 10px 0 12px;
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.035)),
-    rgba(7, 10, 16, 0.92);
+  gap: 5px;
+  min-width: 0;
 }
 
-.workspace-export-footer button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 38px;
-  padding: 0 14px;
-  color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  font-weight: 700;
-}
-
-.workspace-export-footer button:last-child {
-  color: var(--primary);
-}
-
-.workspace-export-footer svg {
-  width: 16px;
-  height: 16px;
+.workspace-action-item small {
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: 0.66rem;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .btn {
@@ -2949,6 +2881,293 @@ input[type="range"]:focus {
   cursor: pointer;
 }
 
+.post-lut-file-preview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 242, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 242, 255, 0.045);
+}
+
+.post-lut-file-preview span,
+.post-lut-settings-fields label > span {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.post-lut-file-preview strong {
+  grid-column: 1;
+  overflow: hidden;
+  color: var(--primary);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-lut-file-preview small {
+  grid-column: 1 / -1;
+  color: #ffce8a;
+  font-size: 0.66rem;
+}
+
+.post-lut-copy-button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  align-self: center;
+  min-height: 28px;
+  padding: 0 8px;
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.post-lut-copy-button:hover,
+.post-lut-advanced-name-button:hover,
+.post-lut-settings-toggle:hover {
+  color: var(--primary);
+  border-color: rgba(0, 242, 255, 0.3);
+}
+
+.post-lut-copy-button svg {
+  width: 13px;
+  height: 13px;
+}
+
+.post-lut-export-settings {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(0, 242, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(7, 10, 16, 0.38);
+}
+
+.post-lut-export-settings-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.post-lut-export-settings-header > div {
+  min-width: 0;
+}
+
+.post-lut-export-settings-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.post-lut-export-settings-kicker svg {
+  width: 14px;
+  height: 14px;
+  color: var(--primary);
+}
+
+.post-lut-export-settings-header p {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: var(--text-faint);
+  font-size: 0.67rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-lut-settings-toggle,
+.post-lut-advanced-name-button {
+  min-height: 30px;
+  padding: 0 9px;
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.post-lut-settings-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.post-lut-look-field {
+  display: grid;
+  gap: 7px;
+}
+
+.post-lut-look-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 10px;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  background: rgba(7, 10, 16, 0.88);
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.post-lut-settings-fields .select-control {
+  gap: 7px;
+}
+
+.post-lut-advanced-name-button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.export-type-code {
+  color: var(--primary);
+}
+
+.custom-lut-name-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 4400;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(14px);
+}
+
+.custom-lut-name-modal {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: min(520px, 100%);
+  max-height: min(86vh, 580px);
+  overflow: hidden;
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(17, 23, 37, 0.99), rgba(3, 6, 12, 0.99));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.62);
+}
+
+.custom-lut-name-modal-header,
+.custom-lut-name-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.custom-lut-name-modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.custom-lut-name-modal-header span {
+  color: var(--primary);
+  font-size: 0.66rem;
+  font-weight: 850;
+}
+
+.custom-lut-name-modal-header h2 {
+  margin: 4px 0 0;
+  font-size: 1rem;
+}
+
+.custom-lut-name-modal-header > button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+}
+
+.custom-lut-name-modal-header svg {
+  width: 16px;
+  height: 16px;
+}
+
+.custom-lut-name-modal-body {
+  display: grid;
+  gap: 14px;
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.custom-lut-name-modal-body > label,
+.custom-lut-name-automatic,
+.custom-lut-name-mode,
+.custom-lut-name-preview {
+  display: grid;
+  gap: 6px;
+}
+
+.custom-lut-name-modal-body span {
+  color: var(--text-faint);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.custom-lut-name-automatic,
+.custom-lut-name-preview,
+.custom-lut-name-mode {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.custom-lut-name-automatic strong,
+.custom-lut-name-preview strong {
+  overflow: hidden;
+  color: var(--primary);
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.custom-lut-name-modal-body input {
+  min-height: 40px;
+  padding: 0 11px;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  background: rgba(3, 6, 12, 0.82);
+  font: inherit;
+}
+
+.custom-lut-name-modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.custom-lut-name-modal-footer > div {
+  display: flex;
+  gap: 8px;
+}
+
 .camera-lut-name-meta svg {
   width: 13px;
   height: 13px;
@@ -3580,6 +3799,10 @@ input[type="range"]:focus {
     flex-basis: 300px;
   }
 
+  .post-lut-settings-fields {
+    grid-template-columns: 1fr;
+  }
+
   .style-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -3604,12 +3827,6 @@ input[type="range"]:focus {
 
   .studio-canvas-column {
     min-height: 520px;
-  }
-
-  .workspace-export-footer {
-    position: static;
-    grid-column: 1;
-    margin-top: 0;
   }
 
   .tool-entry,
@@ -3659,21 +3876,17 @@ input[type="range"]:focus {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .export-footer-left,
-  .export-footer-actions,
-  .workspace-export-footer {
+  .post-lut-settings-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-lut-name-modal-footer {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .workspace-export-footer label {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .workspace-export-footer input,
-  .workspace-export-footer select {
-    width: 100%;
+  .custom-lut-name-modal-footer > div {
+    justify-content: flex-end;
   }
 
   .preview-lightbox-grid {

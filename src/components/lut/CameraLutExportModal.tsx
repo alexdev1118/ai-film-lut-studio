@@ -38,6 +38,7 @@ interface CameraLutExportFormValue {
 interface CameraLutExportModalProps {
   readonly isOpen: boolean;
   readonly isExporting: boolean;
+  readonly lookName: string;
   readonly onClose: () => void;
   readonly onExport: (value: CameraLutExportFormValue) => Promise<void>;
 }
@@ -158,7 +159,7 @@ const FieldLabel = ({ label, helpKey }: FieldLabelProps) => (
   </span>
 );
 
-export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }: CameraLutExportModalProps) => {
+export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, onExport }: CameraLutExportModalProps) => {
   const [brandId, setBrandId] = useState<CameraBrand>(defaultCameraLutProfile.brand);
   const [profileId, setProfileId] = useState(defaultCameraLutProfile.id);
   const [selectedLogProfile, setSelectedLogProfile] = useState(defaultCameraLutProfile.supportedLogProfiles[0] ?? "Unknown");
@@ -178,8 +179,8 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
   const resolvedSize = getResolvedSize(selectedProfile, requestedCubeSize);
   const exposureConfig = getExposureConfig(monitoringMode, ettrTargetEv, manualBrightnessOffsetEv);
   const autoLutName = useMemo(
-    () => generateCameraLutName(selectedProfile, selectedLogProfile, resolvedSize, exposureConfig, namingMode),
-    [exposureConfig, namingMode, resolvedSize, selectedLogProfile, selectedProfile]
+    () => generateCameraLutName(selectedProfile, selectedLogProfile, lookName, resolvedSize, exposureConfig, range, namingMode),
+    [exposureConfig, lookName, namingMode, range, resolvedSize, selectedLogProfile, selectedProfile]
   );
   const finalLutName = sanitizeLutName(lutName);
   const exceedsMaxSize =

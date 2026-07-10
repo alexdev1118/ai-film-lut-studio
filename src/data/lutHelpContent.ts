@@ -59,6 +59,10 @@ export const lutHelpContent = {
   lutName: {
     title: "LUT 名称",
     paragraphs: ["自动命名会随品牌、曲线、亮度语义和点数更新。完整命名会包含更多机型信息。手动编辑后会转为自定义命名；可使用“恢复自动命名”回到建议名称。", "输入框、下载文件名和 .cube TITLE 使用同一名称。"]
+  },
+  postNamingMode: {
+    title: "后期 LUT 命名模式",
+    paragraphs: ["简洁命名只包含 POST、Rec709、风格名称、点数与版本。完整命名会附加 SRC 素材来源提示。", "SRC 只说明制作该创意 LUT 时工作台选择的素材配置，不表示文件包含 Log 到 Rec.709 的技术转换。"]
   }
 } as const satisfies Record<string, LutHelpContent>;
 

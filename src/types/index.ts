@@ -63,6 +63,12 @@ export type CameraLutRange = "full" | "legal" | "unknown";
 
 export type CameraLutDataStatus = "verified-official" | "placeholder" | "needs-official-confirmation";
 
+export type LutExportKind = "post-creative" | "camera-monitoring" | "camera-baked" | "technical-conversion";
+
+export type LutExportTypeCode = "POST" | "CAMMON";
+
+export type PostLutNamingMode = "simple" | "full";
+
 export type CameraDataSourceType =
   | "official-manual"
   | "official-support-page"
@@ -381,6 +387,7 @@ export interface GenerateLocalPreviewParams {
 
 export interface LutExportOptions {
   readonly lutName: string;
+  readonly lookName?: string;
   readonly lutSize: number;
   readonly adjustments: ColorPreviewAdjustments;
   readonly referenceAverageColor?: RgbColor;
@@ -419,6 +426,9 @@ export interface CameraMonitoringLutExportParams {
 
 export interface CameraLutExportResult extends CubeExportResult {
   readonly exportType: "camera-monitoring";
+  readonly exportKind: "camera-monitoring";
+  readonly exportTypeCode: "CAMMON";
+  readonly verificationStatus: "TEST" | "verified";
   readonly cameraBrand: string;
   readonly cameraModel: string;
   readonly gamma: string;
@@ -432,6 +442,13 @@ export interface CubeExportResult {
   readonly fileName: string;
   readonly content: string;
   readonly lutSize: number;
+  readonly exportKind?: LutExportKind;
+  readonly exportTypeCode?: LutExportTypeCode;
+  readonly lookName?: string;
+  readonly outputColorSpace?: string;
+  readonly sourceHintBrand?: string;
+  readonly sourceHintGamma?: string;
+  readonly verificationStatus?: "TEST" | "verified";
   readonly dataLineCount?: number;
   readonly isValid?: boolean;
   readonly validationErrors?: readonly string[];
@@ -440,6 +457,7 @@ export interface CubeExportResult {
 
 export interface ExportCubeLutParams {
   readonly lutName: string;
+  readonly lookName: string;
   readonly lutSize: number;
   readonly parameters: LutParameters;
   readonly skinToneProtection: boolean;
@@ -516,6 +534,13 @@ export interface ExportHistoryRecord {
   readonly gamma: string;
   readonly gamut: string;
   readonly lutType: string;
+  readonly exportKind: LutExportKind;
+  readonly exportTypeCode: LutExportTypeCode;
+  readonly lookName: string;
+  readonly outputColorSpace: string;
+  readonly sourceHintBrand?: string;
+  readonly sourceHintGamma?: string;
+  readonly verificationStatus?: "TEST" | "verified";
   readonly workflowSummary: string;
   readonly styleIntensity: number;
   readonly passedValidation: boolean;

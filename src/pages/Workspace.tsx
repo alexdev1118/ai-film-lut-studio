@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Download, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
+import { Camera, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
 import { cameraBrandOptions, defaultCameraProfile, getCameraProfileById, getProfilesByBrand, toInputColorConfig } from "../data/cameraProfiles";
 import { previewImages } from "../data/mockImages";
 import { lutStyles } from "../data/styles";
@@ -7,12 +7,15 @@ import { exportCameraMonitoringLut, exportCubeLut, generateLocalColorPreview } f
 import { revokeWorkspacePreviewResult, useWorkspaceState } from "../state/WorkspaceContext";
 import type { CameraBrand, CameraLutCubeSize, CameraLutRange, CameraLutSupportProfile, CameraLutUseType, CameraMonitoringExposureConfig, CapturedFrame, LutParameters, LutPrecision, MediaItem, RoutePath, WorkspaceMediaState } from "../types";
 import { formatFileSize, getImageMetadata, getImageSourceFromCssBackground, getReadableImageType, revokeMediaItem, toUploadedMediaItem } from "../utils/image";
-import { defaultLutParameters, precisionOptions } from "../utils/lutMock";
+import { defaultLutParameters } from "../utils/lutMock";
 import { capturedFrameToMediaItem } from "../utils/videoFrame";
+import { generateLutFileName, generatePostLutName, sanitizeLookName, suggestLookName } from "../utils/lutNaming";
 import { BeforeAfterPreview } from "../components/lut/BeforeAfterPreview";
 import { CameraLutExportModal } from "../components/lut/CameraLutExportModal";
+import { CustomLutNameModal } from "../components/lut/CustomLutNameModal";
 import { LutUsageGuideModal } from "../components/lut/LutUsageGuideModal";
 import { MediaBin } from "../components/lut/MediaBin";
+import { PostLutExportSettings } from "../components/lut/PostLutExportSettings";
 import { PreviewLightbox } from "../components/lut/PreviewLightbox";
 import { VideoFrameCaptureModal } from "../components/lut/VideoFrameCaptureModal";
 import { Button } from "../components/ui/Button";
@@ -106,8 +109,13 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     setSelectedProfileId,
     lutName,
     setLutName,
+    postNamingMode,
+    setPostNamingMode,
+    postCustomFileName,
+    setPostCustomFileName,
     selectedStyleKey,
     setSelectedStyleKey,
+    lastExportResult,
     setLastExportResult
   } = useWorkspaceState();
 
@@ -130,6 +138,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const [isPreviewLightboxOpen, setIsPreviewLightboxOpen] = useState(false);
   const [isCameraLutModalOpen, setIsCameraLutModalOpen] = useState(false);
   const [isUsageGuideModalOpen, setIsUsageGuideModalOpen] = useState(false);
+  const [isCustomLutNameModalOpen, setIsCustomLutNameModalOpen] = useState(false);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const previewStageRef = useRef<HTMLDivElement | null>(null);
   const mediaStateRef = useRef<WorkspaceMediaState>(mediaState);
@@ -153,6 +162,19 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const referencePreviewUrl = activeReference?.url ?? getImageSourceFromCssBackground(selectedStyle.previewImage);
   const afterImageUrl = result === null ? (activeTarget === null ? getImageSourceFromCssBackground(selectedStyle.previewImage) : undefined) : result.previewImage;
   const hasPreviewHistory = result !== null || sessionPreviewResults.length > 0;
+  const lookName = sanitizeLookName(lutName);
+  const autoPostLutName = useMemo(
+    () =>
+      generatePostLutName({
+        lookName,
+        lutSize: getLutSizeFromPrecision(parameters.precision),
+        namingMode: postNamingMode,
+        inputColorConfig
+      }),
+    [inputColorConfig, lookName, parameters.precision, postNamingMode]
+  );
+  const resolvedPostLutName = postCustomFileName.trim().length > 0 ? sanitizeLookName(postCustomFileName) : autoPostLutName;
+  const postLutFileName = generateLutFileName(resolvedPostLutName);
 
   useEffect(() => {
     if (brandProfiles.length > 0 && !brandProfiles.some((profile) => profile.id === selectedProfileId)) {
@@ -181,7 +203,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     setParameters((current) => ({ ...current, intensity: selectedStyle.recommendedIntensity }));
 
     if (mediaStateRef.current.activeReferenceId === undefined) {
-      setLutName(`${selectedStyle.name}_Studio_V1`);
+      setLutName(suggestLookName(selectedStyle.name));
       setMessage(`已选择风格：${selectedStyle.name}`);
     }
   }, [selectedStyle, selectedStyleKey, setLutName, setMessage, setParameters, setSelectedStyleKey]);
@@ -335,7 +357,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         activeReferenceId: mediaItem.id
       }));
       clearCanvasPreview();
-      setLutName("自定义参考图_Studio_V1");
+      setLutName("CustomLook");
       setMessage(hasPreviewHistory ? "参考图已切换，预览将自动更新" : "已选择风格：自定义参考图");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "图片读取失败，请更换图片";
@@ -369,7 +391,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const handleSelectReference = (itemId: string) => {
     setMediaState((current) => ({ ...current, activeReferenceId: itemId }));
     clearCanvasPreview();
-    setLutName("自定义参考图_Studio_V1");
+    setLutName("CustomLook");
     setMessage(hasPreviewHistory ? "参考图已切换，预览将自动更新" : "已选择风格：自定义参考图");
   };
 
@@ -428,10 +450,10 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
       clearCanvasPreview();
 
       if (nextActiveReferenceId === undefined) {
-        setLutName(`${selectedStyle.name}_Studio_V1`);
+        setLutName(suggestLookName(selectedStyle.name));
         setMessage(`已选择风格：${selectedStyle.name}`);
       } else {
-        setLutName("自定义参考图_Studio_V1");
+        setLutName("CustomLook");
         setMessage("已切换参考图");
       }
     }
@@ -473,7 +495,8 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     try {
       setIsExportingCube(true);
       const exportResult = await exportCubeLut({
-        lutName,
+        lutName: resolvedPostLutName,
+        lookName,
         lutSize: getLutSizeFromPrecision(parameters.precision),
         parameters,
         skinToneProtection: skinProtect,
@@ -774,49 +797,40 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
           <ToggleSwitch checked={avoidOversaturation} label="防止过度饱和" onChange={setAvoidOversaturation} />
         </div>
 
+        <PostLutExportSettings
+          fileName={postLutFileName}
+          lookName={lookName}
+          namingMode={postNamingMode}
+          precision={parameters.precision}
+          onLookNameChange={(value) => setLutName(sanitizeLookName(value))}
+          onNamingModeChange={setPostNamingMode}
+          onOpenCustomName={() => setIsCustomLutNameModalOpen(true)}
+          onPrecisionChange={(value) => setParameters((current) => ({ ...current, precision: value }))}
+        />
+
         <div className="workspace-actions">
           <Button variant="ghost" onClick={resetParameters}>
             重置参数
           </Button>
-          <Button disabled={isExportingCube} variant="secondary" onClick={handleExportCube}>
+          <div className="workspace-action-item">
+            <Button disabled={isExportingCube} variant="secondary" onClick={handleExportCube}>
             {isExportingCube ? "正在导出..." : "导出 .cube"}
-          </Button>
-          <Button disabled={isExportingCameraLut} variant="secondary" onClick={() => setIsCameraLutModalOpen(true)}>
-            <Camera aria-hidden="true" />
-            相机监看 LUT
-          </Button>
-        </div>
-      </section>
-
-      <footer className="workspace-export-footer">
-        <div className="export-footer-left">
-          <label>
-            <span>LUT 名称</span>
-            <input value={lutName} onChange={(event) => setLutName(event.currentTarget.value)} />
-          </label>
-          <SelectControl
-            className="footer-select-control"
-            label="LUT 精度"
-            options={precisionOptions.map((option) => ({
-              value: option,
-              label: option.replace("x", " / ").split(" / ")[0],
-              description: option
-            }))}
-            value={parameters.precision}
-            onChange={(nextValue) => setParameters({ ...parameters, precision: nextValue as LutPrecision })}
-          />
-        </div>
-        <div className="export-footer-actions">
-          <button type="button" onClick={() => setIsUsageGuideModalOpen(true)}>
+            </Button>
+            <small>后期软件创意 LUT</small>
+          </div>
+          <Button variant="ghost" onClick={() => setIsUsageGuideModalOpen(true)}>
             <HelpCircle aria-hidden="true" />
             使用说明
-          </button>
-          <button disabled={isExportingCube} type="button" onClick={handleExportCube}>
-            <Download aria-hidden="true" />
-            {isExportingCube ? "正在导出" : "导出 LUT"}
-          </button>
+          </Button>
+          <div className="workspace-action-item">
+            <Button disabled={isExportingCameraLut} variant="secondary" onClick={() => setIsCameraLutModalOpen(true)}>
+              <Camera aria-hidden="true" />
+              相机监看 LUT
+            </Button>
+            <small>实验性相机监看文件</small>
+          </div>
         </div>
-      </footer>
+      </section>
 
       <VideoFrameCaptureModal
         isOpen={isVideoFrameModalOpen}
@@ -826,15 +840,25 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
       <CameraLutExportModal
         isExporting={isExportingCameraLut}
         isOpen={isCameraLutModalOpen}
+        lookName={lookName}
         onClose={() => setIsCameraLutModalOpen(false)}
         onExport={handleExportCameraMonitoringLut}
+      />
+      <CustomLutNameModal
+        automaticName={autoPostLutName}
+        customName={postCustomFileName}
+        isOpen={isCustomLutNameModalOpen}
+        onClose={() => setIsCustomLutNameModalOpen(false)}
+        onSave={setPostCustomFileName}
       />
       <LutUsageGuideModal
         hasReferenceImage={activeReference !== null}
         hasTargetImage={activeTarget !== null}
         inputColorConfig={inputColorConfig}
         isOpen={isUsageGuideModalOpen}
-        lutName={lutName}
+        lutName={lastExportResult?.fileName ?? postLutFileName}
+        exportKind={lastExportResult?.exportKind ?? "post-creative"}
+        exportTypeCode={lastExportResult?.exportTypeCode ?? "POST"}
         precision={parameters.precision}
         selectedStyleName={activeStyleName}
         onClose={() => setIsUsageGuideModalOpen(false)}

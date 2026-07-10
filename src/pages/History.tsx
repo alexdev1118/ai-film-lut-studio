@@ -1,7 +1,49 @@
 import { exportHistoryRecords } from "../data/history";
 import { GlassCard } from "../components/ui/GlassCard";
+import { useWorkspaceState } from "../state/WorkspaceContext";
+import type { ExportHistoryRecord, LutPrecision } from "../types";
+
+const getPrecisionFromSize = (lutSize: number): LutPrecision => {
+  if (lutSize === 17) {
+    return "17x17x17";
+  }
+
+  return lutSize === 65 ? "65x65x65" : "33x33x33";
+};
 
 export const History = () => {
+  const { lastExportResult, lutName, parameters } = useWorkspaceState();
+  const currentExport: ExportHistoryRecord | null =
+    lastExportResult === null
+      ? null
+      : {
+          id: `session-${lastExportResult.fileName}`,
+          lutName: lastExportResult.lookName ?? lutName,
+          fileName: lastExportResult.fileName,
+          styleName: lastExportResult.lookName ?? lutName,
+          colorSpace: "Rec.709",
+          precision: getPrecisionFromSize(lastExportResult.lutSize),
+          inputType: lastExportResult.outputColorSpace ?? "Rec.709",
+          cameraBrand: lastExportResult.sourceHintBrand ?? "Generic",
+          gamma: lastExportResult.sourceHintGamma ?? "Rec.709",
+          gamut: "Metadata hint",
+          lutType: lastExportResult.exportKind === "camera-monitoring" ? "相机监看 LUT" : "后期软件创意 LUT",
+          exportKind: lastExportResult.exportKind ?? "post-creative",
+          exportTypeCode: lastExportResult.exportTypeCode ?? "POST",
+          lookName: lastExportResult.lookName ?? lutName,
+          outputColorSpace: lastExportResult.outputColorSpace ?? "Rec.709",
+          sourceHintBrand: lastExportResult.sourceHintBrand,
+          sourceHintGamma: lastExportResult.sourceHintGamma,
+          verificationStatus: lastExportResult.verificationStatus,
+          workflowSummary: lastExportResult.exportKind === "camera-monitoring" ? "相机监看测试，需按机型继续核验。" : "先完成技术转换，再作为创意 Look 使用。",
+          styleIntensity: parameters.intensity,
+          passedValidation: lastExportResult.isValid ?? false,
+          dataLineCount: lastExportResult.dataLineCount ?? 0,
+          createdAt: "当前会话",
+          status: "已导出"
+        };
+  const records = currentExport === null ? exportHistoryRecords : [currentExport, ...exportHistoryRecords];
+
   return (
     <div className="stack-page">
       <header className="page-header">
@@ -21,10 +63,10 @@ export const History = () => {
             <span>校验</span>
             <span>时间</span>
           </div>
-          {exportHistoryRecords.map((record) => (
+          {records.map((record) => (
             <div className="history-row" key={record.id}>
               <span>{record.fileName}</span>
-              <span>{record.lutType}</span>
+              <span><strong className="export-type-code">{record.exportTypeCode}</strong> {record.lutType}{record.verificationStatus === "TEST" ? " / TEST" : ""}</span>
               <span>
                 {record.cameraBrand} / {record.gamma}
               </span>

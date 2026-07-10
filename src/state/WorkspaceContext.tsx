@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 import { defaultCameraProfile } from "../data/cameraProfiles";
 import { lutStyles } from "../data/styles";
-import type { CameraBrand, ColorSpace, CubeExportResult, LutParameters, PreviewResult, WorkspaceMediaState } from "../types";
+import type { CameraBrand, ColorSpace, CubeExportResult, LutParameters, PostLutNamingMode, PreviewResult, WorkspaceMediaState } from "../types";
 import { revokeColorPreviewUrl } from "../utils/colorPreview";
 import { colorSpaceOptions, defaultLutParameters } from "../utils/lutMock";
 import { revokeMediaItem } from "../utils/image";
+import { sanitizeLookName } from "../utils/lutNaming";
 
 interface PersistedWorkspaceState {
   readonly parameters: LutParameters;
@@ -14,6 +15,8 @@ interface PersistedWorkspaceState {
   readonly selectedBrandId: CameraBrand;
   readonly selectedProfileId: string;
   readonly lutName: string;
+  readonly postNamingMode: PostLutNamingMode;
+  readonly postCustomFileName: string;
   readonly selectedStyleKey: string;
 }
 
@@ -44,6 +47,10 @@ interface WorkspaceContextValue {
   readonly setSelectedProfileId: Dispatch<SetStateAction<string>>;
   readonly lutName: string;
   readonly setLutName: Dispatch<SetStateAction<string>>;
+  readonly postNamingMode: PostLutNamingMode;
+  readonly setPostNamingMode: Dispatch<SetStateAction<PostLutNamingMode>>;
+  readonly postCustomFileName: string;
+  readonly setPostCustomFileName: Dispatch<SetStateAction<string>>;
   readonly selectedStyleKey: string;
   readonly setSelectedStyleKey: Dispatch<SetStateAction<string>>;
   readonly lastExportResult: CubeExportResult | null;
@@ -67,7 +74,9 @@ const defaultPersistedWorkspaceState: PersistedWorkspaceState = {
   avoidOversaturation: false,
   selectedBrandId: defaultCameraProfile.brandId,
   selectedProfileId: defaultCameraProfile.id,
-  lutName: `${lutStyles[0].name}_Studio_V1`,
+  lutName: "CustomLook",
+  postNamingMode: "simple",
+  postCustomFileName: "",
   selectedStyleKey: lutStyles[0].id
 };
 
@@ -78,6 +87,13 @@ const isNumber = (value: unknown): value is number => typeof value === "number" 
 const isString = (value: unknown): value is string => typeof value === "string";
 
 const isBoolean = (value: unknown): value is boolean => typeof value === "boolean";
+
+const readPostNamingMode = (value: unknown): PostLutNamingMode => (value === "full" ? "full" : "simple");
+
+const migrateLookName = (value: string): string => {
+  const normalized = value.trim().replace(/_Studio_V1$/i, "");
+  return sanitizeLookName(normalized);
+};
 
 const readColorSpace = (value: unknown): ColorSpace => {
   return colorSpaceOptions.some((colorSpace) => colorSpace === value) ? (value as ColorSpace) : defaultPersistedWorkspaceState.parameters.inputColorSpace;
@@ -118,7 +134,9 @@ const readPersistedWorkspaceState = (): PersistedWorkspaceState => {
       avoidOversaturation: isBoolean(parsedValue.avoidOversaturation) ? parsedValue.avoidOversaturation : defaultPersistedWorkspaceState.avoidOversaturation,
       selectedBrandId: isString(parsedValue.selectedBrandId) ? (parsedValue.selectedBrandId as CameraBrand) : defaultPersistedWorkspaceState.selectedBrandId,
       selectedProfileId: isString(parsedValue.selectedProfileId) ? parsedValue.selectedProfileId : defaultPersistedWorkspaceState.selectedProfileId,
-      lutName: isString(parsedValue.lutName) ? parsedValue.lutName : defaultPersistedWorkspaceState.lutName,
+      lutName: isString(parsedValue.lutName) ? migrateLookName(parsedValue.lutName) : defaultPersistedWorkspaceState.lutName,
+      postNamingMode: readPostNamingMode(parsedValue.postNamingMode),
+      postCustomFileName: isString(parsedValue.postCustomFileName) ? parsedValue.postCustomFileName : "",
       selectedStyleKey: isString(parsedValue.selectedStyleKey) ? parsedValue.selectedStyleKey : defaultPersistedWorkspaceState.selectedStyleKey
     };
   } catch (error) {
@@ -150,6 +168,8 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
   const [selectedBrandId, setSelectedBrandId] = useState<CameraBrand>(persistedState.selectedBrandId);
   const [selectedProfileId, setSelectedProfileId] = useState(persistedState.selectedProfileId);
   const [lutName, setLutName] = useState(persistedState.lutName);
+  const [postNamingMode, setPostNamingMode] = useState<PostLutNamingMode>(persistedState.postNamingMode);
+  const [postCustomFileName, setPostCustomFileName] = useState(persistedState.postCustomFileName);
   const [selectedStyleKey, setSelectedStyleKey] = useState(persistedState.selectedStyleKey);
   const [lastExportResult, setLastExportResult] = useState<CubeExportResult | null>(null);
   const cleanupRef = useRef({ mediaState, result });
@@ -168,13 +188,15 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
         selectedBrandId,
         selectedProfileId,
         lutName,
+        postNamingMode,
+        postCustomFileName,
         selectedStyleKey
       };
       window.sessionStorage.setItem(workspaceSessionStorageKey, JSON.stringify(nextPersistedState));
     } catch (error) {
       console.warn("保存工作台会话状态失败", error);
     }
-  }, [parameters, skinProtect, preserveLuma, avoidOversaturation, selectedBrandId, selectedProfileId, lutName, selectedStyleKey]);
+  }, [parameters, skinProtect, preserveLuma, avoidOversaturation, selectedBrandId, selectedProfileId, lutName, postNamingMode, postCustomFileName, selectedStyleKey]);
 
   useEffect(() => {
     return () => {
@@ -212,6 +234,10 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
       setSelectedProfileId,
       lutName,
       setLutName,
+      postNamingMode,
+      setPostNamingMode,
+      postCustomFileName,
+      setPostCustomFileName,
       selectedStyleKey,
       setSelectedStyleKey,
       lastExportResult,
@@ -231,6 +257,8 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
       selectedBrandId,
       selectedProfileId,
       lutName,
+      postNamingMode,
+      postCustomFileName,
       selectedStyleKey,
       lastExportResult
     ]

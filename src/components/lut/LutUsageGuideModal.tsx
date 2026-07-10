@@ -1,11 +1,13 @@
 import { useEffect, type MouseEvent as ReactMouseEvent } from "react";
 import { BookOpen, CheckCircle2, X } from "lucide-react";
-import type { InputColorConfig, LutPrecision } from "../../types";
+import type { InputColorConfig, LutExportKind, LutExportTypeCode, LutPrecision } from "../../types";
 import { Button } from "../ui/Button";
 
 interface LutUsageGuideModalProps {
   readonly isOpen: boolean;
   readonly lutName: string;
+  readonly exportKind: LutExportKind;
+  readonly exportTypeCode: LutExportTypeCode;
   readonly precision: LutPrecision;
   readonly selectedStyleName: string;
   readonly inputColorConfig: InputColorConfig;
@@ -37,6 +39,8 @@ const getInputRecommendation = (inputColorConfig: InputColorConfig): string => {
 export const LutUsageGuideModal = ({
   isOpen,
   lutName,
+  exportKind,
+  exportTypeCode,
   precision,
   selectedStyleName,
   inputColorConfig,
@@ -70,6 +74,12 @@ export const LutUsageGuideModal = ({
     }
   };
 
+  const isCameraMonitoring = exportKind === "camera-monitoring";
+  const guideTitle = isCameraMonitoring ? "相机监看 LUT 使用说明" : "创意 LUT 使用说明";
+  const guideDescription = isCameraMonitoring
+    ? "当前导出为相机监看 LUT，仍处于实验性 / 待官方确认工作流。"
+    : "当前导出为后期软件创意 LUT，不是相机 Log 技术转换 LUT。";
+
   return (
     <div className="lut-usage-guide-backdrop" role="presentation" onMouseDown={handleBackdropClick}>
       <section aria-label="当前 LUT 使用说明" aria-modal="true" className="lut-usage-guide-modal" role="dialog">
@@ -79,8 +89,8 @@ export const LutUsageGuideModal = ({
               <BookOpen aria-hidden="true" />
               当前工作流
             </span>
-            <h2>创意 LUT 使用说明</h2>
-            <p>当前导出为基础创意风格 LUT，不是相机 Log 技术转换 LUT。</p>
+            <h2>{guideTitle}</h2>
+            <p>{guideDescription}</p>
           </div>
           <button aria-label="关闭使用说明" className="lut-usage-guide-close" type="button" onClick={onClose}>
             <X aria-hidden="true" />
@@ -90,6 +100,7 @@ export const LutUsageGuideModal = ({
         <div className="lut-usage-guide-body">
           <div className="lut-usage-guide-summary">
             <p><span>LUT 名称</span><strong>{lutName.trim().length > 0 ? lutName : "未命名 LUT"}</strong></p>
+            <p><span>导出类型</span><strong>{exportTypeCode} / {isCameraMonitoring ? "相机监看 LUT" : "后期软件创意 LUT"}</strong></p>
             <p><span>精度</span><strong>{precision}</strong></p>
             <p><span>当前风格</span><strong>{selectedStyleName}</strong></p>
             <p><span>输入目录</span><strong>{inputColorConfig.gamma ?? "Unknown"} / {inputColorConfig.gamut ?? "Unknown"}</strong></p>
@@ -97,16 +108,27 @@ export const LutUsageGuideModal = ({
 
           <section className="lut-usage-guide-card">
             <h3>当前建议</h3>
-            <p>{getInputRecommendation(inputColorConfig)}</p>
+            <p>{isCameraMonitoring ? "当前文件用于相机或外接监视器的监看测试。请在正式拍摄前确认相机是否支持该文件格式、点数、Range 与导入路径。不要把它当作后期 Log 技术转换 LUT。" : getInputRecommendation(inputColorConfig)}</p>
           </section>
 
           <section className="lut-usage-guide-card">
             <h3>推荐顺序</h3>
             <ol>
-              <li>完成基础曝光与白平衡校正。</li>
-              <li>{inputColorConfig.inputType === "log" ? "完成 Log / 色彩空间还原。" : "确认素材已处于目标显示空间。"}</li>
-              <li>在独立节点、Creative / Look 或风格滤镜位置加载本 LUT。</li>
-              <li>根据素材微调 LUT 强度、饱和度、肤色与高光。</li>
+              {isCameraMonitoring ? (
+                <>
+                  <li>先在相机或外接监视器中确认可导入该 LUT。</li>
+                  <li>以小范围测试检查亮度、高光、肤色与色偏。</li>
+                  <li>确认监看 LUT 不会被误用于不可逆录制流程。</li>
+                  <li>保留原始曝光与色彩管理工作流，不把本文件视为官方转换 LUT。</li>
+                </>
+              ) : (
+                <>
+                  <li>完成基础曝光与白平衡校正。</li>
+                  <li>{inputColorConfig.inputType === "log" ? "完成 Log / 色彩空间还原。" : "确认素材已处于目标显示空间。"}</li>
+                  <li>在独立节点、Creative / Look 或风格滤镜位置加载本 LUT。</li>
+                  <li>根据素材微调 LUT 强度、饱和度、肤色与高光。</li>
+                </>
+              )}
             </ol>
           </section>
 

@@ -3,6 +3,7 @@ import { defaultCameraProfile, getCameraProfileById, toInputColorConfig } from "
 import { useWorkspaceState } from "../state/WorkspaceContext";
 import type { InputColorConfig, LutPrecision, RoutePath } from "../types";
 import { defaultLutParameters } from "../utils/lutMock";
+import { generateLutFileName, generatePostLutName, sanitizeLookName } from "../utils/lutNaming";
 
 interface ExportResultProps {
   readonly selectedStyleName: string;
@@ -55,14 +56,31 @@ const getPrecisionFromSize = (lutSize: number): LutPrecision => {
   return "33x33x33";
 };
 
+const getLutSizeFromPrecision = (precision: LutPrecision): number => {
+  if (precision === "17x17x17") {
+    return 17;
+  }
+
+  return precision === "65x65x65" ? 65 : 33;
+};
+
 export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProps) => {
-  const { lastExportResult, lutName, parameters } = useWorkspaceState();
+  const { lastExportResult, lutName, parameters, postCustomFileName, postNamingMode } = useWorkspaceState();
   const inputColorConfig = readInputColorConfig();
   const selectedProfile = getCameraProfileById(inputColorConfig.profileId);
   const precision = lastExportResult === null ? parameters.precision : getPrecisionFromSize(lastExportResult.lutSize);
-  const fileName = lastExportResult?.fileName ?? `${lutName || selectedStyleName || "AI_Film_LUT_Studio"}.cube`;
+  const lookName = sanitizeLookName(lutName || selectedStyleName);
+  const autoPostLutName = generatePostLutName({ lookName, lutSize: getLutSizeFromPrecision(precision), namingMode: postNamingMode, inputColorConfig });
+  const resolvedPostLutName = postCustomFileName.trim().length > 0 ? sanitizeLookName(postCustomFileName) : autoPostLutName;
+  const fileName = lastExportResult?.fileName ?? generateLutFileName(resolvedPostLutName);
   const dataLineCount = lastExportResult?.dataLineCount ?? getDataLineCount(precision);
   const validationPassed = lastExportResult?.isValid ?? true;
+  const exportKind = lastExportResult?.exportKind ?? "post-creative";
+  const exportTypeCode = lastExportResult?.exportTypeCode ?? "POST";
+  const isCameraMonitoring = exportKind === "camera-monitoring";
+  const displayLookName = lastExportResult?.lookName ?? lookName;
+  const outputColorSpace = lastExportResult?.outputColorSpace ?? "Rec.709";
+  const sourceHint = `${lastExportResult?.sourceHintBrand ?? inputColorConfig.brand ?? inputColorConfig.brandId} / ${lastExportResult?.sourceHintGamma ?? inputColorConfig.gamma ?? "Rec.709"}`;
 
   return (
     <div className="export-page">
@@ -70,8 +88,8 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
         <div className="export-icon-orbit">
           <Film aria-hidden="true" />
         </div>
-        <h1>{lastExportResult === null ? "基础创意 LUT 导出说明" : "最近导出的基础创意 LUT"}</h1>
-        <p>当前导出的是基础创意风格 LUT，适合 Rec.709 / 已还原素材的风格测试，不是相机 Log 技术转换 LUT。</p>
+        <h1>{isCameraMonitoring ? "最近导出的相机监看 LUT" : lastExportResult === null ? "后期软件创意 LUT 导出说明" : "最近导出的后期软件创意 LUT"}</h1>
+        <p>{isCameraMonitoring ? "当前导出为相机监看 LUT，处于实验性 / 待官方确认状态，必须在正式拍摄前测试。" : "当前导出的是后期软件创意 LUT，适合 Rec.709 / 已还原素材的风格测试，不是相机 Log 技术转换 LUT。"}</p>
       </header>
 
       <section className="export-bento">
@@ -83,7 +101,7 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
           <div className="export-metadata-grid">
             <p>
               <span>LUT 名称</span>
-              <strong>{lutName}</strong>
+              <strong>{displayLookName}</strong>
             </p>
             <p>
               <span>文件格式</span>
@@ -99,11 +117,11 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             </p>
             <p>
               <span>输入假设</span>
-              <strong>Rec.709 / 标准显示空间</strong>
+              <strong>{outputColorSpace}</strong>
             </p>
             <p>
               <span>类型</span>
-              <strong>基础创意风格 LUT</strong>
+              <strong>{exportTypeCode} / {isCameraMonitoring ? "相机监看 LUT" : "后期软件创意 LUT"}</strong>
             </p>
             <p>
               <span>格式校验</span>
@@ -114,10 +132,14 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             </p>
             <p>
               <span>输入素材配置</span>
-              <strong>
-                {inputColorConfig.brand ?? inputColorConfig.brandId} / {inputColorConfig.gamma ?? "Rec.709"} / {inputColorConfig.gamut ?? "Rec.709"}
-              </strong>
+              <strong>{sourceHint}</strong>
             </p>
+            {isCameraMonitoring ? (
+              <p>
+                <span>核验状态</span>
+                <strong>{lastExportResult?.verificationStatus === "verified" ? "已验证" : "TEST / 待官方确认"}</strong>
+              </p>
+            ) : null}
           </div>
           <p className="export-note">{selectedProfile.warning}</p>
         </article>
@@ -127,8 +149,8 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             <Info aria-hidden="true" />
             <h2>使用定位</h2>
           </div>
-          <p>当前 LUT 适合用于 Rec.709 或已还原素材。如果是 S-Log3 / C-Log / D-Log / V-Log 等素材，建议先完成基础色彩空间转换，再叠加本 LUT。</p>
-          <p>它不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。</p>
+          <p>{isCameraMonitoring ? "这是相机监看 LUT，不是后期技术转换 LUT。请先确认相机的导入能力和监看 / 录制行为，再用于实际拍摄。" : "当前 LUT 适合用于 Rec.709 或已还原素材。如果是 S-Log3 / C-Log / D-Log / V-Log 等素材，建议先完成基础色彩空间转换，再叠加本 LUT。"}</p>
+          <p>{isCameraMonitoring ? "当前机型资料未完成官方核验时，导出名称会包含 TEST；请小范围测试后再用于正式工作。" : "它不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。"}</p>
         </article>
       </section>
 
