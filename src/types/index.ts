@@ -51,6 +51,22 @@ export type CameraProfileDataStatus = "built-in" | "placeholder" | "needs-offici
 
 export type CameraProfileSourceStatus = "official-needed" | "community-reference" | "user-confirmed" | "unknown";
 
+export type SensorFormat = "full-frame" | "aps-c" | "mft" | "s35" | "medium-format" | "1-inch" | "unknown";
+
+export type CameraLutUseType = "monitoring" | "recording" | "monitoring-and-recording" | "unknown";
+
+export type CameraLutFormat = ".cube" | ".vlt" | ".aml" | ".look" | "unknown";
+
+export type CameraLutCubeSize = 17 | 33 | 65;
+
+export type CameraLutRange = "full" | "legal" | "unknown";
+
+export type CameraLutDataStatus = "verified-official" | "placeholder" | "needs-official-confirmation";
+
+export type MonitoringExposureOffset = "0" | "+1" | "+2" | "+3" | "custom";
+
+export type CameraMonitoringMode = "standard" | "ettr-normalization" | "manual-brightness-offset";
+
 export interface NavigationItem {
   readonly label: string;
   readonly path: RoutePath;
@@ -88,6 +104,59 @@ export interface CameraProfile {
   readonly exportNote: string;
   readonly dataStatus: CameraProfileDataStatus;
   readonly sourceStatus?: CameraProfileSourceStatus;
+}
+
+export interface CameraLutExposureTools {
+  readonly supportsEiMetadata?: boolean | "unknown";
+  readonly supportsExposureOffset?: boolean | "unknown";
+  readonly exposureOffsetLabel?: string;
+  readonly notes?: string;
+}
+
+export interface CameraLutSupportProfile {
+  readonly id: string;
+  readonly brand: CameraBrand;
+  readonly brandLabel: string;
+  readonly modelName: string;
+  readonly modelFamily: string;
+  readonly sensorFormat?: SensorFormat;
+  readonly supported: boolean | "unknown";
+  readonly lutUseType: CameraLutUseType;
+  readonly supportedFormats: readonly CameraLutFormat[];
+  readonly maxCubeSize?: CameraLutCubeSize | "unknown";
+  readonly recommendedCubeSize?: CameraLutCubeSize;
+  readonly range?: CameraLutRange;
+  readonly importMethod?: string;
+  readonly fileNameRules?: string;
+  readonly maxSlots?: number | "unknown";
+  readonly supportedLogProfiles: readonly string[];
+  readonly supportedGamuts: readonly string[];
+  readonly exposureTools?: CameraLutExposureTools;
+  readonly monitoringNotes: string;
+  readonly warning: string;
+  readonly dataStatus: CameraLutDataStatus;
+  readonly officialSourceNeeded: boolean;
+  readonly sourceNotes?: string;
+}
+
+export interface CameraExposureGuide {
+  readonly cameraModel: string;
+  readonly sensorFormat: SensorFormat;
+  readonly logProfile: string;
+  readonly nativeIso?: string;
+  readonly recommendedEttr?: string;
+  readonly zebraMiddleGray?: string;
+  readonly zebraSkinTone?: string;
+  readonly whiteClipIre?: string;
+  readonly notes: string;
+  readonly dataStatus: CameraLutDataStatus;
+  readonly sourceNeeded: boolean;
+}
+
+export interface CameraMonitoringExposureConfig {
+  readonly mode: CameraMonitoringMode;
+  readonly shootingTargetEv?: number;
+  readonly lutBrightnessOffsetEv: number;
 }
 
 export interface InputColorConfig {
@@ -240,6 +309,47 @@ export interface LutExportOptions {
   readonly adjustments: ColorPreviewAdjustments;
   readonly referenceAverageColor?: RgbColor;
   readonly inputColorConfig?: InputColorConfig;
+}
+
+export interface CameraLutExportOptions {
+  readonly lutName: string;
+  readonly profile: CameraLutSupportProfile;
+  readonly requestedCubeSize: CameraLutCubeSize | "auto";
+  readonly selectedLogProfile: string;
+  readonly selectedGamut: string;
+  readonly lutUseType: CameraLutUseType;
+  readonly range: CameraLutRange;
+  readonly exposureConfig: CameraMonitoringExposureConfig;
+  readonly adjustments: ColorPreviewAdjustments;
+  readonly referenceAverageColor?: RgbColor;
+}
+
+export interface CameraMonitoringLutExportParams {
+  readonly lutName: string;
+  readonly profile: CameraLutSupportProfile;
+  readonly requestedCubeSize: CameraLutCubeSize | "auto";
+  readonly selectedLogProfile: string;
+  readonly selectedGamut: string;
+  readonly lutUseType: CameraLutUseType;
+  readonly range: CameraLutRange;
+  readonly exposureConfig: CameraMonitoringExposureConfig;
+  readonly parameters: LutParameters;
+  readonly skinToneProtection: boolean;
+  readonly preserveLuma: boolean;
+  readonly preventOversaturation: boolean;
+  readonly referenceImageUrl?: string;
+  readonly referenceAverageColor?: RgbColor;
+}
+
+export interface CameraLutExportResult extends CubeExportResult {
+  readonly exportType: "camera-monitoring";
+  readonly cameraBrand: string;
+  readonly cameraModel: string;
+  readonly gamma: string;
+  readonly gamut: string;
+  readonly range: CameraLutRange;
+  readonly exposureConfig: CameraMonitoringExposureConfig;
+  readonly dataStatus: CameraLutDataStatus;
 }
 
 export interface CubeExportResult {

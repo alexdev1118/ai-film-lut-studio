@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Download, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
+import { Camera, Download, HelpCircle, Info, Maximize, Sparkles, Upload, ZoomIn } from "lucide-react";
 import { cameraBrandOptions, defaultCameraProfile, getCameraProfileById, getProfilesByBrand, toInputColorConfig } from "../data/cameraProfiles";
 import { previewImages } from "../data/mockImages";
 import { lutStyles } from "../data/styles";
-import { exportCubeLut, generateLocalColorPreview } from "../services/lutService";
+import { exportCameraMonitoringLut, exportCubeLut, generateLocalColorPreview } from "../services/lutService";
 import { revokeWorkspacePreviewResult, useWorkspaceState } from "../state/WorkspaceContext";
-import type { CameraBrand, CapturedFrame, LutParameters, LutPrecision, MediaItem, RoutePath, WorkspaceMediaState } from "../types";
+import type { CameraBrand, CameraLutCubeSize, CameraLutRange, CameraLutSupportProfile, CameraLutUseType, CameraMonitoringExposureConfig, CapturedFrame, LutParameters, LutPrecision, MediaItem, RoutePath, WorkspaceMediaState } from "../types";
 import { formatFileSize, getImageMetadata, getImageSourceFromCssBackground, getReadableImageType, revokeMediaItem, toUploadedMediaItem } from "../utils/image";
 import { defaultLutParameters, precisionOptions } from "../utils/lutMock";
 import { capturedFrameToMediaItem } from "../utils/videoFrame";
 import { BeforeAfterPreview } from "../components/lut/BeforeAfterPreview";
+import { CameraLutExportModal } from "../components/lut/CameraLutExportModal";
 import { MediaBin } from "../components/lut/MediaBin";
 import { PreviewLightbox } from "../components/lut/PreviewLightbox";
 import { VideoFrameCaptureModal } from "../components/lut/VideoFrameCaptureModal";
@@ -121,10 +122,12 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExportingCube, setIsExportingCube] = useState(false);
+  const [isExportingCameraLut, setIsExportingCameraLut] = useState(false);
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [isVideoFrameModalOpen, setIsVideoFrameModalOpen] = useState(false);
   const [isPreviewLightboxOpen, setIsPreviewLightboxOpen] = useState(false);
+  const [isCameraLutModalOpen, setIsCameraLutModalOpen] = useState(false);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const previewStageRef = useRef<HTMLDivElement | null>(null);
   const mediaStateRef = useRef<WorkspaceMediaState>(mediaState);
@@ -487,6 +490,53 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     }
   };
 
+  const handleExportCameraMonitoringLut = async (value: {
+    readonly lutName: string;
+    readonly profile: CameraLutSupportProfile;
+    readonly selectedLogProfile: string;
+    readonly selectedGamut: string;
+    readonly lutUseType: CameraLutUseType;
+    readonly requestedCubeSize: CameraLutCubeSize | "auto";
+    readonly range: CameraLutRange;
+    readonly exposureConfig: CameraMonitoringExposureConfig;
+  }) => {
+    if (isExportingCameraLut) {
+      return;
+    }
+
+    try {
+      setIsExportingCameraLut(true);
+      const exportResult = await exportCameraMonitoringLut({
+        lutName: value.lutName,
+        profile: value.profile,
+        requestedCubeSize: value.requestedCubeSize,
+        selectedLogProfile: value.selectedLogProfile,
+        selectedGamut: value.selectedGamut,
+        lutUseType: value.lutUseType,
+        range: value.range,
+        exposureConfig: value.exposureConfig,
+        parameters,
+        skinToneProtection: skinProtect,
+        preserveLuma,
+        preventOversaturation: avoidOversaturation,
+        referenceImageUrl: activeReference?.url
+      });
+      setLastExportResult(exportResult);
+      setMessage(
+        exportResult.dataStatus === "verified-official"
+          ? "相机监看 LUT 已生成并通过基础格式校验"
+          : "相机监看 LUT 已生成；该机型规格仍需官方确认，请先小范围测试"
+      );
+      setIsCameraLutModalOpen(false);
+    } catch (error) {
+      console.error("相机监看 LUT 导出失败", error);
+      const errorMessage = error instanceof Error ? error.message : "相机监看 LUT 导出失败，请稍后重试";
+      setMessage(errorMessage);
+    } finally {
+      setIsExportingCameraLut(false);
+    }
+  };
+
   const setNumberParameter = (
     key: keyof Pick<
       LutParameters,
@@ -729,6 +779,10 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
           <Button disabled={isExportingCube} variant="secondary" onClick={handleExportCube}>
             {isExportingCube ? "正在导出..." : "导出 .cube"}
           </Button>
+          <Button disabled={isExportingCameraLut} variant="secondary" onClick={() => setIsCameraLutModalOpen(true)}>
+            <Camera aria-hidden="true" />
+            相机监看 LUT
+          </Button>
         </div>
       </section>
 
@@ -766,6 +820,12 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         isOpen={isVideoFrameModalOpen}
         onCapture={handleCapturedFrame}
         onClose={() => setIsVideoFrameModalOpen(false)}
+      />
+      <CameraLutExportModal
+        isExporting={isExportingCameraLut}
+        isOpen={isCameraLutModalOpen}
+        onClose={() => setIsCameraLutModalOpen(false)}
+        onExport={handleExportCameraMonitoringLut}
       />
       <PreviewLightbox
         afterAlt={`${activeStyleName} 效果图`}

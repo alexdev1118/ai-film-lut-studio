@@ -1,9 +1,12 @@
 import { colorAnalysisReport } from "../data/analysis";
 import { previewImages } from "../data/mockImages";
 import { generateColorPreview, getAverageColorFromImageUrl } from "../utils/colorPreview";
+import { downloadCameraMonitoringLut, generateCameraMonitoringCubeLut } from "../utils/cameraLutExport";
 import { downloadCubeLut, generateCubeLut } from "../utils/cubeExport";
 import { validateCubeLut } from "../utils/cubeValidate";
 import type {
+  CameraLutExportResult,
+  CameraMonitoringLutExportParams,
   ColorAnalysisInput,
   ColorAnalysisReport,
   CubeExportResult,
@@ -155,6 +158,55 @@ export const exportCubeLut = async (params: ExportCubeLutParams): Promise<CubeEx
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown cube export failure";
     throw new Error(message.startsWith("LUT 文件校验失败") ? message : `LUT 导出失败，请稍后重试。${message}`);
+  }
+};
+
+export const exportCameraMonitoringLut = async (params: CameraMonitoringLutExportParams): Promise<CameraLutExportResult> => {
+  try {
+    const referenceAverageColor =
+      params.referenceAverageColor ?? (params.referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(params.referenceImageUrl));
+    const result = generateCameraMonitoringCubeLut({
+      lutName: params.lutName,
+      profile: params.profile,
+      requestedCubeSize: params.requestedCubeSize,
+      selectedLogProfile: params.selectedLogProfile,
+      selectedGamut: params.selectedGamut,
+      lutUseType: params.lutUseType,
+      range: params.range,
+      exposureConfig: params.exposureConfig,
+      adjustments: {
+        intensity: params.parameters.intensity,
+        contrast: params.parameters.contrast,
+        saturation: params.parameters.saturation,
+        temperature: params.parameters.temperature,
+        tint: params.parameters.tint,
+        shadowMatch: params.parameters.shadowMatch,
+        midtoneMatch: params.parameters.midtoneMatch,
+        highlightMatch: params.parameters.highlightMatch,
+        skinToneProtection: params.skinToneProtection,
+        preserveLuma: params.preserveLuma,
+        preventOversaturation: params.preventOversaturation
+      },
+      referenceAverageColor
+    });
+    const validation = validateCubeLut(result.content);
+
+    if (!validation.isValid) {
+      throw new Error(`相机监看 LUT 校验失败：${validation.errors.join(" ")}`);
+    }
+
+    const validatedResult: CameraLutExportResult = {
+      ...result,
+      dataLineCount: validation.dataLineCount,
+      isValid: validation.isValid,
+      validationErrors: validation.errors,
+      validationWarnings: validation.warnings
+    };
+    downloadCameraMonitoringLut(validatedResult);
+    return validatedResult;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown camera monitoring LUT export failure";
+    throw new Error(message.startsWith("相机监看 LUT 校验失败") ? message : `相机监看 LUT 导出失败：${message}`);
   }
 };
 
