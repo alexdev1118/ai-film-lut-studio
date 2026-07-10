@@ -17,7 +17,9 @@ import type {
 } from "../../types";
 import { generateCameraLutName, sanitizeLutName, type CameraLutNamingMode } from "../../utils/lutNaming";
 import { Button } from "../ui/Button";
+import { HelpPopover } from "../ui/HelpPopover";
 import { SelectControl } from "../ui/SelectControl";
+import { lutHelpContent, type LutHelpKey } from "../../data/lutHelpContent";
 
 type RequestedCameraCubeSize = CameraLutCubeSize | "auto";
 
@@ -53,7 +55,7 @@ const cubeSizeOptions: readonly { readonly value: string; readonly label: string
 ];
 
 const rangeOptions: readonly { readonly value: CameraLutRange; readonly label: string; readonly description: string }[] = [
-  { value: "unknown", label: "自动 / 未知", description: "按机型资料确认后再决定。" },
+  { value: "unknown", label: "自动 / 未知", description: "暂无官方确认，当前按 Full Range 输出。" },
   { value: "full", label: "Full range", description: "保留 0-1 全范围输出。" },
   { value: "legal", label: "Legal range", description: "将 RGB 数值映射到视频 Legal 范围。" }
 ];
@@ -142,6 +144,18 @@ const formatEv = (value: number): string => {
 
   return value > 0 ? `+${value} EV` : `${value} EV`;
 };
+
+interface FieldLabelProps {
+  readonly label: string;
+  readonly helpKey: LutHelpKey;
+}
+
+const FieldLabel = ({ label, helpKey }: FieldLabelProps) => (
+  <span className="field-label-with-help">
+    {label}
+    <HelpPopover content={lutHelpContent[helpKey]} />
+  </span>
+);
 
 export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }: CameraLutExportModalProps) => {
   const [brandId, setBrandId] = useState<CameraBrand>(defaultCameraLutProfile.brand);
@@ -248,7 +262,7 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
           <div className="camera-lut-name-card">
             <div className="camera-lut-name-row">
               <label>
-                <span>LUT 名称</span>
+                <FieldLabel helpKey="lutName" label="LUT 名称" />
                 <input maxLength={120} value={lutName} onChange={(event) => handleNameChange(event.currentTarget.value)} />
               </label>
               <SelectControl
@@ -274,7 +288,8 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
 
           <div className="camera-lut-form-grid">
             <SelectControl
-              label="相机品牌"
+              ariaLabel="相机品牌"
+              label={<FieldLabel helpKey="cameraBrand" label="相机品牌" />}
               options={cameraLutBrandOptions.map((brand) => ({ value: brand.id, label: brand.label }))}
               value={brandId}
               onChange={(nextValue) => {
@@ -285,7 +300,8 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
               }}
             />
             <SelectControl
-              label="相机型号"
+              ariaLabel="相机型号"
+              label={<FieldLabel helpKey="cameraModel" label="相机型号" />}
               options={brandProfiles.map((profile) => ({
                 value: profile.id,
                 label: profile.modelName,
@@ -295,25 +311,29 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
               onChange={setProfileId}
             />
             <SelectControl
-              label="Log 曲线"
+              ariaLabel="Log 曲线"
+              label={<FieldLabel helpKey="logCurve" label="Log 曲线" />}
               options={selectedProfile.supportedLogProfiles.map((profile) => ({ value: profile, label: profile }))}
               value={selectedLogProfile}
               onChange={setSelectedLogProfile}
             />
             <SelectControl
-              label="Gamut"
+              ariaLabel="Gamut"
+              label={<FieldLabel helpKey="gamut" label="Gamut" />}
               options={selectedProfile.supportedGamuts.map((gamut) => ({ value: gamut, label: gamut }))}
               value={selectedGamut}
               onChange={setSelectedGamut}
             />
             <SelectControl
-              label="LUT 用途"
+              ariaLabel="LUT 用途"
+              label={<FieldLabel helpKey="lutUse" label="LUT 用途" />}
               options={lutUseOptions}
               value={lutUseType}
               onChange={(nextValue) => setLutUseType(nextValue as CameraLutUseType)}
             />
             <SelectControl
-              label="LUT 点数"
+              ariaLabel="LUT 点数"
+              label={<FieldLabel helpKey="lutCubeSize" label="LUT 点数" />}
               options={cubeSizeOptions.map((option) =>
                 option.value === "auto" ? { ...option, label: `自动推荐（${selectedProfile.recommendedCubeSize ?? 33} 点）` } : option
               )}
@@ -321,20 +341,23 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
               onChange={(nextValue) => setRequestedCubeSize(getRequestedSize(nextValue))}
             />
             <SelectControl
-              label="Range"
+              ariaLabel="Range"
+              label={<FieldLabel helpKey="range" label="Range" />}
               options={rangeOptions}
               value={range}
               onChange={(nextValue) => setRange(nextValue as CameraLutRange)}
             />
             <SelectControl
-              label="监看亮度模式"
+              ariaLabel="监看亮度模式"
+              label={<FieldLabel helpKey="monitoringMode" label="监看亮度模式" />}
               options={monitoringModeOptions}
               value={monitoringMode}
               onChange={(nextValue) => setMonitoringMode(nextValue as CameraMonitoringMode)}
             />
             {monitoringMode === "ettr-normalization" ? (
               <SelectControl
-                label="拍摄曝光目标"
+                ariaLabel="拍摄曝光目标"
+                label={<FieldLabel helpKey="shootingExposureTarget" label="拍摄曝光目标" />}
                 options={ettrTargetOptions}
                 value={`${ettrTargetEv}`}
                 onChange={(nextValue) => setEttrTargetEv(Number(nextValue))}
@@ -342,7 +365,8 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
             ) : null}
             {monitoringMode === "manual-brightness-offset" ? (
               <SelectControl
-                label="手动亮度偏移"
+                ariaLabel="手动亮度偏移"
+                label={<FieldLabel helpKey="manualBrightnessOffset" label="手动亮度偏移" />}
                 options={manualBrightnessOptions}
                 value={`${manualBrightnessOffsetEv}`}
                 onChange={(nextValue) => setManualBrightnessOffsetEv(Number(nextValue))}
@@ -352,7 +376,7 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
 
           <div className="camera-lut-profile-summary">
             <p>
-              <span>传感器 / 画幅</span>
+              <FieldLabel helpKey="sensorFormat" label="传感器 / 画幅" />
               <strong>{selectedProfile.sensorFormat ?? "unknown"}</strong>
             </p>
             <p>
@@ -360,7 +384,7 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
               <strong>{selectedProfile.recommendedCubeSize ?? 33}</strong>
             </p>
             <p>
-              <span>最终导出点数</span>
+              <FieldLabel helpKey="resolvedCubeSize" label="最终导出点数" />
               <strong>{resolvedSize}</strong>
             </p>
             <p>
@@ -368,7 +392,7 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
               <strong>{selectedProfile.maxCubeSize ?? "待官方确认"}</strong>
             </p>
             <p>
-              <span>数据状态</span>
+              <FieldLabel helpKey="dataStatus" label="数据状态" />
               <strong>{selectedProfile.dataStatus === "verified-official" ? "官方已确认" : "待官方确认"}</strong>
             </p>
           </div>
@@ -400,7 +424,7 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
             </p>
             <p>
               <span>Range</span>
-              <strong>{range === "legal" ? "Legal range（真实映射）" : range === "full" ? "Full range" : "自动 / 未知"}</strong>
+              <strong>{range === "legal" ? "Legal range（真实映射）" : range === "full" ? "Full range" : "自动 / 未知（当前按 Full 输出）"}</strong>
             </p>
             <p>
               <span>文件名</span>

@@ -11,6 +11,7 @@ import { defaultLutParameters, precisionOptions } from "../utils/lutMock";
 import { capturedFrameToMediaItem } from "../utils/videoFrame";
 import { BeforeAfterPreview } from "../components/lut/BeforeAfterPreview";
 import { CameraLutExportModal } from "../components/lut/CameraLutExportModal";
+import { LutUsageGuideModal } from "../components/lut/LutUsageGuideModal";
 import { MediaBin } from "../components/lut/MediaBin";
 import { PreviewLightbox } from "../components/lut/PreviewLightbox";
 import { VideoFrameCaptureModal } from "../components/lut/VideoFrameCaptureModal";
@@ -128,6 +129,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
   const [isVideoFrameModalOpen, setIsVideoFrameModalOpen] = useState(false);
   const [isPreviewLightboxOpen, setIsPreviewLightboxOpen] = useState(false);
   const [isCameraLutModalOpen, setIsCameraLutModalOpen] = useState(false);
+  const [isUsageGuideModalOpen, setIsUsageGuideModalOpen] = useState(false);
   const splitContainerRef = useRef<HTMLDivElement | null>(null);
   const previewStageRef = useRef<HTMLDivElement | null>(null);
   const mediaStateRef = useRef<WorkspaceMediaState>(mediaState);
@@ -805,7 +807,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
           />
         </div>
         <div className="export-footer-actions">
-          <button type="button" onClick={() => onNavigate("/export")}>
+          <button type="button" onClick={() => setIsUsageGuideModalOpen(true)}>
             <HelpCircle aria-hidden="true" />
             使用说明
           </button>
@@ -826,6 +828,16 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         isOpen={isCameraLutModalOpen}
         onClose={() => setIsCameraLutModalOpen(false)}
         onExport={handleExportCameraMonitoringLut}
+      />
+      <LutUsageGuideModal
+        hasReferenceImage={activeReference !== null}
+        hasTargetImage={activeTarget !== null}
+        inputColorConfig={inputColorConfig}
+        isOpen={isUsageGuideModalOpen}
+        lutName={lutName}
+        precision={parameters.precision}
+        selectedStyleName={activeStyleName}
+        onClose={() => setIsUsageGuideModalOpen(false)}
       />
       <PreviewLightbox
         afterAlt={`${activeStyleName} 效果图`}

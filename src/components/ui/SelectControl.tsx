@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 
@@ -19,7 +19,8 @@ interface SelectControlProps {
   readonly value: string;
   readonly options: readonly SelectControlOption[];
   readonly onChange: (value: string) => void;
-  readonly label?: string;
+  readonly label?: ReactNode;
+  readonly ariaLabel?: string;
   readonly disabled?: boolean;
   readonly placeholder?: string;
   readonly className?: string;
@@ -51,9 +52,10 @@ const getMenuPosition = (button: HTMLButtonElement): FloatingPosition => {
   };
 };
 
-export const SelectControl = ({ value, options, onChange, label, disabled = false, placeholder = "请选择", className = "" }: SelectControlProps) => {
+export const SelectControl = ({ value, options, onChange, label, ariaLabel, disabled = false, placeholder = "请选择", className = "" }: SelectControlProps) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const listboxId = useId();
+  const labelId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [position, setPosition] = useState<FloatingPosition | null>(null);
@@ -208,9 +210,11 @@ export const SelectControl = ({ value, options, onChange, label, disabled = fals
       : null;
 
   return (
-    <label className={`select-control custom-select-control ${className}`.trim()}>
-      {label !== undefined ? <span>{label}</span> : null}
+    <div className={`select-control custom-select-control ${className}`.trim()}>
+      {label !== undefined ? <span id={labelId}>{label}</span> : null}
       <button
+        aria-label={ariaLabel ?? (typeof label === "string" ? label : undefined)}
+        aria-labelledby={ariaLabel === undefined && typeof label !== "string" && label !== undefined ? labelId : undefined}
         aria-controls={isOpen ? listboxId : undefined}
         aria-expanded={isOpen}
         className="select-control-trigger"
@@ -225,6 +229,6 @@ export const SelectControl = ({ value, options, onChange, label, disabled = fals
         <ChevronDown aria-hidden="true" className={isOpen ? "open" : ""} />
       </button>
       {menu}
-    </label>
+    </div>
   );
 };

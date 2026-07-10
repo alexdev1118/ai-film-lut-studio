@@ -2349,6 +2349,73 @@ input[type="range"]:focus {
   overscroll-behavior: contain;
 }
 
+.field-label-with-help {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.help-popover-trigger {
+  display: inline-grid;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  place-items: center;
+  padding: 0;
+  color: rgba(157, 225, 238, 0.86);
+  border: 1px solid rgba(0, 242, 255, 0.22);
+  border-radius: 50%;
+  background: rgba(0, 242, 255, 0.06);
+  cursor: pointer;
+}
+
+.help-popover-trigger:hover,
+.help-popover-trigger[aria-expanded="true"] {
+  color: var(--primary);
+  border-color: rgba(0, 242, 255, 0.52);
+  background: rgba(0, 242, 255, 0.14);
+}
+
+.help-popover-trigger:focus-visible {
+  outline: 2px solid rgba(0, 242, 255, 0.62);
+  outline-offset: 2px;
+}
+
+.help-popover-trigger svg {
+  width: 11px;
+  height: 11px;
+}
+
+.help-popover {
+  position: fixed;
+  z-index: 8000;
+  display: grid;
+  gap: 8px;
+  max-height: min(320px, calc(100vh - 20px));
+  overflow-y: auto;
+  padding: 12px;
+  color: var(--text-muted);
+  border: 1px solid rgba(0, 242, 255, 0.24);
+  border-radius: 12px;
+  background:
+    linear-gradient(145deg, rgba(17, 28, 45, 0.98), rgba(4, 8, 15, 0.99)),
+    rgba(6, 10, 17, 0.98);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.56);
+  backdrop-filter: blur(18px);
+}
+
+.help-popover strong {
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.help-popover p {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
 .select-control-option {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -2938,6 +3005,10 @@ input[type="range"]:focus {
   text-overflow: ellipsis;
 }
 
+.camera-lut-profile-summary .field-label-with-help {
+  justify-content: flex-start;
+}
+
 .camera-lut-risk-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -2980,6 +3051,195 @@ input[type="range"]:focus {
 }
 
 .camera-lut-modal-footer {
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(4, 7, 13, 0.9);
+  backdrop-filter: blur(18px);
+}
+
+.lut-usage-guide-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 4350;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.74);
+  backdrop-filter: blur(18px);
+}
+
+.lut-usage-guide-modal {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(720px, 100%);
+  max-height: min(90vh, 780px);
+  overflow: hidden;
+  color: var(--text);
+  border: 1px solid rgba(0, 242, 255, 0.18);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(0, 242, 255, 0.12), transparent 36%),
+    radial-gradient(circle at 92% 5%, rgba(124, 92, 255, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(16, 21, 34, 0.99), rgba(3, 6, 12, 0.99));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.62);
+}
+
+.lut-usage-guide-header,
+.lut-usage-guide-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px;
+}
+
+.lut-usage-guide-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lut-usage-guide-header > div > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--primary);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.lut-usage-guide-header span svg,
+.lut-usage-guide-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.lut-usage-guide-header h2 {
+  margin: 6px 0 4px;
+  color: var(--text);
+  font-size: 1.3rem;
+}
+
+.lut-usage-guide-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.lut-usage-guide-close {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.045);
+  cursor: pointer;
+}
+
+.lut-usage-guide-body {
+  display: grid;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 18px;
+  overscroll-behavior: contain;
+}
+
+.lut-usage-guide-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.lut-usage-guide-summary p,
+.lut-usage-guide-card,
+.lut-usage-guide-warning {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.lut-usage-guide-summary p {
+  display: grid;
+  gap: 5px;
+}
+
+.lut-usage-guide-summary span,
+.lut-usage-guide-card p,
+.lut-usage-guide-card li,
+.lut-usage-guide-warning p {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.lut-usage-guide-summary strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lut-usage-guide-card {
+  display: grid;
+  gap: 8px;
+}
+
+.lut-usage-guide-card h3,
+.lut-usage-guide-warning strong {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.84rem;
+}
+
+.lut-usage-guide-card p,
+.lut-usage-guide-warning p {
+  margin: 0;
+}
+
+.lut-usage-guide-card ol,
+.lut-usage-guide-card ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.lut-usage-guide-card.compact ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.lut-usage-guide-card.compact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.lut-usage-guide-card.compact svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: var(--primary);
+}
+
+.lut-usage-guide-warning {
+  display: grid;
+  gap: 6px;
+  border-color: rgba(255, 206, 138, 0.2);
+  background: rgba(255, 138, 0, 0.06);
+}
+
+.lut-usage-guide-warning strong {
+  color: #ffce8a;
+}
+
+.lut-usage-guide-footer {
   justify-content: flex-end;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(4, 7, 13, 0.9);
@@ -3340,6 +3600,23 @@ input[type="range"]:focus {
 
   .video-frame-controls,
   .video-source-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-lut-modal-backdrop,
+  .lut-usage-guide-backdrop {
+    padding: 12px;
+  }
+
+  .camera-lut-form-grid,
+  .camera-lut-profile-summary,
+  .camera-lut-config-summary,
+  .lut-usage-guide-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-lut-name-row,
+  .camera-lut-note-grid {
     grid-template-columns: 1fr;
   }
 }
