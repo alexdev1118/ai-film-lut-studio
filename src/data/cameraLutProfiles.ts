@@ -1,4 +1,6 @@
 import type { CameraBrand, CameraLutSupportProfile, CameraLutUseType, SensorFormat } from "../types";
+import { getCameraDataSourceIdsForModel } from "./cameraDataSources";
+import { getCameraVerifiedFactIdsForModel } from "./cameraVerifiedFacts";
 
 interface CameraLutBrandOption {
   readonly id: CameraBrand;
@@ -36,6 +38,9 @@ const makeProfile = ({
   lutUseType = "unknown"
 }: CameraModelInput): CameraLutSupportProfile => {
   const normalizedModelId = modelName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const sourceIds = getCameraDataSourceIdsForModel(brand, modelName);
+  const verifiedFactIds = getCameraVerifiedFactIdsForModel(brand, modelName);
+  const hasEvidenceRegistry = sourceIds.length > 0;
 
   return {
     id: `${brand}-${normalizedModelId}`,
@@ -64,6 +69,8 @@ const makeProfile = ({
     monitoringNotes: defaultMonitoringNotes,
     warning: defaultWarning,
     dataStatus: "needs-official-confirmation",
+    ...(hasEvidenceRegistry ? { sourceIds, verifiedFactIds, firmwareScope: ["待按官方固件版本核验"] } : {}),
+    confidenceLevel: "unknown",
     officialSourceNeeded: true,
     sourceNotes: "需要补充官方说明书、厂商 LUT 导入文档或经用户实机验证的资料。"
   };

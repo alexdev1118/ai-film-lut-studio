@@ -17,6 +17,7 @@ import type {
 } from "../../types";
 import { generateCameraLutName, sanitizeLutName, type CameraLutNamingMode } from "../../utils/lutNaming";
 import { Button } from "../ui/Button";
+import { CameraDataStatusPanel } from "./CameraDataStatusPanel";
 import { HelpPopover } from "../ui/HelpPopover";
 import { SelectControl } from "../ui/SelectControl";
 import { lutHelpContent, type LutHelpKey } from "../../data/lutHelpContent";
@@ -396,6 +397,8 @@ export const CameraLutExportModal = ({ isOpen, isExporting, onClose, onExport }:
               <strong>{selectedProfile.dataStatus === "verified-official" ? "官方已确认" : "待官方确认"}</strong>
             </p>
           </div>
+
+          <CameraDataStatusPanel profile={selectedProfile} />
 
           <div className="camera-lut-config-summary">
             <p>

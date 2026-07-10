@@ -63,6 +63,39 @@ export type CameraLutRange = "full" | "legal" | "unknown";
 
 export type CameraLutDataStatus = "verified-official" | "placeholder" | "needs-official-confirmation";
 
+export type CameraDataSourceType =
+  | "official-manual"
+  | "official-support-page"
+  | "official-lut-download"
+  | "official-white-paper"
+  | "official-firmware-note"
+  | "community-test"
+  | "user-feedback"
+  | "internal-assumption";
+
+export type CameraDataVerificationStatus = "verified" | "partially-verified" | "conflicting" | "unverified";
+
+export type CameraVerifiedFactCategory =
+  | "lut-format"
+  | "lut-size"
+  | "lut-slots"
+  | "import-path"
+  | "monitoring-only"
+  | "baked-recording"
+  | "gamma"
+  | "gamut"
+  | "native-iso"
+  | "cine-ei"
+  | "zebra"
+  | "middle-gray"
+  | "white-clip"
+  | "range"
+  | "exposure-guidance"
+  | "firmware"
+  | "other";
+
+export type CameraDataConfidenceLevel = "official-confirmed" | "official-incomplete" | "community-consensus" | "experimental" | "unknown";
+
 export type MonitoringExposureOffset = "0" | "+1" | "+2" | "+3" | "custom";
 
 export type CameraMonitoringMode = "standard" | "ettr-normalization" | "manual-brightness-offset";
@@ -135,6 +168,11 @@ export interface CameraLutSupportProfile {
   readonly monitoringNotes: string;
   readonly warning: string;
   readonly dataStatus: CameraLutDataStatus;
+  readonly sourceIds?: readonly string[];
+  readonly verifiedFactIds?: readonly string[];
+  readonly lastVerifiedAt?: string;
+  readonly firmwareScope?: readonly string[];
+  readonly confidenceLevel: CameraDataConfidenceLevel;
   readonly officialSourceNeeded: boolean;
   readonly sourceNotes?: string;
 }
@@ -150,7 +188,45 @@ export interface CameraExposureGuide {
   readonly whiteClipIre?: string;
   readonly notes: string;
   readonly dataStatus: CameraLutDataStatus;
+  readonly sourceIds?: readonly string[];
+  readonly verifiedFactIds?: readonly string[];
+  readonly lastVerifiedAt?: string;
+  readonly firmwareScope?: readonly string[];
+  readonly confidenceLevel: CameraDataConfidenceLevel;
   readonly sourceNeeded: boolean;
+}
+
+export interface CameraDataSource {
+  readonly id: string;
+  readonly brand: CameraBrand;
+  readonly model: string;
+  readonly documentTitle: string;
+  readonly sourceType: CameraDataSourceType;
+  readonly url?: string;
+  readonly documentVersion?: string;
+  readonly firmwareVersion?: string;
+  readonly language?: string;
+  readonly pageNumber?: string;
+  readonly section?: string;
+  readonly retrievedAt?: string;
+  readonly verifiedAt?: string;
+  readonly verificationStatus: CameraDataVerificationStatus;
+  readonly notes?: string;
+}
+
+export interface CameraVerifiedFact {
+  readonly id: string;
+  readonly brand: CameraBrand;
+  readonly model: string;
+  readonly category: CameraVerifiedFactCategory;
+  readonly field: string;
+  readonly value: string;
+  readonly unit?: string;
+  readonly sourceIds: readonly string[];
+  readonly confidence: CameraDataConfidenceLevel;
+  readonly appliesToFirmware?: readonly string[];
+  readonly lastVerifiedAt?: string;
+  readonly notes?: string;
 }
 
 export interface CameraMonitoringExposureConfig {

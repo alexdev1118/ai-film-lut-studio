@@ -3005,6 +3005,101 @@ input[type="range"]:focus {
   text-overflow: ellipsis;
 }
 
+.camera-data-status-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255, 206, 138, 0.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 138, 0, 0.07), rgba(0, 242, 255, 0.03)),
+    rgba(0, 0, 0, 0.2);
+}
+
+.camera-data-status-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.camera-data-status-panel > header span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.camera-data-status-panel > header span svg {
+  width: 16px;
+  height: 16px;
+  color: #ffce8a;
+}
+
+.camera-data-status-panel > header > strong {
+  padding: 4px 8px;
+  color: #ffce8a;
+  border: 1px solid rgba(255, 206, 138, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 138, 0, 0.08);
+  font-size: 0.68rem;
+}
+
+.camera-data-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.camera-data-status-grid p {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.camera-data-status-grid span {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+}
+
+.camera-data-status-grid strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.camera-data-status-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  color: #ffce8a;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.camera-data-status-warning svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.camera-data-status-conflict {
+  margin: 0;
+  color: #ff8f8f;
+  font-size: 0.74rem;
+}
+
 .camera-lut-profile-summary .field-label-with-help {
   justify-content: flex-start;
 }
@@ -3611,6 +3706,7 @@ input[type="range"]:focus {
   .camera-lut-form-grid,
   .camera-lut-profile-summary,
   .camera-lut-config-summary,
+  .camera-data-status-grid,
   .lut-usage-guide-summary {
     grid-template-columns: 1fr;
   }
