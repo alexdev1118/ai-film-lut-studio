@@ -1,0 +1,70 @@
+[
+  {
+    "id": "panasonic-s5-iix", "brand": "panasonic", "model": "S5 IIX", "aliases": ["DC-S5M2X"], "productCategory": "mirrorless", "sensorFormat": "full-frame", "sensorDimensions": "unknown",
+    "firmwareScope": [{ "status": "documented", "minVersion": "2.10", "notes": "The reviewed Panasonic Real Time LUT workflow page requires firmware 2.1 for the described LUMIX Lab workflow." }],
+    "supportedGammas": [{ "gamma": "V-Log", "sourceIds": ["panasonic-global-lut-download"], "verificationStatus": "verified" }], "supportedGamuts": [{ "gamut": "V-Gamut", "compatibleGammas": ["V-Log"], "sourceIds": ["panasonic-global-lut-download"], "verificationStatus": "verified" }],
+    "lutCapability": { "userLutImport": true, "userLutFileFormats": [".vlt", ".cube"], "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": true, "monitorOnlySupport": false, "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": true, "stillPhotoLutSupport": true, "videoLutSupport": true, "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["panasonic-vlog-v709-v35"],
+    "verifiedFactIds": ["panasonic-s5iix-real-time-lut", "panasonic-s5iix-lut-formats", "panasonic-s5iix-baked-photo-video", "panasonic-s5iix-firmware"], "sourceIds": ["panasonic-s5iix-real-time-lut", "panasonic-global-lut-download"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorDimensions", "supportedCubeSizes", "fileNameLimit", "cardPath", "slotCount", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "panasonic-gh7", "brand": "panasonic", "model": "GH7", "aliases": ["DC-GH7"], "productCategory": "mirrorless", "sensorFormat": "mft", "sensorDimensions": "unknown",
+    "firmwareScope": [{ "status": "documented", "minVersion": "1.30", "notes": "The reviewed Panasonic product page associates current LUMIX Lab functions with firmware 1.3; base Real Time LUT availability is documented separately." }],
+    "supportedGammas": [{ "gamma": "V-Log", "sourceIds": ["panasonic-global-lut-download"], "verificationStatus": "verified" }], "supportedGamuts": [{ "gamut": "V-Gamut", "compatibleGammas": ["V-Log"], "sourceIds": ["panasonic-global-lut-download"], "verificationStatus": "verified" }],
+    "lutCapability": { "userLutImport": true, "userLutFileFormats": [".vlt", ".cube"], "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": true, "monitorOnlySupport": false, "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": true, "stillPhotoLutSupport": true, "videoLutSupport": true, "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["panasonic-vlog-v709-v35"],
+    "verifiedFactIds": ["panasonic-gh7-sensor-format", "panasonic-gh7-real-time-lut", "panasonic-gh7-lut-formats", "panasonic-gh7-baked-photo-video"], "sourceIds": ["panasonic-gh7-product", "panasonic-gh7-quick-guide", "panasonic-global-lut-download"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorDimensions", "supportedCubeSizes", "fileNameLimit", "cardPath", "slotCount", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "dji-osmo-pocket-3", "brand": "dji", "model": "Osmo Pocket 3", "aliases": [], "productCategory": "action", "sensorFormat": "1-inch", "sensorDimensions": "unknown", "firmwareScope": [{ "status": "unknown", "notes": "The official download page does not tie the LUT to a minimum firmware version." }],
+    "supportedGammas": [{ "gamma": "D-Log M", "sourceIds": ["dji-pocket3-downloads", "dji-pocket3-faq"], "verificationStatus": "verified" }], "supportedGamuts": "unknown",
+    "lutCapability": { "userLutImport": "unknown", "userLutFileFormats": "unknown", "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": "unknown", "monitorOnlySupport": "unknown", "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": "unknown", "stillPhotoLutSupport": "unknown", "videoLutSupport": "unknown", "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["dji-pocket3-dlogm-rec709-v1"], "verifiedFactIds": ["dji-pocket3-sensor", "dji-pocket3-dlogm", "dji-pocket3-official-lut"], "sourceIds": ["dji-pocket3-downloads", "dji-pocket3-faq"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorDimensions", "supportedGamuts", "userLutImport", "supportedCubeSizes", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "dji-osmo-action-5-pro", "brand": "dji", "model": "Osmo Action 5 Pro", "aliases": [], "productCategory": "action", "sensorFormat": "unknown", "sensorDimensions": "unknown", "firmwareScope": [{ "status": "unknown", "notes": "No firmware minimum was recorded from the download page." }],
+    "supportedGammas": [{ "gamma": "D-Log M", "sourceIds": ["dji-action5-downloads"], "verificationStatus": "verified" }], "supportedGamuts": "unknown",
+    "lutCapability": { "userLutImport": "unknown", "userLutFileFormats": "unknown", "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": "unknown", "monitorOnlySupport": "unknown", "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": "unknown", "stillPhotoLutSupport": "unknown", "videoLutSupport": "unknown", "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["dji-action5-dlogm-rec709-v1"], "verifiedFactIds": ["dji-action5-dlogm", "dji-action5-official-lut"], "sourceIds": ["dji-action5-downloads"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorFormat", "sensorDimensions", "supportedGamuts", "userLutImport", "supportedCubeSizes", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "dji-mavic-3-pro", "brand": "dji", "model": "Mavic 3 Pro", "aliases": [], "productCategory": "drone", "sensorFormat": "unknown", "sensorDimensions": "unknown", "firmwareScope": [{ "status": "unknown", "notes": "The LUT download page is product-specific but does not define a minimum aircraft firmware." }],
+    "supportedGammas": [{ "gamma": "D-Log", "sourceIds": ["dji-mavic3pro-downloads"], "verificationStatus": "verified" }, { "gamma": "D-Log M", "sourceIds": ["dji-mavic3pro-downloads"], "verificationStatus": "verified" }], "supportedGamuts": "unknown",
+    "lutCapability": { "userLutImport": "unknown", "userLutFileFormats": "unknown", "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": "unknown", "monitorOnlySupport": "unknown", "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": "unknown", "stillPhotoLutSupport": "unknown", "videoLutSupport": "unknown", "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["dji-mavic3-dlog-rec709-v1", "dji-mavic3-dlogm-rec709-v1"], "verifiedFactIds": ["dji-mavic3pro-log-curves", "dji-mavic3pro-official-luts"], "sourceIds": ["dji-mavic3pro-downloads"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorFormat", "sensorDimensions", "supportedGamuts", "userLutImport", "supportedCubeSizes", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "arri-alexa-35", "brand": "arri", "model": "ALEXA 35", "aliases": [], "productCategory": "cinema", "sensorFormat": "s35", "sensorDimensions": "unknown", "firmwareScope": [{ "status": "unknown", "notes": "LogC4/AWG4 is a platform color-science capability; specific camera software scope remains linked to the current ARRI documentation." }],
+    "supportedGammas": [{ "gamma": "LogC4", "sourceIds": ["arri-alexa35-color-science"], "verificationStatus": "verified" }], "supportedGamuts": [{ "gamut": "ARRI Wide Gamut 4", "compatibleGammas": ["LogC4"], "sourceIds": ["arri-alexa35-color-science"], "verificationStatus": "verified" }],
+    "lutCapability": { "userLutImport": true, "userLutFileFormats": [".cube", ".alf4"], "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": true, "monitorOnlySupport": true, "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": "unknown", "stillPhotoLutSupport": false, "videoLutSupport": true, "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["arri-logc4-rec709-package-2025"], "verifiedFactIds": ["arri-alexa35-logc4-awg4", "arri-alexa35-logc4-package", "arri-logc3-logc4-separation"], "sourceIds": ["arri-alexa35-color-science", "arri-logc4-downloads", "arri-color-faq"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorDimensions", "supportedCubeSizes", "fileNameLimit", "cardPath", "slotCount", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance", "bakedRecordingSupport"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "red-komodo-x", "brand": "red", "model": "KOMODO-X", "aliases": [], "productCategory": "cinema", "sensorFormat": "s35", "sensorDimensions": "unknown", "firmwareScope": [{ "status": "unknown", "notes": "The current official operation guide was reviewed without converting it into a firmware-wide guarantee." }],
+    "supportedGammas": [{ "gamma": "Log3G10", "sourceIds": ["red-ipp2-output-transforms", "red-komodox-output-space"], "verificationStatus": "verified" }], "supportedGamuts": [{ "gamut": "REDWideGamutRGB", "compatibleGammas": ["Log3G10"], "sourceIds": ["red-ipp2-output-transforms", "red-komodox-output-space"], "verificationStatus": "verified" }],
+    "lutCapability": { "userLutImport": true, "userLutFileFormats": [".cube"], "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": true, "monitorOnlySupport": "unknown", "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": true, "stillPhotoLutSupport": false, "videoLutSupport": true, "embeddedLutMetadata": true },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["red-ipp2-output-presets"], "verifiedFactIds": ["red-komodox-rwg-log3g10", "red-komodox-recording-behavior", "red-ipp2-stage-order"], "sourceIds": ["red-komodox-output-space", "red-ipp2-output-transforms", "red-lut-downloads"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorDimensions", "supportedCubeSizes", "fileNameLimit", "cardPath", "slotCount", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance", "monitorOnlySupport"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  },
+  {
+    "id": "red-v-raptor", "brand": "red", "model": "V-RAPTOR", "aliases": ["V-RAPTOR 8K VV"], "productCategory": "cinema", "sensorFormat": "full-frame", "sensorDimensions": "unknown", "firmwareScope": [{ "status": "unknown", "notes": "The current official operation guide was reviewed without converting it into a firmware-wide guarantee." }],
+    "supportedGammas": [{ "gamma": "Log3G10", "sourceIds": ["red-ipp2-output-transforms", "red-vraptor-sdi"], "verificationStatus": "verified" }], "supportedGamuts": [{ "gamut": "REDWideGamutRGB", "compatibleGammas": ["Log3G10"], "sourceIds": ["red-ipp2-output-transforms", "red-vraptor-sdi"], "verificationStatus": "verified" }],
+    "lutCapability": { "userLutImport": true, "userLutFileFormats": [".cube"], "supportedCubeSizes": "unknown", "fileNameLimit": "unknown", "cardPath": "unknown", "slotCount": "unknown", "rangeSupport": "unknown" },
+    "monitoringCapability": { "displayLut": true, "monitorOnlySupport": true, "gammaDisplayAssist": "unknown" }, "recordingCapability": { "bakedRecordingSupport": "unknown", "stillPhotoLutSupport": false, "videoLutSupport": true, "embeddedLutMetadata": "unknown" },
+    "exposure": { "baseIsoOrEi": "unknown", "officialExposureGuidance": "unknown", "sourceIds": [] }, "officialTechnicalLutIds": ["red-ipp2-output-presets"], "verifiedFactIds": ["red-vraptor-rwg-log3g10-monitor", "red-vraptor-ipp2-stage-order"], "sourceIds": ["red-vraptor-sdi", "red-ipp2-output-transforms", "red-lut-downloads"], "communityNoteIds": [],
+    "unresolvedFields": ["sensorDimensions", "supportedCubeSizes", "fileNameLimit", "cardPath", "slotCount", "rangeSupport", "baseIsoOrEi", "officialExposureGuidance", "bakedRecordingSupport"], "confidenceLevel": "official-incomplete", "lastVerifiedAt": "2026-07-10"
+  }
+]

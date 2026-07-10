@@ -81,6 +81,8 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
   const displayLookName = lastExportResult?.lookName ?? lookName;
   const outputColorSpace = lastExportResult?.outputColorSpace ?? "Rec.709";
   const sourceHint = `${lastExportResult?.sourceHintBrand ?? inputColorConfig.brand ?? inputColorConfig.brandId} / ${lastExportResult?.sourceHintGamma ?? inputColorConfig.gamma ?? "Rec.709"}`;
+  const hasTechnicalTransform =
+    lastExportResult?.technicalTransformFileName !== undefined && lastExportResult.technicalTransformVerification !== "none";
 
   return (
     <div className="export-page">
@@ -140,6 +142,24 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
                 <strong>{lastExportResult?.verificationStatus === "verified" ? "已验证" : "TEST / 待官方确认"}</strong>
               </p>
             ) : null}
+            {hasTechnicalTransform ? (
+              <p>
+                <span>技术转换文件</span>
+                <strong>{lastExportResult?.technicalTransformFileName}</strong>
+              </p>
+            ) : null}
+            {hasTechnicalTransform ? (
+              <p>
+                <span>技术转换核验</span>
+                <strong>{lastExportResult?.technicalTransformVerification === "verified-official" ? "官方文件哈希已核验" : "用户本地文件 / 未核验"}</strong>
+              </p>
+            ) : null}
+            {lastExportResult?.technicalTransformSourceId === undefined ? null : (
+              <p>
+                <span>技术转换来源 ID</span>
+                <strong>{lastExportResult.technicalTransformSourceId}</strong>
+              </p>
+            )}
           </div>
           <p className="export-note">{selectedProfile.warning}</p>
         </article>
@@ -149,7 +169,7 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             <Info aria-hidden="true" />
             <h2>使用定位</h2>
           </div>
-          <p>{isCameraMonitoring ? "这是相机监看 LUT，不是后期技术转换 LUT。请先确认相机的导入能力和监看 / 录制行为，再用于实际拍摄。" : "当前 LUT 适合用于 Rec.709 或已还原素材。如果是 S-Log3 / C-Log / D-Log / V-Log 等素材，建议先完成基础色彩空间转换，再叠加本 LUT。"}</p>
+          <p>{isCameraMonitoring ? hasTechnicalTransform ? "当前相机监看 LUT 已按“本地技术转换 → 创意风格 → 监看亮度 → Range”顺序合成；文件未通过登记哈希核验时仍是 TEST。" : "这是相机监看 LUT，当前未绑定技术转换。请先确认相机的导入能力和监看 / 录制行为，再用于实际拍摄。" : "当前 LUT 适合用于 Rec.709 或已还原素材。如果是 S-Log3 / C-Log / D-Log / V-Log 等素材，建议先完成基础色彩空间转换，再叠加本 LUT。"}</p>
           <p>{isCameraMonitoring ? "当前机型资料未完成官方核验时，导出名称会包含 TEST；请小范围测试后再用于正式工作。" : "它不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。"}</p>
         </article>
       </section>

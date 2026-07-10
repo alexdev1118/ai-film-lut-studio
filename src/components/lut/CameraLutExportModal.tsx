@@ -6,6 +6,8 @@ import {
   getCameraLutProfileById,
   getCameraLutProfilesByBrand
 } from "../../data/cameraLutProfiles";
+import { getTechnicalTransformRegistryMatches } from "../../data/technicalTransformRegistry";
+import { importLocalTechnicalTransform } from "../../services/technicalTransformService";
 import type {
   CameraBrand,
   CameraLutCubeSize,
@@ -13,7 +15,8 @@ import type {
   CameraLutSupportProfile,
   CameraLutUseType,
   CameraMonitoringExposureConfig,
-  CameraMonitoringMode
+  CameraMonitoringMode,
+  TechnicalTransformBinding
 } from "../../types";
 import { generateCameraLutName, sanitizeLutName, type CameraLutNamingMode } from "../../utils/lutNaming";
 import { Button } from "../ui/Button";
@@ -21,6 +24,7 @@ import { CameraDataStatusPanel } from "./CameraDataStatusPanel";
 import { HelpPopover } from "../ui/HelpPopover";
 import { SelectControl } from "../ui/SelectControl";
 import { lutHelpContent, type LutHelpKey } from "../../data/lutHelpContent";
+import { TechnicalTransformStatus } from "./TechnicalTransformStatus";
 
 type RequestedCameraCubeSize = CameraLutCubeSize | "auto";
 
@@ -33,14 +37,17 @@ interface CameraLutExportFormValue {
   readonly requestedCubeSize: RequestedCameraCubeSize;
   readonly range: CameraLutRange;
   readonly exposureConfig: CameraMonitoringExposureConfig;
+  readonly technicalTransform?: TechnicalTransformBinding;
 }
 
 interface CameraLutExportModalProps {
   readonly isOpen: boolean;
   readonly isExporting: boolean;
   readonly lookName: string;
+  readonly technicalTransform: TechnicalTransformBinding | null;
   readonly onClose: () => void;
   readonly onExport: (value: CameraLutExportFormValue) => Promise<void>;
+  readonly onTechnicalTransformChange: (value: TechnicalTransformBinding | null) => void;
 }
 
 const allLutUseOptions: readonly { readonly value: CameraLutUseType; readonly label: string; readonly description: string }[] = [
@@ -159,11 +166,20 @@ const FieldLabel = ({ label, helpKey }: FieldLabelProps) => (
   </span>
 );
 
-export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, onExport }: CameraLutExportModalProps) => {
-  const [brandId, setBrandId] = useState<CameraBrand>(defaultCameraLutProfile.brand);
-  const [profileId, setProfileId] = useState(defaultCameraLutProfile.id);
-  const [selectedLogProfile, setSelectedLogProfile] = useState(defaultCameraLutProfile.supportedLogProfiles[0] ?? "Unknown");
-  const [selectedGamut, setSelectedGamut] = useState(defaultCameraLutProfile.supportedGamuts[0] ?? "Unknown");
+export const CameraLutExportModal = ({
+  isOpen,
+  isExporting,
+  lookName,
+  technicalTransform,
+  onClose,
+  onExport,
+  onTechnicalTransformChange
+}: CameraLutExportModalProps) => {
+  const initialProfile = technicalTransform === null ? defaultCameraLutProfile : getCameraLutProfileById(technicalTransform.modelId);
+  const [brandId, setBrandId] = useState<CameraBrand>(initialProfile.brand);
+  const [profileId, setProfileId] = useState(initialProfile.id);
+  const [selectedLogProfile, setSelectedLogProfile] = useState(technicalTransform?.inputGamma ?? initialProfile.supportedLogProfiles[0] ?? "Unknown");
+  const [selectedGamut, setSelectedGamut] = useState(technicalTransform?.inputGamut ?? initialProfile.supportedGamuts[0] ?? "Unknown");
   const [lutUseType, setLutUseType] = useState<CameraLutUseType>("monitoring");
   const [requestedCubeSize, setRequestedCubeSize] = useState<RequestedCameraCubeSize>("auto");
   const [range, setRange] = useState<CameraLutRange>("unknown");
@@ -173,6 +189,9 @@ export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, o
   const [monitoringMode, setMonitoringMode] = useState<CameraMonitoringMode>("standard");
   const [ettrTargetEv, setEttrTargetEv] = useState(2);
   const [manualBrightnessOffsetEv, setManualBrightnessOffsetEv] = useState(0);
+  const [technicalTransformWarnings, setTechnicalTransformWarnings] = useState<readonly string[]>([]);
+  const [technicalTransformError, setTechnicalTransformError] = useState("");
+  const [isImportingTechnicalTransform, setIsImportingTechnicalTransform] = useState(false);
 
   const brandProfiles = useMemo(() => getCameraLutProfilesByBrand(brandId), [brandId]);
   const selectedProfile = useMemo(() => getCameraLutProfileById(profileId), [profileId]);
@@ -190,6 +209,10 @@ export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, o
       ? allLutUseOptions
       : allLutUseOptions.filter((option) => option.value === "monitoring");
   const nameTooLong = finalLutName.length > 80;
+  const technicalRegistryMatches = useMemo(
+    () => getTechnicalTransformRegistryMatches(selectedProfile.id, selectedLogProfile, selectedGamut),
+    [selectedGamut, selectedLogProfile, selectedProfile.id]
+  );
 
   useEffect(() => {
     if (brandProfiles.length > 0 && !brandProfiles.some((profile) => profile.id === profileId)) {
@@ -198,11 +221,24 @@ export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, o
   }, [brandProfiles, profileId]);
 
   useEffect(() => {
-    setSelectedLogProfile(selectedProfile.supportedLogProfiles[0] ?? "Unknown");
-    setSelectedGamut(selectedProfile.supportedGamuts[0] ?? "Unknown");
+    setSelectedLogProfile((current) => selectedProfile.supportedLogProfiles.includes(current) ? current : selectedProfile.supportedLogProfiles[0] ?? "Unknown");
+    setSelectedGamut((current) => selectedProfile.supportedGamuts.includes(current) ? current : selectedProfile.supportedGamuts[0] ?? "Unknown");
     setLutUseType("monitoring");
     setRange(selectedProfile.range ?? "unknown");
   }, [selectedProfile]);
+
+  useEffect(() => {
+    if (
+      technicalTransform !== null &&
+      (technicalTransform.modelId !== selectedProfile.id ||
+        technicalTransform.inputGamma !== selectedLogProfile ||
+        technicalTransform.inputGamut !== selectedGamut)
+    ) {
+      onTechnicalTransformChange(null);
+      setTechnicalTransformWarnings([]);
+      setTechnicalTransformError("");
+    }
+  }, [onTechnicalTransformChange, selectedGamut, selectedLogProfile, selectedProfile.id, technicalTransform]);
 
   useEffect(() => {
     if (isAutoNaming) {
@@ -239,8 +275,36 @@ export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, o
       lutUseType,
       requestedCubeSize,
       range,
-      exposureConfig
+      exposureConfig,
+      ...(technicalTransform === null ? {} : { technicalTransform })
     });
+  };
+
+  const handleTechnicalTransformImport = async (file: File): Promise<void> => {
+    try {
+      setIsImportingTechnicalTransform(true);
+      setTechnicalTransformError("");
+      setTechnicalTransformWarnings([]);
+      const result = await importLocalTechnicalTransform({
+        file,
+        modelId: selectedProfile.id,
+        inputGamma: selectedLogProfile,
+        inputGamut: selectedGamut
+      });
+      onTechnicalTransformChange(result.binding);
+      setTechnicalTransformWarnings(result.warnings);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "技术 LUT 导入失败，请更换文件";
+      setTechnicalTransformError(message);
+    } finally {
+      setIsImportingTechnicalTransform(false);
+    }
+  };
+
+  const clearTechnicalTransform = (): void => {
+    onTechnicalTransformChange(null);
+    setTechnicalTransformWarnings([]);
+    setTechnicalTransformError("");
   };
 
   return (
@@ -253,7 +317,7 @@ export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, o
               相机监看 LUT
             </span>
             <h2>导出相机监看 LUT V1</h2>
-            <p>用于部分支持导入 LUT 的相机内监看。当前不是官方技术转换 LUT。</p>
+            <p>可选绑定用户本地技术 LUT，再叠加创意风格；未通过文件哈希核验时继续保持 TEST。</p>
           </div>
           <button className="camera-lut-close" aria-label="关闭相机监看 LUT 导出" type="button" onClick={onClose}>
             <X aria-hidden="true" />
@@ -400,6 +464,21 @@ export const CameraLutExportModal = ({ isOpen, isExporting, lookName, onClose, o
           </div>
 
           <CameraDataStatusPanel profile={selectedProfile} />
+
+          <TechnicalTransformStatus
+            binding={technicalTransform}
+            error={technicalTransformError}
+            inputGamma={selectedLogProfile}
+            inputGamut={selectedGamut}
+            isImporting={isImportingTechnicalTransform}
+            lookName={lookName}
+            matchingAssetCount={technicalRegistryMatches.length}
+            monitorModeLabel={getExposureModeLabel(exposureConfig)}
+            range={range}
+            warnings={technicalTransformWarnings}
+            onClear={clearTechnicalTransform}
+            onFileSelected={handleTechnicalTransformImport}
+          />
 
           <div className="camera-lut-config-summary">
             <p>

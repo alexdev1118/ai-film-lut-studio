@@ -35,6 +35,9 @@ export const History = () => {
           sourceHintBrand: lastExportResult.sourceHintBrand,
           sourceHintGamma: lastExportResult.sourceHintGamma,
           verificationStatus: lastExportResult.verificationStatus,
+          technicalTransformFileName: lastExportResult.technicalTransformFileName,
+          technicalTransformSourceId: lastExportResult.technicalTransformSourceId,
+          technicalTransformVerification: lastExportResult.technicalTransformVerification,
           workflowSummary: lastExportResult.exportKind === "camera-monitoring" ? "相机监看测试，需按机型继续核验。" : "先完成技术转换，再作为创意 Look 使用。",
           styleIntensity: parameters.intensity,
           passedValidation: lastExportResult.isValid ?? false,
@@ -66,7 +69,10 @@ export const History = () => {
           {records.map((record) => (
             <div className="history-row" key={record.id}>
               <span>{record.fileName}</span>
-              <span><strong className="export-type-code">{record.exportTypeCode}</strong> {record.lutType}{record.verificationStatus === "TEST" ? " / TEST" : ""}</span>
+              <span title={record.technicalTransformFileName === undefined ? undefined : `技术转换：${record.technicalTransformFileName}`}>
+                <strong className="export-type-code">{record.exportTypeCode}</strong> {record.lutType}{record.verificationStatus === "TEST" ? " / TEST" : ""}
+                {record.technicalTransformFileName === undefined ? "" : ` / 技术：${record.technicalTransformVerification ?? "user-supplied-unverified"}`}
+              </span>
               <span>
                 {record.cameraBrand} / {record.gamma}
               </span>

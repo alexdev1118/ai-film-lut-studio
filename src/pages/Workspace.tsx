@@ -5,7 +5,7 @@ import { previewImages } from "../data/mockImages";
 import { lutStyles } from "../data/styles";
 import { exportCameraMonitoringLut, exportCubeLut, generateLocalColorPreview } from "../services/lutService";
 import { revokeWorkspacePreviewResult, useWorkspaceState } from "../state/WorkspaceContext";
-import type { CameraBrand, CameraLutCubeSize, CameraLutRange, CameraLutSupportProfile, CameraLutUseType, CameraMonitoringExposureConfig, CapturedFrame, LutParameters, LutPrecision, MediaItem, RoutePath, WorkspaceMediaState } from "../types";
+import type { CameraBrand, CameraLutCubeSize, CameraLutRange, CameraLutSupportProfile, CameraLutUseType, CameraMonitoringExposureConfig, CapturedFrame, LutParameters, LutPrecision, MediaItem, RoutePath, TechnicalTransformBinding, WorkspaceMediaState } from "../types";
 import { formatFileSize, getImageMetadata, getImageSourceFromCssBackground, getReadableImageType, revokeMediaItem, toUploadedMediaItem } from "../utils/image";
 import { defaultLutParameters } from "../utils/lutMock";
 import { capturedFrameToMediaItem } from "../utils/videoFrame";
@@ -116,7 +116,9 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     selectedStyleKey,
     setSelectedStyleKey,
     lastExportResult,
-    setLastExportResult
+    setLastExportResult,
+    technicalTransform,
+    setTechnicalTransform
   } = useWorkspaceState();
 
   const selectedStyle = useMemo(() => {
@@ -271,7 +273,8 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         parameters,
         skinToneProtection: skinProtect,
         preserveLuma,
-        preventOversaturation: avoidOversaturation
+        preventOversaturation: avoidOversaturation,
+        technicalTransform: technicalTransform ?? undefined
       });
 
       if (requestId !== previewRequestIdRef.current) {
@@ -325,7 +328,8 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     preserveLuma,
     avoidOversaturation,
     skinProtect,
-    canvasTargetImageUrl
+    canvasTargetImageUrl,
+    technicalTransform
   ]);
 
   const handleTargetImageFileChange = async (file: File) => {
@@ -524,6 +528,7 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
     readonly requestedCubeSize: CameraLutCubeSize | "auto";
     readonly range: CameraLutRange;
     readonly exposureConfig: CameraMonitoringExposureConfig;
+    readonly technicalTransform?: TechnicalTransformBinding;
   }) => {
     if (isExportingCameraLut) {
       return;
@@ -544,7 +549,8 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         skinToneProtection: skinProtect,
         preserveLuma,
         preventOversaturation: avoidOversaturation,
-        referenceImageUrl: activeReference?.url
+        referenceImageUrl: activeReference?.url,
+        technicalTransform: value.technicalTransform
       });
       setLastExportResult(exportResult);
       setMessage(
@@ -841,8 +847,10 @@ export const Workspace = ({ selectedStyleName, onNavigate }: WorkspaceProps) => 
         isExporting={isExportingCameraLut}
         isOpen={isCameraLutModalOpen}
         lookName={lookName}
+        technicalTransform={technicalTransform}
         onClose={() => setIsCameraLutModalOpen(false)}
         onExport={handleExportCameraMonitoringLut}
+        onTechnicalTransformChange={setTechnicalTransform}
       />
       <CustomLutNameModal
         automaticName={autoPostLutName}

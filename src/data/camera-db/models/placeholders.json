@@ -1,0 +1,14 @@
+[
+  { "id": "canon-pending", "brand": "canon", "models": [], "status": "pending-official-research" },
+  { "id": "fujifilm-pending", "brand": "fujifilm", "models": [], "status": "pending-official-research" },
+  { "id": "nikon-pending", "brand": "nikon", "models": [], "status": "pending-official-research" },
+  { "id": "blackmagic-pending", "brand": "blackmagic", "models": [], "status": "pending-official-research" },
+  { "id": "gopro-pending", "brand": "gopro", "models": [], "status": "pending-official-research" },
+  { "id": "insta360-pending", "brand": "insta360", "models": [], "status": "pending-official-research" },
+  { "id": "kinefinity-pending", "brand": "kinefinity", "models": [], "status": "pending-official-research" },
+  { "id": "zcam-pending", "brand": "zcam", "models": [], "status": "pending-official-research" },
+  { "id": "leica-pending", "brand": "leica", "models": [], "status": "pending-official-research" },
+  { "id": "sigma-pending", "brand": "sigma", "models": [], "status": "pending-official-research" },
+  { "id": "olympus-pending", "brand": "olympus", "models": [], "status": "pending-official-research" },
+  { "id": "apple-pending", "brand": "apple", "models": [], "status": "pending-official-research" }
+]

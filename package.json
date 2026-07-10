@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "validate:camera-data": "node scripts/validate-camera-data.mjs",
+    "test:lut-pipeline": "node scripts/run-lut-pipeline-tests.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "6.0.3",

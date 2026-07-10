@@ -1,5 +1,5 @@
 import type { ColorPreviewResult, GenerateColorPreviewParams, RgbColor } from "../types";
-import { applyLookToRgb } from "./cubeExport";
+import { applyColorPipelineToRgb } from "./cubeCompose";
 
 interface LoadedImage {
   readonly image: HTMLImageElement;
@@ -169,6 +169,7 @@ export const generateColorPreview = async ({
   targetImageUrl,
   referenceImageUrl,
   adjustments,
+  technicalTransform,
   maxSize = DEFAULT_MAX_SIZE
 }: GenerateColorPreviewParams): Promise<ColorPreviewResult> => {
   try {
@@ -177,16 +178,24 @@ export const generateColorPreview = async ({
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     const referenceAverage = referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(referenceImageUrl, maxSize);
+    const pipeline = {
+      ...(technicalTransform === undefined ? {} : { inputTechnicalTransform: technicalTransform }),
+      creativeLookTransform: {
+        adjustments,
+        ...(referenceAverage === undefined ? {} : { referenceAverageColor: referenceAverage })
+      },
+      monitorAdjustment: { brightnessOffsetEv: 0 },
+      rangeMapping: "full" as const
+    };
 
     for (let index = 0; index < data.length; index += 4) {
-      const output = applyLookToRgb(
+      const output = applyColorPipelineToRgb(
         {
           r: data[index] / 255,
           g: data[index + 1] / 255,
           b: data[index + 2] / 255
         },
-        adjustments,
-        referenceAverage
+        pipeline
       );
 
       data[index] = clamp(output.r * 255);

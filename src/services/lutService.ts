@@ -78,6 +78,7 @@ export const generateLocalColorPreview = async (params: GenerateLocalPreviewPara
         preserveLuma: params.preserveLuma,
         preventOversaturation: params.preventOversaturation
       },
+      technicalTransform: params.technicalTransform,
       maxSize: 1600
     });
 
@@ -188,7 +189,8 @@ export const exportCameraMonitoringLut = async (params: CameraMonitoringLutExpor
         preserveLuma: params.preserveLuma,
         preventOversaturation: params.preventOversaturation
       },
-      referenceAverageColor
+      referenceAverageColor,
+      technicalTransform: params.technicalTransform
     });
     const validation = validateCubeLut(result.content);
 

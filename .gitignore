@@ -3,3 +3,4 @@ dist/
 *.tsbuildinfo
 __pycache__/
 *.pyc
+.tmp-lut-tests/

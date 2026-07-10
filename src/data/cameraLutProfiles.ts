@@ -152,6 +152,8 @@ export const cameraLutProfiles: readonly CameraLutSupportProfile[] = [
 
   makeProfile({ brand: "dji", brandLabel: "DJI", modelName: "Ronin 4D", modelFamily: "Ronin", sensorFormat: "full-frame", supportedLogProfiles: djiLogProfiles, supportedGamuts: djiGamuts, maxCubeSize: "unknown" }),
   makeProfile({ brand: "dji", brandLabel: "DJI", modelName: "Osmo Pocket 3", modelFamily: "Osmo Pocket", sensorFormat: "1-inch", supportedLogProfiles: djiLogProfiles, supportedGamuts: djiGamuts, maxCubeSize: "unknown" }),
+  makeProfile({ brand: "dji", brandLabel: "DJI", modelName: "Osmo Action 5 Pro", modelFamily: "Osmo Action", sensorFormat: "unknown", supportedLogProfiles: ["D-Log M", "Normal"], supportedGamuts: ["Rec.709"], maxCubeSize: "unknown" }),
+  makeProfile({ brand: "dji", brandLabel: "DJI", modelName: "Mavic 3 Pro", modelFamily: "Mavic", sensorFormat: "unknown", supportedLogProfiles: ["D-Log", "D-Log M", "Normal"], supportedGamuts: ["D-Gamut", "Rec.709"], maxCubeSize: "unknown" }),
   makeProfile({ brand: "dji", brandLabel: "DJI", modelName: "Action 系列", modelFamily: "Osmo Action", sensorFormat: "unknown", supportedLogProfiles: djiLogProfiles, supportedGamuts: djiGamuts, maxCubeSize: "unknown" }),
 
   makeProfile({ brand: "fujifilm", brandLabel: "Fujifilm", modelName: "X-H2S", modelFamily: "X Series", sensorFormat: "aps-c", supportedLogProfiles: fujifilmLogProfiles, supportedGamuts: fujifilmGamuts, maxCubeSize: "unknown" }),

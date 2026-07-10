@@ -366,6 +366,7 @@ export interface GenerateColorPreviewParams {
   readonly targetImageUrl: string;
   readonly referenceImageUrl?: string;
   readonly adjustments: ColorPreviewAdjustments;
+  readonly technicalTransform?: import("./colorPipeline").TechnicalTransformBinding;
   readonly maxSize?: number;
 }
 
@@ -383,6 +384,7 @@ export interface GenerateLocalPreviewParams {
   readonly skinToneProtection: boolean;
   readonly preserveLuma: boolean;
   readonly preventOversaturation: boolean;
+  readonly technicalTransform?: import("./colorPipeline").TechnicalTransformBinding;
 }
 
 export interface LutExportOptions {
@@ -405,6 +407,7 @@ export interface CameraLutExportOptions {
   readonly exposureConfig: CameraMonitoringExposureConfig;
   readonly adjustments: ColorPreviewAdjustments;
   readonly referenceAverageColor?: RgbColor;
+  readonly technicalTransform?: import("./colorPipeline").TechnicalTransformBinding;
 }
 
 export interface CameraMonitoringLutExportParams {
@@ -422,6 +425,7 @@ export interface CameraMonitoringLutExportParams {
   readonly preventOversaturation: boolean;
   readonly referenceImageUrl?: string;
   readonly referenceAverageColor?: RgbColor;
+  readonly technicalTransform?: import("./colorPipeline").TechnicalTransformBinding;
 }
 
 export interface CameraLutExportResult extends CubeExportResult {
@@ -453,6 +457,10 @@ export interface CubeExportResult {
   readonly isValid?: boolean;
   readonly validationErrors?: readonly string[];
   readonly validationWarnings?: readonly string[];
+  readonly technicalTransformFileName?: string;
+  readonly technicalTransformSourceId?: string;
+  readonly technicalTransformSourceTitle?: string;
+  readonly technicalTransformVerification?: import("./colorPipeline").TechnicalTransformVerification;
 }
 
 export interface ExportCubeLutParams {
@@ -541,6 +549,9 @@ export interface ExportHistoryRecord {
   readonly sourceHintBrand?: string;
   readonly sourceHintGamma?: string;
   readonly verificationStatus?: "TEST" | "verified";
+  readonly technicalTransformFileName?: string;
+  readonly technicalTransformSourceId?: string;
+  readonly technicalTransformVerification?: import("./colorPipeline").TechnicalTransformVerification;
   readonly workflowSummary: string;
   readonly styleIntensity: number;
   readonly passedValidation: boolean;
@@ -555,3 +566,17 @@ export interface TutorialStep {
   readonly summary: string;
   readonly details: readonly string[];
 }
+
+export type {
+  ColorPipelineDefinition,
+  ColorPipelineStageStatus,
+  CubeParseResult,
+  MonitorAdjustment,
+  ParsedCubeLut,
+  SupportedCubeSize,
+  TechnicalTransformBinding,
+  TechnicalTransformImportParams,
+  TechnicalTransformImportResult,
+  TechnicalTransformRegistryMatch,
+  TechnicalTransformVerification
+} from "./colorPipeline";

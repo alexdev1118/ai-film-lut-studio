@@ -1,0 +1,19 @@
+[
+  { "id": "sony", "label": "Sony", "aliases": ["索尼"], "sourceIds": [], "coverageState": "partial" },
+  { "id": "canon", "label": "Canon", "aliases": ["佳能"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "panasonic", "label": "Panasonic / Lumix", "aliases": ["松下", "Lumix"], "sourceIds": [], "coverageState": "partial" },
+  { "id": "fujifilm", "label": "Fujifilm", "aliases": ["富士"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "nikon", "label": "Nikon", "aliases": ["尼康"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "blackmagic", "label": "Blackmagic Design", "aliases": ["BMD"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "dji", "label": "DJI", "aliases": ["大疆"], "sourceIds": [], "coverageState": "partial" },
+  { "id": "gopro", "label": "GoPro", "aliases": [], "sourceIds": [], "coverageState": "pending" },
+  { "id": "insta360", "label": "Insta360", "aliases": ["影石"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "arri", "label": "ARRI", "aliases": ["阿莱"], "sourceIds": [], "coverageState": "partial" },
+  { "id": "red", "label": "RED", "aliases": ["RED Digital Cinema"], "sourceIds": [], "coverageState": "partial" },
+  { "id": "kinefinity", "label": "Kinefinity", "aliases": ["Kine"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "zcam", "label": "Z CAM", "aliases": [], "sourceIds": [], "coverageState": "pending" },
+  { "id": "leica", "label": "Leica", "aliases": ["徕卡"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "sigma", "label": "Sigma", "aliases": ["适马"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "olympus", "label": "OM System / Olympus", "aliases": ["奥林巴斯"], "sourceIds": [], "coverageState": "pending" },
+  { "id": "apple", "label": "Apple / Mobile", "aliases": ["苹果", "Mobile"], "sourceIds": [], "coverageState": "pending" }
+]

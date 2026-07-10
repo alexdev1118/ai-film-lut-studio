@@ -1,7 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 import { defaultCameraProfile } from "../data/cameraProfiles";
 import { lutStyles } from "../data/styles";
-import type { CameraBrand, ColorSpace, CubeExportResult, LutParameters, PostLutNamingMode, PreviewResult, WorkspaceMediaState } from "../types";
+import type {
+  CameraBrand,
+  ColorSpace,
+  CubeExportResult,
+  LutParameters,
+  PostLutNamingMode,
+  PreviewResult,
+  TechnicalTransformBinding,
+  WorkspaceMediaState
+} from "../types";
 import { revokeColorPreviewUrl } from "../utils/colorPreview";
 import { colorSpaceOptions, defaultLutParameters } from "../utils/lutMock";
 import { revokeMediaItem } from "../utils/image";
@@ -55,6 +64,8 @@ interface WorkspaceContextValue {
   readonly setSelectedStyleKey: Dispatch<SetStateAction<string>>;
   readonly lastExportResult: CubeExportResult | null;
   readonly setLastExportResult: Dispatch<SetStateAction<CubeExportResult | null>>;
+  readonly technicalTransform: TechnicalTransformBinding | null;
+  readonly setTechnicalTransform: Dispatch<SetStateAction<TechnicalTransformBinding | null>>;
 }
 
 const workspaceSessionStorageKey = "ai-film-lut-studio-workspace-state";
@@ -172,6 +183,7 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
   const [postCustomFileName, setPostCustomFileName] = useState(persistedState.postCustomFileName);
   const [selectedStyleKey, setSelectedStyleKey] = useState(persistedState.selectedStyleKey);
   const [lastExportResult, setLastExportResult] = useState<CubeExportResult | null>(null);
+  const [technicalTransform, setTechnicalTransform] = useState<TechnicalTransformBinding | null>(null);
   const cleanupRef = useRef({ mediaState, result });
 
   useEffect(() => {
@@ -241,7 +253,9 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
       selectedStyleKey,
       setSelectedStyleKey,
       lastExportResult,
-      setLastExportResult
+      setLastExportResult,
+      technicalTransform,
+      setTechnicalTransform
     }),
     [
       mediaState,
@@ -260,7 +274,8 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
       postNamingMode,
       postCustomFileName,
       selectedStyleKey,
-      lastExportResult
+      lastExportResult,
+      technicalTransform
     ]
   );
 

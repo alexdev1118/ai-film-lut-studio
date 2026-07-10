@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
+    "noEmit": false,
+    "isolatedModules": false,
+    "outDir": ".tmp-lut-tests",
+    "rootDir": ".",
+    "types": ["node", "react", "react-dom"]
+  },
+  "include": ["tests/lutPipeline.test.ts"]
+}
