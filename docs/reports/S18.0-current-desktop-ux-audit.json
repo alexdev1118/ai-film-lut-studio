@@ -1,0 +1,64 @@
+{
+  "task": "S18.0 desktop UX audit",
+  "auditedAt": "2026-07-16",
+  "viewports": [
+    { "width": 1366, "height": 768, "passed": true },
+    { "width": 1440, "height": 900, "passed": true },
+    { "width": 1920, "height": 945, "passed": true }
+  ],
+  "paths": [
+    { "id": "unknown", "description": "用户不确定素材状态", "result": "可继续实验并获得明确风险提示" },
+    { "id": "sony-slog3", "description": "用户知道原始拍摄为 Sony S-Log3", "result": "专业目录可配置，但必须与当前静帧像素状态分开解释" },
+    { "id": "rec709-still", "description": "用户已从 DaVinci 导出正常 Rec.709 静帧", "result": "快速模式可直接进入创意 LUT 流程" }
+  ],
+  "fiveSecondPurposeUnderstood": true,
+  "mainFlowSteps": 6,
+  "topConfusions": [
+    "原始相机来源与当前静帧像素状态曾混在同一配置区",
+    "POST LUT 与技术转换 LUT 的边界需要在导出前再次说明",
+    "CST、Gamma、Gamut、Range 在新手完成首次任务前出现过早",
+    "Cube Hash 与参数 Hash 属于诊断信息，不应占据普通模式主视觉",
+    "相机监看 LUT 与后期创意 LUT 同屏时容易被理解为同一种文件",
+    "自动仿色名称容易被误解为云端机器学习模型",
+    "未确认输入仍允许实验时，需要持续显示可靠性边界",
+    "风格详情逐个打开不利于快速比较",
+    "目标软件的 LUT 放置位置此前需要用户自己查找",
+    "示例素材失效会让首次工作台看起来像空白或故障"
+  ],
+  "mostErrorProne": [
+    "把 POST LUT 直接套到灰色 Log 素材",
+    "重复执行 CST 或技术 LUT",
+    "同时降低网站强度和 DaVinci Key Output",
+    "按相机型号猜测当前导出静帧的 Gamma",
+    "把未核验相机目录理解为官方技术转换",
+    "在 Input LUT 与 Creative Look 中重复加载同一 Cube",
+    "忽略 Full 与 Legal 的软件解释差异",
+    "参考图和目标图不是同一技术状态",
+    "参数变化后使用旧预览或旧下载 Artifact",
+    "把浏览器下载提示误认为操作系统已落盘"
+  ],
+  "leastValuableInBeginnerFlow": [
+    "完整 Cube Hash",
+    "完整参数 Hash",
+    "Round-Trip 入口",
+    "PRE / POST 术语",
+    "输入解释 Hash",
+    "显示转换 ID",
+    "RGB MAE 与 P95",
+    "相机监看 LUT 高级配置",
+    "技术转换证据详情",
+    "全部高级影调参数"
+  ],
+  "capabilitiesToKeep": [
+    "本地图片与 DPX 预览",
+    "统一 RGB Core",
+    "Preview 与 Cube 一致性",
+    "结构化原创风格",
+    "风格强度",
+    "Cube parser 与 validator",
+    "下载 Artifact 重试",
+    "相机证据可信度",
+    "DaVinci Round-Trip",
+    "会话状态保持"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
+    "noEmit": false,
+    "isolatedModules": false,
+    "outDir": ".tmp-download-artifact-verification",
+    "rootDir": ".",
+    "types": ["node", "react", "react-dom"]
+  },
+  "include": ["scripts/verify-cube-download-artifact.ts"]
+}

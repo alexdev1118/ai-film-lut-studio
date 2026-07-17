@@ -4,10 +4,14 @@ import { lutStyles } from "../data/styles";
 import type {
   CameraBrand,
   ColorSpace,
+  CubeDownloadArtifact,
+  CubeDownloadStatus,
   CubeExportResult,
   LutParameters,
   PostLutNamingMode,
+  ProductExperienceMode,
   PreviewResult,
+  QuickWorkflowPreferences,
   TechnicalTransformBinding,
   WorkspaceMediaState
 } from "../types";
@@ -15,6 +19,7 @@ import { revokeColorPreviewUrl } from "../utils/colorPreview";
 import { colorSpaceOptions, defaultLutParameters } from "../utils/lutMock";
 import { revokeMediaItem } from "../utils/image";
 import { sanitizeLookName } from "../utils/lutNaming";
+import { createDefaultQuickWorkflowPreferences, migrateQuickWorkflowPreferences } from "../utils/productWorkflow";
 
 interface PersistedWorkspaceState {
   readonly parameters: LutParameters;
@@ -27,6 +32,8 @@ interface PersistedWorkspaceState {
   readonly postNamingMode: PostLutNamingMode;
   readonly postCustomFileName: string;
   readonly selectedStyleKey: string;
+  readonly experienceMode: ProductExperienceMode;
+  readonly quickWorkflowPreferences: QuickWorkflowPreferences;
 }
 
 interface WorkspaceContextValue {
@@ -62,10 +69,20 @@ interface WorkspaceContextValue {
   readonly setPostCustomFileName: Dispatch<SetStateAction<string>>;
   readonly selectedStyleKey: string;
   readonly setSelectedStyleKey: Dispatch<SetStateAction<string>>;
+  readonly experienceMode: ProductExperienceMode;
+  readonly setExperienceMode: Dispatch<SetStateAction<ProductExperienceMode>>;
+  readonly quickWorkflowPreferences: QuickWorkflowPreferences;
+  readonly setQuickWorkflowPreferences: Dispatch<SetStateAction<QuickWorkflowPreferences>>;
   readonly lastExportResult: CubeExportResult | null;
   readonly setLastExportResult: Dispatch<SetStateAction<CubeExportResult | null>>;
+  readonly lastCubeDownloadArtifact: CubeDownloadArtifact | null;
+  readonly setLastCubeDownloadArtifact: Dispatch<SetStateAction<CubeDownloadArtifact | null>>;
+  readonly cubeDownloadStatus: CubeDownloadStatus;
+  readonly setCubeDownloadStatus: Dispatch<SetStateAction<CubeDownloadStatus>>;
   readonly technicalTransform: TechnicalTransformBinding | null;
   readonly setTechnicalTransform: Dispatch<SetStateAction<TechnicalTransformBinding | null>>;
+  readonly lastAnalyzedTargetId: string | null;
+  readonly setLastAnalyzedTargetId: Dispatch<SetStateAction<string | null>>;
 }
 
 const workspaceSessionStorageKey = "ai-film-lut-studio-workspace-state";
@@ -78,7 +95,7 @@ const defaultMediaState: WorkspaceMediaState = {
 const defaultPersistedWorkspaceState: PersistedWorkspaceState = {
   parameters: {
     ...defaultLutParameters,
-    intensity: lutStyles[0].recommendedIntensity
+    intensity: 50
   },
   skinProtect: true,
   preserveLuma: true,
@@ -88,7 +105,9 @@ const defaultPersistedWorkspaceState: PersistedWorkspaceState = {
   lutName: "CustomLook",
   postNamingMode: "simple",
   postCustomFileName: "",
-  selectedStyleKey: lutStyles[0].id
+  selectedStyleKey: lutStyles[0].id,
+  experienceMode: "quick",
+  quickWorkflowPreferences: createDefaultQuickWorkflowPreferences()
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
@@ -148,7 +167,9 @@ const readPersistedWorkspaceState = (): PersistedWorkspaceState => {
       lutName: isString(parsedValue.lutName) ? migrateLookName(parsedValue.lutName) : defaultPersistedWorkspaceState.lutName,
       postNamingMode: readPostNamingMode(parsedValue.postNamingMode),
       postCustomFileName: isString(parsedValue.postCustomFileName) ? parsedValue.postCustomFileName : "",
-      selectedStyleKey: isString(parsedValue.selectedStyleKey) ? parsedValue.selectedStyleKey : defaultPersistedWorkspaceState.selectedStyleKey
+      selectedStyleKey: isString(parsedValue.selectedStyleKey) ? parsedValue.selectedStyleKey : defaultPersistedWorkspaceState.selectedStyleKey,
+      experienceMode: parsedValue.experienceMode === "professional" ? "professional" : "quick",
+      quickWorkflowPreferences: migrateQuickWorkflowPreferences(parsedValue.quickWorkflowPreferences)
     };
   } catch (error) {
     console.warn("读取工作台会话状态失败", error);
@@ -159,6 +180,7 @@ const readPersistedWorkspaceState = (): PersistedWorkspaceState => {
 const revokePreviewResult = (result: PreviewResult | null): void => {
   if (result?.isCanvasPreview === true) {
     revokeColorPreviewUrl(result.previewImage);
+    revokeColorPreviewUrl(result.sourcePreviewImage);
   }
 };
 
@@ -182,8 +204,13 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
   const [postNamingMode, setPostNamingMode] = useState<PostLutNamingMode>(persistedState.postNamingMode);
   const [postCustomFileName, setPostCustomFileName] = useState(persistedState.postCustomFileName);
   const [selectedStyleKey, setSelectedStyleKey] = useState(persistedState.selectedStyleKey);
+  const [experienceMode, setExperienceMode] = useState<ProductExperienceMode>(persistedState.experienceMode);
+  const [quickWorkflowPreferences, setQuickWorkflowPreferences] = useState<QuickWorkflowPreferences>(persistedState.quickWorkflowPreferences);
   const [lastExportResult, setLastExportResult] = useState<CubeExportResult | null>(null);
+  const [lastCubeDownloadArtifact, setLastCubeDownloadArtifact] = useState<CubeDownloadArtifact | null>(null);
+  const [cubeDownloadStatus, setCubeDownloadStatus] = useState<CubeDownloadStatus>("idle");
   const [technicalTransform, setTechnicalTransform] = useState<TechnicalTransformBinding | null>(null);
+  const [lastAnalyzedTargetId, setLastAnalyzedTargetId] = useState<string | null>(null);
   const cleanupRef = useRef({ mediaState, result });
 
   useEffect(() => {
@@ -202,13 +229,15 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
         lutName,
         postNamingMode,
         postCustomFileName,
-        selectedStyleKey
+        selectedStyleKey,
+        experienceMode,
+        quickWorkflowPreferences
       };
       window.sessionStorage.setItem(workspaceSessionStorageKey, JSON.stringify(nextPersistedState));
     } catch (error) {
       console.warn("保存工作台会话状态失败", error);
     }
-  }, [parameters, skinProtect, preserveLuma, avoidOversaturation, selectedBrandId, selectedProfileId, lutName, postNamingMode, postCustomFileName, selectedStyleKey]);
+  }, [parameters, skinProtect, preserveLuma, avoidOversaturation, selectedBrandId, selectedProfileId, lutName, postNamingMode, postCustomFileName, selectedStyleKey, experienceMode, quickWorkflowPreferences]);
 
   useEffect(() => {
     return () => {
@@ -252,10 +281,20 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
       setPostCustomFileName,
       selectedStyleKey,
       setSelectedStyleKey,
+      experienceMode,
+      setExperienceMode,
+      quickWorkflowPreferences,
+      setQuickWorkflowPreferences,
       lastExportResult,
       setLastExportResult,
+      lastCubeDownloadArtifact,
+      setLastCubeDownloadArtifact,
+      cubeDownloadStatus,
+      setCubeDownloadStatus,
       technicalTransform,
-      setTechnicalTransform
+      setTechnicalTransform,
+      lastAnalyzedTargetId,
+      setLastAnalyzedTargetId
     }),
     [
       mediaState,
@@ -274,8 +313,13 @@ export const WorkspaceProvider = ({ children }: { readonly children: ReactNode }
       postNamingMode,
       postCustomFileName,
       selectedStyleKey,
+      experienceMode,
+      quickWorkflowPreferences,
       lastExportResult,
-      technicalTransform
+      lastCubeDownloadArtifact,
+      cubeDownloadStatus,
+      technicalTransform,
+      lastAnalyzedTargetId
     ]
   );
 

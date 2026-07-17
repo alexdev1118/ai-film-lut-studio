@@ -3,6 +3,7 @@ import { Download, Grid3X3, Palette, SlidersHorizontal, Sparkles, SplitSquareHor
 import type { RoutePath } from "../types";
 import { Button } from "../components/ui/Button";
 import { previewImages } from "../data/mockImages";
+import { demoTargetImage } from "../data/demoProject";
 
 interface HomeProps {
   readonly onNavigate: (path: RoutePath) => void;
@@ -13,10 +14,10 @@ export const Home = ({ onNavigate }: HomeProps) => {
     <div className="home-page">
       <section className="tool-entry">
         <div className="tool-entry-copy">
-          <p className="eyebrow">AI 调色工作台</p>
-          <h1>上传参考图，一键生成你的电影感 LUT</h1>
+          <p className="eyebrow">本地创意 LUT 工作台</p>
+          <h1>看懂素材状态，再生成能正确使用的电影感 LUT</h1>
           <p>
-            AI Film LUT Studio 面向视频创作者和调色新手，帮助你把参考图的色彩、影调和对比度转化为可预览、可微调、可导出的 .cube LUT。
+            无需先学会色彩科学。选择素材状态、参考图或原创风格，在本地预览并导出可验证的 .cube；灰色 Log 素材会明确提示先完成技术还原。
           </p>
           <div className="hero-actions">
             <Button onClick={() => onNavigate("/workspace")}>开始生成 LUT</Button>
@@ -39,7 +40,7 @@ export const Home = ({ onNavigate }: HomeProps) => {
                 <SplitSquareHorizontal aria-hidden="true" />
                 目标图
               </p>
-              <div className="mini-image target" style={{ background: previewImages.sourceFrame }} />
+              <div className="mini-image target" style={{ backgroundImage: `url("${demoTargetImage.url}")`, backgroundPosition: "center", backgroundSize: "cover" }} />
             </div>
             <div className="mini-panel">
               <p>

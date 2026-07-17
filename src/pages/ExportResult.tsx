@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { ArrowLeft, CheckCircle2, Copy, Download, FileText, Film, Grid3X3, Info, Lightbulb, Palette, Video } from "lucide-react";
 import { defaultCameraProfile, getCameraProfileById, toInputColorConfig } from "../data/cameraProfiles";
 import { useWorkspaceState } from "../state/WorkspaceContext";
+import { requestPostLutDownload } from "../services/lutRenderService";
 import type { InputColorConfig, LutPrecision, RoutePath } from "../types";
 import { defaultLutParameters } from "../utils/lutMock";
 import { generateLutFileName, generatePostLutName, sanitizeLookName } from "../utils/lutNaming";
+import { getTargetEditorGuide } from "../utils/productWorkflow";
 
 interface ExportResultProps {
   readonly selectedStyleName: string;
@@ -65,7 +68,8 @@ const getLutSizeFromPrecision = (precision: LutPrecision): number => {
 };
 
 export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProps) => {
-  const { lastExportResult, lutName, parameters, postCustomFileName, postNamingMode } = useWorkspaceState();
+  const { lastExportResult, lastCubeDownloadArtifact, setCubeDownloadStatus, lutName, parameters, postCustomFileName, postNamingMode, experienceMode, quickWorkflowPreferences } = useWorkspaceState();
+  const [downloadMessage, setDownloadMessage] = useState("");
   const inputColorConfig = readInputColorConfig();
   const selectedProfile = getCameraProfileById(inputColorConfig.profileId);
   const precision = lastExportResult === null ? parameters.precision : getPrecisionFromSize(lastExportResult.lutSize);
@@ -83,6 +87,23 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
   const sourceHint = `${lastExportResult?.sourceHintBrand ?? inputColorConfig.brand ?? inputColorConfig.brandId} / ${lastExportResult?.sourceHintGamma ?? inputColorConfig.gamma ?? "Rec.709"}`;
   const hasTechnicalTransform =
     lastExportResult?.technicalTransformFileName !== undefined && lastExportResult.technicalTransformVerification !== "none";
+  const diagnostics = lastExportResult?.consistencyDiagnostics;
+  const targetEditorGuide = getTargetEditorGuide(quickWorkflowPreferences.targetEditor);
+  const handleRedownload = () => {
+    if (lastCubeDownloadArtifact === null) {
+      setDownloadMessage("当前会话没有可重新下载的已验证文件，请返回工作台生成预览。");
+      return;
+    }
+
+    try {
+      requestPostLutDownload(lastCubeDownloadArtifact);
+      setCubeDownloadStatus("requested");
+      setDownloadMessage("已再次请求浏览器下载同一份已验证 LUT。");
+    } catch (error) {
+      setCubeDownloadStatus("blocked");
+      setDownloadMessage(error instanceof Error ? error.message : "重新下载失败，请返回工作台重试。");
+    }
+  };
 
   return (
     <div className="export-page">
@@ -136,6 +157,68 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
               <span>输入素材配置</span>
               <strong>{sourceHint}</strong>
             </p>
+            {experienceMode !== "professional" || lastExportResult?.parameterHash === undefined ? null : (
+              <p title={lastExportResult.parameterHash}>
+                <span>参数 Hash</span>
+                <strong>{lastExportResult.parameterHash.slice(0, 12)}</strong>
+              </p>
+            )}
+            {experienceMode !== "professional" || lastExportResult?.cubeHash === undefined ? null : (
+              <p title={lastExportResult.cubeHash}>
+                <span>Cube Hash</span>
+                <strong>{lastExportResult.cubeHash.slice(0, 12)}</strong>
+              </p>
+            )}
+            {experienceMode !== "professional" || lastExportResult?.inputInterpretationHash === undefined ? null : (
+              <p title={lastExportResult.inputInterpretationHash}>
+                <span>输入解释 Hash</span>
+                <strong>{lastExportResult.inputInterpretationHash.slice(0, 12)}</strong>
+              </p>
+            )}
+            {experienceMode !== "professional" || lastExportResult?.inputProfileId === undefined ? null : (
+              <p>
+                <span>素材输入 Profile</span>
+                <strong>{lastExportResult.inputProfileId}</strong>
+              </p>
+            )}
+            {experienceMode !== "professional" || lastExportResult?.outputProfileId === undefined ? null : (
+              <p>
+                <span>POST 输出 Profile</span>
+                <strong>{lastExportResult.outputProfileId}</strong>
+              </p>
+            )}
+            {experienceMode !== "professional" || lastExportResult?.previewDisplayTransformId === undefined ? null : (
+              <p>
+                <span>网站显示转换</span>
+                <strong>{lastExportResult.previewDisplayTransformId}</strong>
+              </p>
+            )}
+            {lastExportResult?.targetMaterialName === undefined ? null : (
+              <p>
+                <span>目标素材</span>
+                <strong>{lastExportResult.targetMaterialName}</strong>
+              </p>
+            )}
+            {lastExportResult?.referenceMaterialName === undefined ? null : (
+              <p>
+                <span>参考素材</span>
+                <strong>{lastExportResult.referenceMaterialName}</strong>
+              </p>
+            )}
+            {experienceMode !== "professional" || diagnostics === undefined ? null : (
+              <p>
+                <span>Cube 回读一致性</span>
+                <strong className={diagnostics.passed ? "success-text" : "upload-error"}>
+                  {diagnostics.passed ? "通过" : "未通过"} / 平均误差 {diagnostics.averageRgbError.toFixed(6)}
+                </strong>
+              </p>
+            )}
+            {lastExportResult?.targetWasReanalyzed === undefined ? null : (
+              <p>
+                <span>目标重新分析</span>
+                <strong>{lastExportResult.targetWasReanalyzed ? "已针对当前目标应用建议" : "否，参数可能与上一版本相同"}</strong>
+              </p>
+            )}
             {isCameraMonitoring ? (
               <p>
                 <span>核验状态</span>
@@ -169,8 +252,8 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             <Info aria-hidden="true" />
             <h2>使用定位</h2>
           </div>
-          <p>{isCameraMonitoring ? hasTechnicalTransform ? "当前相机监看 LUT 已按“本地技术转换 → 创意风格 → 监看亮度 → Range”顺序合成；文件未通过登记哈希核验时仍是 TEST。" : "这是相机监看 LUT，当前未绑定技术转换。请先确认相机的导入能力和监看 / 录制行为，再用于实际拍摄。" : "当前 LUT 适合用于 Rec.709 或已还原素材。如果是 S-Log3 / C-Log / D-Log / V-Log 等素材，建议先完成基础色彩空间转换，再叠加本 LUT。"}</p>
-          <p>{isCameraMonitoring ? "当前机型资料未完成官方核验时，导出名称会包含 TEST；请小范围测试后再用于正式工作。" : "它不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。"}</p>
+          <p>{isCameraMonitoring ? hasTechnicalTransform ? "当前相机监看 LUT 已按“本地技术转换 → 创意风格 → 监看亮度 → Range”顺序合成；文件未通过登记哈希核验时仍是 TEST。" : "这是相机监看 LUT，当前未绑定技术转换。请先确认相机的导入能力和监看 / 录制行为，再用于实际拍摄。" : "POST LUT 的输入与输出契约均为 Rec.709 / Gamma 2.4 / Full。Log 原片必须先通过 CST、RCM 或厂商技术 LUT 还原，再叠加本 LUT。"}</p>
+          <p>{isCameraMonitoring ? "当前机型资料未完成官方核验时，导出名称会包含 TEST；请小范围测试后再用于正式工作。" : "DaVinci 节点 Key Output Gain 建议保持 1.000；可按个人偏好微调，但不应依赖它补救网站与 LUT 强度差异。"}</p>
         </article>
       </section>
 
@@ -200,19 +283,11 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
         <article className="guide-card glass-panel">
           <div className="guide-title">
             <Video aria-hidden="true" />
-            <h2>软件导入提示</h2>
+            <h2>{targetEditorGuide.label} 导入步骤</h2>
           </div>
-          {[
-            ["DaVinci Resolve", "建议放在基础校正或 CST 之后的独立节点上。"],
-            ["Premiere Pro", "可在 Lumetri Color 的 Creative / Look 或 Input LUT 中加载，建议优先作为风格 Look 使用。"],
-            ["剪映", "如果版本支持导入 LUT，可作为风格滤镜使用，并适当降低强度。"],
-            ["Final Cut Pro", "通过自带或第三方 LUT 工具加载，建议先完成曝光和白平衡校正。"]
-          ].map(([name, description]) => (
-            <p key={name}>
-              <strong>{name}</strong>
-              <span>{description}</span>
-            </p>
-          ))}
+          <p><strong>使用位置</strong><span>{targetEditorGuide.location}</span></p>
+          <ol>{targetEditorGuide.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+          <p className="upload-error">常见错误：{targetEditorGuide.commonMistake}</p>
         </article>
 
         <article className="guide-card glass-panel">
@@ -221,7 +296,7 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
             <h2>常见问题</h2>
           </div>
           <ul>
-            <li>网页预览和软件效果可能因色彩管理、播放器显示转换、LUT 插值方式不同而不完全一致。</li>
+            <li>网页预览已由最终导出 Cube 回读渲染；按 Rec.709 Gamma 2.4 / Full 契约使用时应与软件接近。若差异明显，请检查节点顺序、Range、显示色彩管理，并将其视为一致性问题。</li>
             <li>Log 素材直接套创意 LUT 会偏灰或偏色，因为它还没有转换到标准显示空间。</li>
             <li>建议先校正曝光和白平衡，再使用创意 LUT，否则 LUT 会放大原素材的曝光或色偏问题。</li>
           </ul>
@@ -233,9 +308,9 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
           <ArrowLeft aria-hidden="true" />
           返回工作台
         </button>
-        <button type="button" onClick={() => onNavigate("/workspace")}>
+        <button type="button" disabled={lastCubeDownloadArtifact === null} onClick={handleRedownload}>
           <Download aria-hidden="true" />
-          继续导出 LUT
+          重新下载当前 LUT
         </button>
         <button type="button" onClick={() => onNavigate("/styles")}>
           <Palette aria-hidden="true" />
@@ -250,6 +325,7 @@ export const ExportResult = ({ selectedStyleName, onNavigate }: ExportResultProp
           使用说明
         </button>
       </div>
+      {downloadMessage.length === 0 ? null : <p className="export-download-message" role="status">{downloadMessage}</p>}
     </div>
   );
 };

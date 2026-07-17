@@ -1,0 +1,16 @@
+{
+  "task": "S18.0-FINAL-GATE-AND-CHECKPOINT-SAVE",
+  "untrackedFiles": 249,
+  "categories": {
+    "formalSource": 36,
+    "formalTests": 12,
+    "formalScripts": 19,
+    "formalDocuments": 62,
+    "publicPreviewAssets": 120,
+    "localMedia": 0,
+    "unknown": 0
+  },
+  "prohibitedTrackedPaths": [],
+  "localTestAssetsIgnored": true,
+  "safeForExplicitStaging": true
+}

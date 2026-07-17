@@ -1,6 +1,7 @@
 import { useEffect, type MouseEvent as ReactMouseEvent } from "react";
 import { BookOpen, CheckCircle2, X } from "lucide-react";
-import type { InputColorConfig, LutExportKind, LutExportTypeCode, LutPrecision } from "../../types";
+import type { InputColorConfig, LutExportKind, LutExportTypeCode, LutPrecision, TargetEditor } from "../../types";
+import { getTargetEditorGuide } from "../../utils/productWorkflow";
 import { Button } from "../ui/Button";
 
 interface LutUsageGuideModalProps {
@@ -13,12 +14,13 @@ interface LutUsageGuideModalProps {
   readonly inputColorConfig: InputColorConfig;
   readonly hasTargetImage: boolean;
   readonly hasReferenceImage: boolean;
+  readonly targetEditor: TargetEditor;
   readonly onClose: () => void;
 }
 
 const getInputRecommendation = (inputColorConfig: InputColorConfig): string => {
   if (inputColorConfig.inputType === "log") {
-    return "当前输入是 Log / 宽色域目录。请先在调色软件中通过项目色彩管理、CST 或厂商官方流程还原到标准显示空间，再叠加本工具的创意 LUT。";
+    return "当前输入是 Log / 宽色域目录。POST LUT 不包含官方 Log 技术还原；请先通过项目色彩管理、CST 或厂商官方流程还原到 Rec.709 / Gamma 2.4，再叠加本工具的创意 LUT。";
   }
 
   if (inputColorConfig.inputType === "hdr") {
@@ -33,7 +35,7 @@ const getInputRecommendation = (inputColorConfig: InputColorConfig): string => {
     return "当前输入类型未确认。请先确认素材来源，或先完成基础还原后再测试本 LUT。";
   }
 
-  return "当前输入按 Rec.709 / 标准显示空间工作流处理。建议先完成曝光与白平衡校正，再叠加本 LUT。";
+  return "POST LUT 的输入与输出契约均为 Rec.709 / Gamma 2.4 / Full。建议先完成曝光与白平衡校正，再叠加本 LUT。";
 };
 
 export const LutUsageGuideModal = ({
@@ -46,6 +48,7 @@ export const LutUsageGuideModal = ({
   inputColorConfig,
   hasTargetImage,
   hasReferenceImage,
+  targetEditor,
   onClose
 }: LutUsageGuideModalProps) => {
   useEffect(() => {
@@ -79,6 +82,7 @@ export const LutUsageGuideModal = ({
   const guideDescription = isCameraMonitoring
     ? "当前导出为相机监看 LUT，仍处于实验性 / 待官方确认工作流。"
     : "当前导出为后期软件创意 LUT，不是相机 Log 技术转换 LUT。";
+  const editorGuide = getTargetEditorGuide(targetEditor);
 
   return (
     <div className="lut-usage-guide-backdrop" role="presentation" onMouseDown={handleBackdropClick}>
@@ -123,14 +127,23 @@ export const LutUsageGuideModal = ({
                 </>
               ) : (
                 <>
-                  <li>完成基础曝光与白平衡校正。</li>
-                  <li>{inputColorConfig.inputType === "log" ? "完成 Log / 色彩空间还原。" : "确认素材已处于目标显示空间。"}</li>
-                  <li>在独立节点、Creative / Look 或风格滤镜位置加载本 LUT。</li>
-                  <li>根据素材微调 LUT 强度、饱和度、肤色与高光。</li>
+                  <li>节点 01：通过 CST、RCM 或厂商技术 LUT 将 Log 还原到 Rec.709 / Gamma 2.4。</li>
+                  <li>节点 02：完成基础曝光与白平衡校正。</li>
+                  <li>节点 03：加载网站 POST LUT，Key Output Gain 保持 1.000。</li>
+                  <li>节点 04：根据素材做可选的局部微调。</li>
                 </>
               )}
             </ol>
           </section>
+
+          {!isCameraMonitoring ? (
+            <section className="lut-usage-guide-card target-editor-guide">
+              <h3>{editorGuide.label} 使用位置</h3>
+              <p><strong>{editorGuide.location}</strong></p>
+              <ol>{editorGuide.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+              <p className="guide-warning">常见错误：{editorGuide.commonMistake}</p>
+            </section>
+          ) : null}
 
           <section className="lut-usage-guide-card compact">
             <h3>当前工作台状态</h3>
@@ -143,7 +156,7 @@ export const LutUsageGuideModal = ({
 
           <section className="lut-usage-guide-warning">
             <strong>边界说明</strong>
-            <p>本工具不会执行 Sony S-Log、Canon C-Log、ARRI LogC、RED Log 等官方技术转换，也不会替代相机厂商的色彩管理流程。</p>
+            <p>本工具不会执行 Sony S-Log、Canon C-Log、ARRI LogC、RED Log 等官方技术转换，也不会替代相机厂商的色彩管理流程。Key Output Gain 可用于个人偏好微调，但不应成为修正网站预览强度的必需步骤。</p>
           </section>
         </div>
 

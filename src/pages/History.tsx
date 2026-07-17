@@ -1,6 +1,7 @@
 import { exportHistoryRecords } from "../data/history";
 import { GlassCard } from "../components/ui/GlassCard";
 import { useWorkspaceState } from "../state/WorkspaceContext";
+import { requestPostLutDownload } from "../services/lutRenderService";
 import type { ExportHistoryRecord, LutPrecision } from "../types";
 
 const getPrecisionFromSize = (lutSize: number): LutPrecision => {
@@ -12,7 +13,22 @@ const getPrecisionFromSize = (lutSize: number): LutPrecision => {
 };
 
 export const History = () => {
-  const { lastExportResult, lutName, parameters } = useWorkspaceState();
+  const { lastExportResult, lastCubeDownloadArtifact, setCubeDownloadStatus, setMessage, lutName, parameters } = useWorkspaceState();
+  const handleRedownload = () => {
+    if (lastCubeDownloadArtifact === null) {
+      setMessage("当前会话没有可重新下载的已验证 LUT。");
+      return;
+    }
+
+    try {
+      requestPostLutDownload(lastCubeDownloadArtifact);
+      setCubeDownloadStatus("requested");
+      setMessage("已从导出记录重新请求下载同一份已验证 LUT。");
+    } catch (error) {
+      setCubeDownloadStatus("blocked");
+      setMessage(error instanceof Error ? error.message : "重新下载失败，请返回工作台重试。");
+    }
+  };
   const currentExport: ExportHistoryRecord | null =
     lastExportResult === null
       ? null
@@ -38,6 +54,14 @@ export const History = () => {
           technicalTransformFileName: lastExportResult.technicalTransformFileName,
           technicalTransformSourceId: lastExportResult.technicalTransformSourceId,
           technicalTransformVerification: lastExportResult.technicalTransformVerification,
+          parameterHash: lastExportResult.parameterHash,
+          cubeHash: lastExportResult.cubeHash,
+          inputInterpretationHash: lastExportResult.inputInterpretationHash,
+          inputProfileId: lastExportResult.inputProfileId,
+          outputProfileId: lastExportResult.outputProfileId,
+          targetMaterialName: lastExportResult.targetMaterialName,
+          referenceMaterialName: lastExportResult.referenceMaterialName,
+          targetWasReanalyzed: lastExportResult.targetWasReanalyzed,
           workflowSummary: lastExportResult.exportKind === "camera-monitoring" ? "相机监看测试，需按机型继续核验。" : "先完成技术转换，再作为创意 Look 使用。",
           styleIntensity: parameters.intensity,
           passedValidation: lastExportResult.isValid ?? false,
@@ -72,6 +96,8 @@ export const History = () => {
               <span title={record.technicalTransformFileName === undefined ? undefined : `技术转换：${record.technicalTransformFileName}`}>
                 <strong className="export-type-code">{record.exportTypeCode}</strong> {record.lutType}{record.verificationStatus === "TEST" ? " / TEST" : ""}
                 {record.technicalTransformFileName === undefined ? "" : ` / 技术：${record.technicalTransformVerification ?? "user-supplied-unverified"}`}
+                {record.cubeHash === undefined ? "" : ` / Cube ${record.cubeHash.slice(0, 8)}`}
+                {record.inputProfileId === undefined ? "" : ` / ${record.inputProfileId} → ${record.outputProfileId ?? "bt709-g24-full"}`}
               </span>
               <span>
                 {record.cameraBrand} / {record.gamma}
@@ -87,6 +113,9 @@ export const History = () => {
         <p className="muted-copy">
           当前导出的是基础创意风格 LUT，适合 Rec.709 / 已还原素材的风格测试，不是 Sony S-Log3、Canon C-Log、DJI D-Log 等相机 Log 的技术转换 LUT。
         </p>
+        <button className="history-redownload" disabled={lastCubeDownloadArtifact === null} type="button" onClick={handleRedownload}>
+          重新下载当前会话 LUT
+        </button>
         <p className="muted-copy">记录结构已预留 Gamut、输入类型、推荐工作流和校验状态，后续可接入本地会话保存或“我的 LUT 库”。</p>
       </GlassCard>
     </div>
