@@ -16,10 +16,10 @@
     "fetchSucceeded": true,
     "credentialsUsable": true,
     "checkpointBranch": "checkpoint/s17.3-desktop-rc",
-    "commitsCreated": ["55692a3", "49a1903", "6089da6", "233d964", "600aded"],
+    "commitsCreated": ["55692a3", "49a1903", "6089da6", "233d964", "600aded", "9bb5789"],
     "pushAttempted": true,
     "pushSucceeded": true,
-    "remoteBranchSha": "600aded"
+    "remoteBranchSha": "9bb5789"
   },
   "fileAudit": {
     "untrackedFiles": 249,
