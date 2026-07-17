@@ -1,0 +1,2262 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-15T23:21:10.088Z",
+  "task": "S17.2-CAMERA-EVIDENCE",
+  "evidenceLevels": [
+    "official-spec-verified",
+    "official-asset-verified",
+    "official-description-only",
+    "community-reference",
+    "pending-verification",
+    "unsupported"
+  ],
+  "summary": {
+    "brandDirectoryCount": 17,
+    "verifiedModelDirectoryCount": 11,
+    "pendingBrandDirectoryCount": 12,
+    "officialSourceCount": 28,
+    "verifiedOfficialFactCount": 53,
+    "unresolvedFieldCount": 87,
+    "officialAssetMetadataCount": 7,
+    "officialAssetsWithVerifiedHashCount": 0,
+    "verifiedTechnicalTransformCount": 0
+  },
+  "sources": [
+    {
+      "id": "panasonic-s5iix-real-time-lut",
+      "brand": "panasonic",
+      "modelScope": [
+        "panasonic-s5-iix"
+      ],
+      "publisher": "Panasonic",
+      "documentTitle": "LUMIX S5IIX: All onboard workflow",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.panasonic.com/fr/consumer/appareils-photo-et-camescopes-savoir/lumix-s/fonctionnalites-speciales-du-lumix-s5iix/flux-de-travail-embarque.html",
+      "firmwareScope": [
+        ">=2.10 for reviewed LUMIX Lab workflow"
+      ],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Regional official page; exact availability may vary by firmware and market."
+    },
+    {
+      "id": "panasonic-gh7-product",
+      "brand": "panasonic",
+      "modelScope": [
+        "panasonic-gh7"
+      ],
+      "publisher": "Panasonic",
+      "documentTitle": "LUMIX GH7 product page",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.panasonic.com/sg/consumer/camera-camcorder/lumix-g-series/lumix-g-mirrorless-camera/dc-gh7ga.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Regional official product page."
+    },
+    {
+      "id": "panasonic-gh7-quick-guide",
+      "brand": "panasonic",
+      "modelScope": [
+        "panasonic-gh7"
+      ],
+      "publisher": "Panasonic",
+      "documentTitle": "DC-GH7 Quick Start Guide",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://help.na.panasonic.com/wp-content/uploads/2024/07/DCGH7_QuickStartGuide_ENG.pdf",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Used for product category and sensor format only."
+    },
+    {
+      "id": "panasonic-global-lut-download",
+      "brand": "panasonic",
+      "modelScope": [
+        "panasonic-s5-iix",
+        "panasonic-gh7"
+      ],
+      "publisher": "Panasonic",
+      "documentTitle": "About LUT (Look-up Table)",
+      "sourceType": "official-lut-download",
+      "sourceUrl": "https://av.jpn.support.panasonic.com/support/global/cs/dsc/download/lut/index.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Binary files are not stored in this repository; redistribution status remains unknown."
+    },
+    {
+      "id": "dji-pocket3-downloads",
+      "brand": "dji",
+      "modelScope": [
+        "dji-osmo-pocket-3"
+      ],
+      "publisher": "DJI",
+      "documentTitle": "Osmo Pocket 3 Downloads",
+      "sourceType": "official-lut-download",
+      "sourceUrl": "https://www.dji.com/osmo-pocket-3/downloads",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Download metadata only; binary and license were not copied."
+    },
+    {
+      "id": "dji-pocket3-faq",
+      "brand": "dji",
+      "modelScope": [
+        "dji-osmo-pocket-3"
+      ],
+      "publisher": "DJI",
+      "documentTitle": "Osmo Pocket 3 FAQ",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.dji.com/osmo-pocket-3/faq",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "No technical transfer coefficients are inferred."
+    },
+    {
+      "id": "dji-action5-downloads",
+      "brand": "dji",
+      "modelScope": [
+        "dji-osmo-action-5-pro"
+      ],
+      "publisher": "DJI",
+      "documentTitle": "Osmo Action 5 Pro Downloads",
+      "sourceType": "official-lut-download",
+      "sourceUrl": "https://www.dji.com/osmo-action-5-pro/downloads",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Download metadata only; binary and license were not copied."
+    },
+    {
+      "id": "dji-mavic3pro-downloads",
+      "brand": "dji",
+      "modelScope": [
+        "dji-mavic-3-pro"
+      ],
+      "publisher": "DJI",
+      "documentTitle": "DJI Mavic 3 Pro Downloads",
+      "sourceType": "official-lut-download",
+      "sourceUrl": "https://www.dji.com/mavic-3-pro/downloads",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "The separate curve assets must not be interchanged with Pocket or Action assets."
+    },
+    {
+      "id": "arri-alexa35-color-science",
+      "brand": "arri",
+      "modelScope": [
+        "arri-alexa-35"
+      ],
+      "publisher": "ARRI",
+      "documentTitle": "ALEXA 35 Color Science",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.arri.com/en/camera-systems/cameras/legacy-camera-systems/alexa-35",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "LogC4 is not treated as interchangeable with LogC3."
+    },
+    {
+      "id": "arri-logc4-downloads",
+      "brand": "arri",
+      "modelScope": [
+        "arri-alexa-35"
+      ],
+      "publisher": "ARRI",
+      "documentTitle": "ARRI Technical Downloads: LogC4 LUT Package",
+      "sourceType": "official-lut-download",
+      "sourceUrl": "https://www.arri.com/en/learn-help/learn-help-camera-system/technical-downloads?type=Post+Grading+and+LUTs",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Package binary is not stored; redistribution status remains unknown."
+    },
+    {
+      "id": "arri-color-faq",
+      "brand": "arri",
+      "modelScope": [
+        "arri-alexa-35"
+      ],
+      "publisher": "ARRI",
+      "documentTitle": "ARRI Color FAQ",
+      "sourceType": "official-white-paper",
+      "sourceUrl": "https://www.arri.com/en/learn-help/learn-help-camera-system/image-science/color-faq",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Used to enforce curve separation."
+    },
+    {
+      "id": "red-ipp2-output-transforms",
+      "brand": "red",
+      "modelScope": [
+        "red-komodo-x",
+        "red-v-raptor"
+      ],
+      "publisher": "RED Digital Cinema",
+      "documentTitle": "IPP2 Output Transforms",
+      "sourceType": "official-white-paper",
+      "sourceUrl": "https://docs.red.com/915-0201/REV-A/PDF/915-0201%20Rev-A%20%20%20RED%20OPS%2C%20IPP2%20Output%20Transforms.pdf",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Creative LUTs are not treated as IPP2 output transforms."
+    },
+    {
+      "id": "red-lut-downloads",
+      "brand": "red",
+      "modelScope": [
+        "red-komodo-x",
+        "red-v-raptor"
+      ],
+      "publisher": "RED Digital Cinema",
+      "documentTitle": "RED LUT Downloads",
+      "sourceType": "official-lut-download",
+      "sourceUrl": "https://support.red.com/hc/en-us/articles/360041467533-RED-LUT-Downloads",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Applicability and redistribution terms require separate confirmation before automated binding."
+    },
+    {
+      "id": "red-komodox-output-space",
+      "brand": "red",
+      "modelScope": [
+        "red-komodo-x"
+      ],
+      "publisher": "RED Digital Cinema",
+      "documentTitle": "KOMODO-X Operation Guide: Output Color Space",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://docs.red.com/955-0219/955-0219_V2.0%20Rev-A%20RED%20PS%2C%20KOMODO-X%20Operation%20Guide/Content/4_Menus/01_Image_LUT/OutputColorSpace.htm",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Recording behavior depends on file format and profile selection."
+    },
+    {
+      "id": "red-vraptor-sdi",
+      "brand": "red",
+      "modelScope": [
+        "red-v-raptor"
+      ],
+      "publisher": "RED Digital Cinema",
+      "documentTitle": "V-RAPTOR Operation Guide: SDI Page",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://docs.red.com/955-0199/955-0199_V1.3_Rev-B_RED_PS_V-RAPTOR_8K_VV_Operation_Guide/Content/3_Components/LCD/SDI_Page.htm",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Does not establish R3D baking."
+    },
+    {
+      "id": "sony-a6700-specs",
+      "brand": "sony",
+      "modelScope": [
+        "sony-a6700"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILCE-6700M Specifications",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.sony.com/electronics/support/e-mount-body-ilce-6000-series/ilce-6700m/specifications",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Used only for product category and sensor facts."
+    },
+    {
+      "id": "sony-a6700-manage-lut",
+      "brand": "sony",
+      "modelScope": [
+        "sony-a6700"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILCE-6700 Help Guide: Manage User LUTs",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2320/v1/en/contents/211h_manage_lut.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "The page does not state a minimum firmware version."
+    },
+    {
+      "id": "sony-a6700-log-help",
+      "brand": "sony",
+      "modelScope": [
+        "sony-a6700"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILCE-6700 Help Guide: Log Shooting Setting",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2320/v1/en/contents/211h_log_shoot_setting.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "The icon-rendered gamut names are not transcribed as verified model-specific facts."
+    },
+    {
+      "id": "sony-a6700-display-lut",
+      "brand": "sony",
+      "modelScope": [
+        "sony-a6700"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILCE-6700 Help Guide: Display LUT",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2320/v1/en/contents/211h_display_lut.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Does not establish baked recording behavior."
+    },
+    {
+      "id": "sony-fx3-specs",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx3"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX3 Specifications",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.sony.com/electronics/support/camcorders-and-video-cameras-interchangeable-lens-camcorders/ilme-fx3/specifications",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Used only for product category and sensor facts."
+    },
+    {
+      "id": "sony-fx3-manage-lut",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx3"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX3 Help Guide: Manage User LUTs",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2210/v1/en/contents/TP1000888940.html",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "C3 Portal registration has an additional Ver.4.00 requirement; memory-card import is the capability recorded here."
+    },
+    {
+      "id": "sony-fx3-display-lut",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx3"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX3 Help Guide: Display LUT",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2210/v1/en/contents/TP1000888936.html",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Does not establish baked recording behavior."
+    },
+    {
+      "id": "sony-fx3-log-help",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx3"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX3 Help Guide: Log Shooting Setting",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2210/v1/en/contents/TP1000888942.html",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Specific Base ISO values are not copied into this database."
+    },
+    {
+      "id": "sony-fx30-specs",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx30"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX30 Specifications",
+      "sourceType": "official-support-page",
+      "sourceUrl": "https://www.sony.com/electronics/support/camcorders-and-video-cameras-interchangeable-lens-camcorders/ilme-fx30/specifications",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Used only for product category and sensor facts."
+    },
+    {
+      "id": "sony-fx30-manage-lut",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx30"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX30 Help Guide: Manage User LUTs",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2220/v1/en/contents/TP1000888940.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "C3 Portal registration has an additional Ver.3.00 requirement; memory-card import is the capability recorded here."
+    },
+    {
+      "id": "sony-fx30-display-lut",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx30"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX30 Help Guide: Display LUT",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2220/v1/en/contents/TP1000888936.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Does not establish baked recording behavior."
+    },
+    {
+      "id": "sony-fx30-log-help",
+      "brand": "sony",
+      "modelScope": [
+        "sony-fx30"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "ILME-FX30 Help Guide: Log Shooting Setting",
+      "sourceType": "official-manual",
+      "sourceUrl": "https://helpguide.sony.net/ilc/2220/v1/en/contents/TP1000888942.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "Specific Base ISO values are not copied into this database."
+    },
+    {
+      "id": "sony-slog-creator-guide",
+      "brand": "sony",
+      "modelScope": [
+        "sony-a6700",
+        "sony-fx3",
+        "sony-fx30"
+      ],
+      "publisher": "Sony",
+      "documentTitle": "Help Guide for Creators: Gamut",
+      "sourceType": "official-white-paper",
+      "sourceUrl": "https://helpguide.sony.net/di/pp/v1/en/contents/TP1000756714.html",
+      "firmwareScope": [],
+      "accessedAt": "2026-07-10",
+      "verificationStatus": "verified",
+      "evidenceLevel": "official-spec-verified",
+      "sourceHash": null,
+      "notes": "This is a cross-model workflow source; model-specific availability remains separately verified."
+    }
+  ],
+  "verifiedFacts": [
+    {
+      "id": "panasonic-s5iix-real-time-lut",
+      "brand": "panasonic",
+      "modelId": "panasonic-s5-iix",
+      "category": "workflow",
+      "field": "realTimeLut",
+      "value": true,
+      "sourceIds": [
+        "panasonic-s5iix-real-time-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.10 for reviewed LUMIX Lab workflow"
+      ],
+      "shortEvidenceSummary": "Panasonic documents Real Time LUT on the camera body.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-s5iix-lut-formats",
+      "brand": "panasonic",
+      "modelId": "panasonic-s5-iix",
+      "category": "lut-format",
+      "field": "userLutFileFormats",
+      "value": [
+        ".vlt",
+        ".cube"
+      ],
+      "sourceIds": [
+        "panasonic-s5iix-real-time-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The official page lists VLT and CUBE formats.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-s5iix-baked-photo-video",
+      "brand": "panasonic",
+      "modelId": "panasonic-s5-iix",
+      "category": "baked-recording",
+      "field": "photoVideoLutApplication",
+      "value": [
+        "photo",
+        "video"
+      ],
+      "sourceIds": [
+        "panasonic-s5iix-real-time-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Panasonic states LUTs can be applied to photos and videos in-camera.",
+      "conflictingSourceIds": [],
+      "notes": "This is distinct from monitor-only LUT behavior.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-s5iix-firmware",
+      "brand": "panasonic",
+      "modelId": "panasonic-s5-iix",
+      "category": "firmware",
+      "field": "reviewedWorkflowMinimum",
+      "value": "2.1",
+      "sourceIds": [
+        "panasonic-s5iix-real-time-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.10"
+      ],
+      "shortEvidenceSummary": "The reviewed workflow page requests firmware 2.1.",
+      "conflictingSourceIds": [],
+      "notes": "Does not imply every Real Time LUT capability was introduced in that release.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-gh7-sensor-format",
+      "brand": "panasonic",
+      "modelId": "panasonic-gh7",
+      "category": "sensor-format",
+      "field": "sensorFormat",
+      "value": "Micro Four Thirds",
+      "sourceIds": [
+        "panasonic-gh7-quick-guide"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The official quick guide identifies Micro Four Thirds mount.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-gh7-real-time-lut",
+      "brand": "panasonic",
+      "modelId": "panasonic-gh7",
+      "category": "workflow",
+      "field": "realTimeLut",
+      "value": true,
+      "sourceIds": [
+        "panasonic-gh7-product"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Panasonic documents Real Time LUT on GH7.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-gh7-lut-formats",
+      "brand": "panasonic",
+      "modelId": "panasonic-gh7",
+      "category": "lut-format",
+      "field": "userLutFileFormats",
+      "value": [
+        ".vlt",
+        ".cube"
+      ],
+      "sourceIds": [
+        "panasonic-gh7-product"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The official page lists VLT and CUBE formats.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-gh7-baked-photo-video",
+      "brand": "panasonic",
+      "modelId": "panasonic-gh7",
+      "category": "baked-recording",
+      "field": "photoVideoLutApplication",
+      "value": [
+        "photo",
+        "video"
+      ],
+      "sourceIds": [
+        "panasonic-gh7-product"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Panasonic states LUTs can be applied to photos and videos in-camera.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-pocket3-sensor",
+      "brand": "dji",
+      "modelId": "dji-osmo-pocket-3",
+      "category": "sensor-format",
+      "field": "sensorFormat",
+      "value": "1-inch",
+      "sourceIds": [
+        "dji-pocket3-faq"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "DJI identifies the Pocket 3 sensor as 1 inch.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-pocket3-dlogm",
+      "brand": "dji",
+      "modelId": "dji-osmo-pocket-3",
+      "category": "gamma",
+      "field": "supportedGammas",
+      "value": [
+        "D-Log M"
+      ],
+      "sourceIds": [
+        "dji-pocket3-faq",
+        "dji-pocket3-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "DJI documents D-Log M and a matching product-specific conversion LUT.",
+      "conflictingSourceIds": [],
+      "notes": "D-Log M is kept separate from D-Log.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-pocket3-official-lut",
+      "brand": "dji",
+      "modelId": "dji-osmo-pocket-3",
+      "category": "technical-lut",
+      "field": "officialTechnicalLut",
+      "value": "D-Log M to Rec.709 v1.0",
+      "sourceIds": [
+        "dji-pocket3-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The official product download page lists the LUT.",
+      "conflictingSourceIds": [],
+      "notes": "Binary hash and redistribution permission are not recorded.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-action5-dlogm",
+      "brand": "dji",
+      "modelId": "dji-osmo-action-5-pro",
+      "category": "gamma",
+      "field": "supportedGammas",
+      "value": [
+        "D-Log M"
+      ],
+      "sourceIds": [
+        "dji-action5-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "DJI lists a D-Log M product-specific LUT.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-action5-official-lut",
+      "brand": "dji",
+      "modelId": "dji-osmo-action-5-pro",
+      "category": "technical-lut",
+      "field": "officialTechnicalLut",
+      "value": "D-Log M to Rec.709 vivid v1.0",
+      "sourceIds": [
+        "dji-action5-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The official product download page lists the LUT.",
+      "conflictingSourceIds": [],
+      "notes": "Binary hash and redistribution permission are not recorded.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-mavic3pro-log-curves",
+      "brand": "dji",
+      "modelId": "dji-mavic-3-pro",
+      "category": "gamma",
+      "field": "supportedGammas",
+      "value": [
+        "D-Log",
+        "D-Log M"
+      ],
+      "sourceIds": [
+        "dji-mavic3pro-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "DJI lists separate product-family conversion assets for D-Log and D-Log M.",
+      "conflictingSourceIds": [],
+      "notes": "The curves remain separate.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-mavic3pro-official-luts",
+      "brand": "dji",
+      "modelId": "dji-mavic-3-pro",
+      "category": "technical-lut",
+      "field": "officialTechnicalLuts",
+      "value": [
+        "D-Log to Rec.709 v1.0",
+        "D-Log M to Rec.709 v1.0"
+      ],
+      "sourceIds": [
+        "dji-mavic3pro-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The official product download page lists both curve-specific assets.",
+      "conflictingSourceIds": [],
+      "notes": "These assets are not assigned to Pocket or Action products.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "arri-alexa35-logc4-awg4",
+      "brand": "arri",
+      "modelId": "arri-alexa-35",
+      "category": "workflow",
+      "field": "inputEncoding",
+      "value": [
+        "LogC4",
+        "ARRI Wide Gamut 4"
+      ],
+      "sourceIds": [
+        "arri-alexa35-color-science"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "ARRI documents LogC4/AWG4 as part of REVEAL Color Science for ALEXA 35.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "arri-alexa35-logc4-package",
+      "brand": "arri",
+      "modelId": "arri-alexa-35",
+      "category": "technical-lut",
+      "field": "officialTechnicalLut",
+      "value": "LogC4/AWG4 LUT Package",
+      "sourceIds": [
+        "arri-logc4-downloads"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "ARRI lists an official .cube package for LogC4/AWG4 conversion.",
+      "conflictingSourceIds": [],
+      "notes": "Binary hash and redistribution permission are not recorded.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "arri-logc3-logc4-separation",
+      "brand": "arri",
+      "modelId": "arri-alexa-35",
+      "category": "workflow",
+      "field": "logVersionCompatibility",
+      "value": "LogC3 and LogC4 looks/LUTs are not directly convertible",
+      "sourceIds": [
+        "arri-color-faq"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "ARRI explicitly warns that LogC3 looks must be recreated for LogC4.",
+      "conflictingSourceIds": [],
+      "notes": "The pipeline rejects LogC3 as a substitute for ALEXA 35 LogC4.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-komodox-rwg-log3g10",
+      "brand": "red",
+      "modelId": "red-komodo-x",
+      "category": "workflow",
+      "field": "inputEncoding",
+      "value": [
+        "REDWideGamutRGB",
+        "Log3G10"
+      ],
+      "sourceIds": [
+        "red-komodox-output-space",
+        "red-ipp2-output-transforms"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "RED documents the RWG/Log3G10 IPP2 working encoding.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-komodox-recording-behavior",
+      "brand": "red",
+      "modelId": "red-komodo-x",
+      "category": "baked-recording",
+      "field": "recordingBehavior",
+      "value": "R3D stores metadata; ProRes Image/LUT can bake output color space",
+      "sourceIds": [
+        "red-komodox-output-space"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The operation guide distinguishes R3D metadata from ProRes Image/LUT baking.",
+      "conflictingSourceIds": [],
+      "notes": "Recording behavior must be evaluated with file format and profile context.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-ipp2-stage-order",
+      "brand": "red",
+      "modelId": "red-komodo-x",
+      "category": "workflow",
+      "field": "pipelineOrder",
+      "value": [
+        "Primary Raw Development to RWG/Log3G10",
+        "Grading",
+        "Output Transform"
+      ],
+      "sourceIds": [
+        "red-ipp2-output-transforms"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "RED defines grading before the technical output transform.",
+      "conflictingSourceIds": [],
+      "notes": "A Rec.709 creative LUT is not an IPP2 output transform.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-vraptor-rwg-log3g10-monitor",
+      "brand": "red",
+      "modelId": "red-v-raptor",
+      "category": "monitoring-only",
+      "field": "sdiMonitoringLook",
+      "value": [
+        "Image/LUT",
+        "REDWideGamutRGB/Log3G10"
+      ],
+      "sourceIds": [
+        "red-vraptor-sdi"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The V-RAPTOR guide documents selectable SDI monitoring looks.",
+      "conflictingSourceIds": [],
+      "notes": "Does not establish R3D baking.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-vraptor-ipp2-stage-order",
+      "brand": "red",
+      "modelId": "red-v-raptor",
+      "category": "workflow",
+      "field": "pipelineOrder",
+      "value": [
+        "Primary Raw Development to RWG/Log3G10",
+        "Grading",
+        "Output Transform"
+      ],
+      "sourceIds": [
+        "red-ipp2-output-transforms"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "RED defines grading before the technical output transform.",
+      "conflictingSourceIds": [],
+      "notes": "A Rec.709 creative LUT is not an IPP2 output transform.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-category",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "product-category",
+      "field": "productCategory",
+      "value": "mirrorless",
+      "sourceIds": [
+        "sony-a6700-specs"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Sony identifies the A6700 as an interchangeable-lens digital camera.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-sensor",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "sensor-format",
+      "field": "sensorFormat",
+      "value": [
+        "APS-C",
+        "23.3 x 15.5 mm"
+      ],
+      "sourceIds": [
+        "sony-a6700-specs"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Official specifications identify the sensor format and dimensions.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-user-lut",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "workflow",
+      "field": "userLutImport",
+      "value": true,
+      "sourceIds": [
+        "sony-a6700-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The Help Guide documents registration of user LUT files.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-lut-format",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "lut-format",
+      "field": "userLutFileFormats",
+      "value": [
+        ".cube"
+      ],
+      "sourceIds": [
+        "sony-a6700-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "CUBE files are explicitly required.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-lut-size",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "lut-size",
+      "field": "supportedCubeSizes",
+      "value": [
+        17,
+        33
+      ],
+      "sourceIds": [
+        "sony-a6700-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "17-point and 33-point CUBE files are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-lut-path",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "import-path",
+      "field": "cardPath",
+      "value": [
+        "/Private/Sony/PRO/LUT"
+      ],
+      "sourceIds": [
+        "sony-a6700-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The memory-card folder is explicitly documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-name-limit",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "file-name-limit",
+      "field": "fileNameLimit",
+      "value": 63,
+      "unit": "single-byte alphanumeric characters including .cube",
+      "sourceIds": [
+        "sony-a6700-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The Help Guide states a 63-character limit including extension.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-slots",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "lut-slots",
+      "field": "slotCount",
+      "value": 16,
+      "sourceIds": [
+        "sony-a6700-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "User1 through User16 are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-display-lut",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "monitoring-only",
+      "field": "displayLut",
+      "value": true,
+      "sourceIds": [
+        "sony-a6700-display-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The monitor and playback can display the LUT-reflected preview.",
+      "conflictingSourceIds": [],
+      "notes": "This does not establish baked recording.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700-log",
+      "brand": "sony",
+      "modelId": "sony-a6700",
+      "category": "gamma",
+      "field": "supportedGammas",
+      "value": [
+        "S-Log3"
+      ],
+      "sourceIds": [
+        "sony-a6700-log-help"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The Log shooting workflow explicitly records S-Log material.",
+      "conflictingSourceIds": [],
+      "notes": "Model-specific gamut labels remain unresolved because the source renders them as inaccessible icons.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-category",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "product-category",
+      "field": "productCategory",
+      "value": "cinema",
+      "sourceIds": [
+        "sony-fx3-specs"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Sony identifies FX3 as a Cinema Line interchangeable-lens camera.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-sensor",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "sensor-format",
+      "field": "sensorFormat",
+      "value": [
+        "35 mm full-frame",
+        "35.6 x 23.8 mm"
+      ],
+      "sourceIds": [
+        "sony-fx3-specs"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Official specifications identify the sensor format and dimensions.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-user-lut",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "workflow",
+      "field": "userLutImport",
+      "value": true,
+      "sourceIds": [
+        "sony-fx3-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "The Help Guide documents registration of user LUT files.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-lut-format",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "lut-format",
+      "field": "userLutFileFormats",
+      "value": [
+        ".cube"
+      ],
+      "sourceIds": [
+        "sony-fx3-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "CUBE files are explicitly required.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-lut-size",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "lut-size",
+      "field": "supportedCubeSizes",
+      "value": [
+        17,
+        33
+      ],
+      "sourceIds": [
+        "sony-fx3-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "17-point and 33-point CUBE files are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-lut-path",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "import-path",
+      "field": "cardPath",
+      "value": [
+        "/Private/Sony/PRO/LUT",
+        "/Sony/PRO/LUT"
+      ],
+      "sourceIds": [
+        "sony-fx3-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "Separate SD and CFexpress Type A paths are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-name-limit",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "file-name-limit",
+      "field": "fileNameLimit",
+      "value": 63,
+      "unit": "single-byte alphanumeric characters including .cube",
+      "sourceIds": [
+        "sony-fx3-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "The Help Guide states a 63-character limit including extension.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-slots",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "lut-slots",
+      "field": "slotCount",
+      "value": 16,
+      "sourceIds": [
+        "sony-fx3-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "User1 through User16 are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-display-lut",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "monitoring-only",
+      "field": "displayLut",
+      "value": true,
+      "sourceIds": [
+        "sony-fx3-display-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "The monitor and playback can display the LUT-reflected preview.",
+      "conflictingSourceIds": [],
+      "notes": "This does not establish baked recording.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3-log-modes",
+      "brand": "sony",
+      "modelId": "sony-fx3",
+      "category": "cine-ei",
+      "field": "logShootingModes",
+      "value": [
+        "Flexible ISO",
+        "Cine EI Quick",
+        "Cine EI"
+      ],
+      "sourceIds": [
+        "sony-fx3-log-help"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [
+        ">=2.00"
+      ],
+      "shortEvidenceSummary": "The Help Guide explicitly lists all three Log shooting modes.",
+      "conflictingSourceIds": [],
+      "notes": "No fixed ETTR recommendation is inferred.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-category",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "product-category",
+      "field": "productCategory",
+      "value": "cinema",
+      "sourceIds": [
+        "sony-fx30-specs"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Sony identifies FX30 as a Cinema Line interchangeable-lens camera.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-sensor",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "sensor-format",
+      "field": "sensorFormat",
+      "value": [
+        "APS-C",
+        "23.3 x 15.5 mm"
+      ],
+      "sourceIds": [
+        "sony-fx30-specs"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Official specifications identify the sensor format and dimensions.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-user-lut",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "workflow",
+      "field": "userLutImport",
+      "value": true,
+      "sourceIds": [
+        "sony-fx30-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The Help Guide documents registration of user LUT files.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-lut-format",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "lut-format",
+      "field": "userLutFileFormats",
+      "value": [
+        ".cube"
+      ],
+      "sourceIds": [
+        "sony-fx30-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "CUBE files are explicitly required.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-lut-size",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "lut-size",
+      "field": "supportedCubeSizes",
+      "value": [
+        17,
+        33
+      ],
+      "sourceIds": [
+        "sony-fx30-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "17-point and 33-point CUBE files are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-lut-path",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "import-path",
+      "field": "cardPath",
+      "value": [
+        "/Private/Sony/PRO/LUT",
+        "/Sony/PRO/LUT"
+      ],
+      "sourceIds": [
+        "sony-fx30-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "Separate SD and CFexpress Type A paths are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-name-limit",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "file-name-limit",
+      "field": "fileNameLimit",
+      "value": 63,
+      "unit": "single-byte alphanumeric characters including .cube",
+      "sourceIds": [
+        "sony-fx30-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The Help Guide states a 63-character limit including extension.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-slots",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "lut-slots",
+      "field": "slotCount",
+      "value": 16,
+      "sourceIds": [
+        "sony-fx30-manage-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "User1 through User16 are documented.",
+      "conflictingSourceIds": [],
+      "notes": "",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-display-lut",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "monitoring-only",
+      "field": "displayLut",
+      "value": true,
+      "sourceIds": [
+        "sony-fx30-display-lut"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The monitor and playback can display the LUT-reflected preview.",
+      "conflictingSourceIds": [],
+      "notes": "This does not establish baked recording.",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30-log-modes",
+      "brand": "sony",
+      "modelId": "sony-fx30",
+      "category": "cine-ei",
+      "field": "logShootingModes",
+      "value": [
+        "Flexible ISO",
+        "Cine EI Quick",
+        "Cine EI"
+      ],
+      "sourceIds": [
+        "sony-fx30-log-help"
+      ],
+      "confidenceLevel": "official-confirmed",
+      "verifiedStatus": "verified",
+      "firmwareScope": [],
+      "shortEvidenceSummary": "The Help Guide explicitly lists all three Log shooting modes.",
+      "conflictingSourceIds": [],
+      "notes": "No fixed ETTR recommendation is inferred.",
+      "lastVerifiedAt": "2026-07-10"
+    }
+  ],
+  "models": [
+    {
+      "id": "panasonic-s5-iix",
+      "brand": "panasonic",
+      "model": "S5 IIX",
+      "productCategory": "mirrorless",
+      "firmwareScope": [
+        {
+          "status": "documented",
+          "minVersion": "2.10",
+          "notes": "The reviewed Panasonic Real Time LUT workflow page requires firmware 2.1 for the described LUMIX Lab workflow."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "V-Log",
+          "sourceIds": [
+            "panasonic-global-lut-download"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [
+        {
+          "gamut": "V-Gamut",
+          "compatibleGammas": [
+            "V-Log"
+          ],
+          "sourceIds": [
+            "panasonic-global-lut-download"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "sourceIds": [
+        "panasonic-s5iix-real-time-lut",
+        "panasonic-global-lut-download"
+      ],
+      "verifiedFactIds": [
+        "panasonic-s5iix-real-time-lut",
+        "panasonic-s5iix-lut-formats",
+        "panasonic-s5iix-baked-photo-video",
+        "panasonic-s5iix-firmware"
+      ],
+      "unresolvedFields": [
+        "sensorDimensions",
+        "supportedCubeSizes",
+        "fileNameLimit",
+        "cardPath",
+        "slotCount",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance"
+      ],
+      "officialTechnicalLutIds": [
+        "panasonic-vlog-v709-v35"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "panasonic-gh7",
+      "brand": "panasonic",
+      "model": "GH7",
+      "productCategory": "mirrorless",
+      "firmwareScope": [
+        {
+          "status": "documented",
+          "minVersion": "1.30",
+          "notes": "The reviewed Panasonic product page associates current LUMIX Lab functions with firmware 1.3; base Real Time LUT availability is documented separately."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "V-Log",
+          "sourceIds": [
+            "panasonic-global-lut-download"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [
+        {
+          "gamut": "V-Gamut",
+          "compatibleGammas": [
+            "V-Log"
+          ],
+          "sourceIds": [
+            "panasonic-global-lut-download"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "sourceIds": [
+        "panasonic-gh7-product",
+        "panasonic-gh7-quick-guide",
+        "panasonic-global-lut-download"
+      ],
+      "verifiedFactIds": [
+        "panasonic-gh7-sensor-format",
+        "panasonic-gh7-real-time-lut",
+        "panasonic-gh7-lut-formats",
+        "panasonic-gh7-baked-photo-video"
+      ],
+      "unresolvedFields": [
+        "sensorDimensions",
+        "supportedCubeSizes",
+        "fileNameLimit",
+        "cardPath",
+        "slotCount",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance"
+      ],
+      "officialTechnicalLutIds": [
+        "panasonic-vlog-v709-v35"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-osmo-pocket-3",
+      "brand": "dji",
+      "model": "Osmo Pocket 3",
+      "productCategory": "action",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "The official download page does not tie the LUT to a minimum firmware version."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "D-Log M",
+          "sourceIds": [
+            "dji-pocket3-downloads",
+            "dji-pocket3-faq"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [],
+      "sourceIds": [
+        "dji-pocket3-downloads",
+        "dji-pocket3-faq"
+      ],
+      "verifiedFactIds": [
+        "dji-pocket3-sensor",
+        "dji-pocket3-dlogm",
+        "dji-pocket3-official-lut"
+      ],
+      "unresolvedFields": [
+        "sensorDimensions",
+        "supportedGamuts",
+        "userLutImport",
+        "supportedCubeSizes",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance"
+      ],
+      "officialTechnicalLutIds": [
+        "dji-pocket3-dlogm-rec709-v1"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-osmo-action-5-pro",
+      "brand": "dji",
+      "model": "Osmo Action 5 Pro",
+      "productCategory": "action",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "No firmware minimum was recorded from the download page."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "D-Log M",
+          "sourceIds": [
+            "dji-action5-downloads"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [],
+      "sourceIds": [
+        "dji-action5-downloads"
+      ],
+      "verifiedFactIds": [
+        "dji-action5-dlogm",
+        "dji-action5-official-lut"
+      ],
+      "unresolvedFields": [
+        "sensorFormat",
+        "sensorDimensions",
+        "supportedGamuts",
+        "userLutImport",
+        "supportedCubeSizes",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance"
+      ],
+      "officialTechnicalLutIds": [
+        "dji-action5-dlogm-rec709-v1"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "dji-mavic-3-pro",
+      "brand": "dji",
+      "model": "Mavic 3 Pro",
+      "productCategory": "drone",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "The LUT download page is product-specific but does not define a minimum aircraft firmware."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "D-Log",
+          "sourceIds": [
+            "dji-mavic3pro-downloads"
+          ],
+          "verificationStatus": "verified"
+        },
+        {
+          "gamma": "D-Log M",
+          "sourceIds": [
+            "dji-mavic3pro-downloads"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [],
+      "sourceIds": [
+        "dji-mavic3pro-downloads"
+      ],
+      "verifiedFactIds": [
+        "dji-mavic3pro-log-curves",
+        "dji-mavic3pro-official-luts"
+      ],
+      "unresolvedFields": [
+        "sensorFormat",
+        "sensorDimensions",
+        "supportedGamuts",
+        "userLutImport",
+        "supportedCubeSizes",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance"
+      ],
+      "officialTechnicalLutIds": [
+        "dji-mavic3-dlog-rec709-v1",
+        "dji-mavic3-dlogm-rec709-v1"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "arri-alexa-35",
+      "brand": "arri",
+      "model": "ALEXA 35",
+      "productCategory": "cinema",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "LogC4/AWG4 is a platform color-science capability; specific camera software scope remains linked to the current ARRI documentation."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "LogC4",
+          "sourceIds": [
+            "arri-alexa35-color-science"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [
+        {
+          "gamut": "ARRI Wide Gamut 4",
+          "compatibleGammas": [
+            "LogC4"
+          ],
+          "sourceIds": [
+            "arri-alexa35-color-science"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "sourceIds": [
+        "arri-alexa35-color-science",
+        "arri-logc4-downloads",
+        "arri-color-faq"
+      ],
+      "verifiedFactIds": [
+        "arri-alexa35-logc4-awg4",
+        "arri-alexa35-logc4-package",
+        "arri-logc3-logc4-separation"
+      ],
+      "unresolvedFields": [
+        "sensorDimensions",
+        "supportedCubeSizes",
+        "fileNameLimit",
+        "cardPath",
+        "slotCount",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance",
+        "bakedRecordingSupport"
+      ],
+      "officialTechnicalLutIds": [
+        "arri-logc4-rec709-package-2025"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-komodo-x",
+      "brand": "red",
+      "model": "KOMODO-X",
+      "productCategory": "cinema",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "The current official operation guide was reviewed without converting it into a firmware-wide guarantee."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "Log3G10",
+          "sourceIds": [
+            "red-ipp2-output-transforms",
+            "red-komodox-output-space"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [
+        {
+          "gamut": "REDWideGamutRGB",
+          "compatibleGammas": [
+            "Log3G10"
+          ],
+          "sourceIds": [
+            "red-ipp2-output-transforms",
+            "red-komodox-output-space"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "sourceIds": [
+        "red-komodox-output-space",
+        "red-ipp2-output-transforms",
+        "red-lut-downloads"
+      ],
+      "verifiedFactIds": [
+        "red-komodox-rwg-log3g10",
+        "red-komodox-recording-behavior",
+        "red-ipp2-stage-order"
+      ],
+      "unresolvedFields": [
+        "sensorDimensions",
+        "supportedCubeSizes",
+        "fileNameLimit",
+        "cardPath",
+        "slotCount",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance",
+        "monitorOnlySupport"
+      ],
+      "officialTechnicalLutIds": [
+        "red-ipp2-output-presets"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "red-v-raptor",
+      "brand": "red",
+      "model": "V-RAPTOR",
+      "productCategory": "cinema",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "The current official operation guide was reviewed without converting it into a firmware-wide guarantee."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "Log3G10",
+          "sourceIds": [
+            "red-ipp2-output-transforms",
+            "red-vraptor-sdi"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [
+        {
+          "gamut": "REDWideGamutRGB",
+          "compatibleGammas": [
+            "Log3G10"
+          ],
+          "sourceIds": [
+            "red-ipp2-output-transforms",
+            "red-vraptor-sdi"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "sourceIds": [
+        "red-vraptor-sdi",
+        "red-ipp2-output-transforms",
+        "red-lut-downloads"
+      ],
+      "verifiedFactIds": [
+        "red-vraptor-rwg-log3g10-monitor",
+        "red-vraptor-ipp2-stage-order"
+      ],
+      "unresolvedFields": [
+        "sensorDimensions",
+        "supportedCubeSizes",
+        "fileNameLimit",
+        "cardPath",
+        "slotCount",
+        "rangeSupport",
+        "baseIsoOrEi",
+        "officialExposureGuidance",
+        "bakedRecordingSupport"
+      ],
+      "officialTechnicalLutIds": [
+        "red-ipp2-output-presets"
+      ],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "asset-binding-required",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-a6700",
+      "brand": "sony",
+      "model": "A6700",
+      "productCategory": "mirrorless",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "The current Sony Help Guide was reviewed, but the LUT feature page does not state a minimum firmware version."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "S-Log3",
+          "sourceIds": [
+            "sony-a6700-log-help"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [],
+      "sourceIds": [
+        "sony-a6700-specs",
+        "sony-a6700-manage-lut",
+        "sony-a6700-log-help",
+        "sony-a6700-display-lut"
+      ],
+      "verifiedFactIds": [
+        "sony-a6700-category",
+        "sony-a6700-sensor",
+        "sony-a6700-user-lut",
+        "sony-a6700-lut-format",
+        "sony-a6700-lut-size",
+        "sony-a6700-lut-path",
+        "sony-a6700-name-limit",
+        "sony-a6700-slots",
+        "sony-a6700-display-lut",
+        "sony-a6700-log"
+      ],
+      "unresolvedFields": [
+        "firmwareScope",
+        "supportedGamuts",
+        "baseIsoOrEi",
+        "officialExposureGuidance",
+        "rangeSupport",
+        "bakedRecordingSupport",
+        "stillPhotoLutSupport",
+        "videoLutSupport"
+      ],
+      "officialTechnicalLutIds": [],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "unsupported",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx3",
+      "brand": "sony",
+      "model": "FX3",
+      "productCategory": "cinema",
+      "firmwareScope": [
+        {
+          "status": "documented",
+          "minVersion": "2.00",
+          "notes": "Sony Help Guide title states Ver.2 or later for the reviewed User LUT workflow."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "S-Log3",
+          "sourceIds": [
+            "sony-fx3-log-help"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [],
+      "sourceIds": [
+        "sony-fx3-specs",
+        "sony-fx3-manage-lut",
+        "sony-fx3-display-lut",
+        "sony-fx3-log-help"
+      ],
+      "verifiedFactIds": [
+        "sony-fx3-category",
+        "sony-fx3-sensor",
+        "sony-fx3-user-lut",
+        "sony-fx3-lut-format",
+        "sony-fx3-lut-size",
+        "sony-fx3-lut-path",
+        "sony-fx3-name-limit",
+        "sony-fx3-slots",
+        "sony-fx3-display-lut",
+        "sony-fx3-log-modes"
+      ],
+      "unresolvedFields": [
+        "supportedGamuts",
+        "officialExposureGuidance",
+        "rangeSupport",
+        "bakedRecordingSupport",
+        "stillPhotoLutSupport",
+        "videoLutSupport"
+      ],
+      "officialTechnicalLutIds": [],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "unsupported",
+      "lastVerifiedAt": "2026-07-10"
+    },
+    {
+      "id": "sony-fx30",
+      "brand": "sony",
+      "model": "FX30",
+      "productCategory": "cinema",
+      "firmwareScope": [
+        {
+          "status": "unknown",
+          "notes": "Memory-card LUT import is documented without a minimum firmware version; C3 Portal registration has separate firmware requirements."
+        }
+      ],
+      "supportedGammas": [
+        {
+          "gamma": "S-Log3",
+          "sourceIds": [
+            "sony-fx30-log-help"
+          ],
+          "verificationStatus": "verified"
+        }
+      ],
+      "supportedGamuts": [],
+      "sourceIds": [
+        "sony-fx30-specs",
+        "sony-fx30-manage-lut",
+        "sony-fx30-display-lut",
+        "sony-fx30-log-help"
+      ],
+      "verifiedFactIds": [
+        "sony-fx30-category",
+        "sony-fx30-sensor",
+        "sony-fx30-user-lut",
+        "sony-fx30-lut-format",
+        "sony-fx30-lut-size",
+        "sony-fx30-lut-path",
+        "sony-fx30-name-limit",
+        "sony-fx30-slots",
+        "sony-fx30-display-lut",
+        "sony-fx30-log-modes"
+      ],
+      "unresolvedFields": [
+        "firmwareScope",
+        "supportedGamuts",
+        "officialExposureGuidance",
+        "rangeSupport",
+        "bakedRecordingSupport",
+        "stillPhotoLutSupport",
+        "videoLutSupport"
+      ],
+      "officialTechnicalLutIds": [],
+      "confidence": "official-description-only",
+      "technicalTransformStatus": "unsupported",
+      "lastVerifiedAt": "2026-07-10"
+    }
+  ],
+  "pendingDirectories": [
+    {
+      "id": "canon-pending",
+      "brand": "canon",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "fujifilm-pending",
+      "brand": "fujifilm",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "nikon-pending",
+      "brand": "nikon",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "blackmagic-pending",
+      "brand": "blackmagic",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "gopro-pending",
+      "brand": "gopro",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "insta360-pending",
+      "brand": "insta360",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "kinefinity-pending",
+      "brand": "kinefinity",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "zcam-pending",
+      "brand": "zcam",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "leica-pending",
+      "brand": "leica",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "sigma-pending",
+      "brand": "sigma",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "olympus-pending",
+      "brand": "olympus",
+      "status": "pending-verification",
+      "models": []
+    },
+    {
+      "id": "apple-pending",
+      "brand": "apple",
+      "status": "pending-verification",
+      "models": []
+    }
+  ]
+}

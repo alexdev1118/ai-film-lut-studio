@@ -1,0 +1,42 @@
+{
+  "task": "S17.2-CAMERA-EVIDENCE",
+  "generatedAt": "2026-07-15T23:21:10.088Z",
+  "status": "evidence-baseline-generated-priority-research-pending",
+  "started": true,
+  "passed": false,
+  "officialSources": 28,
+  "officialAssets": 7,
+  "officialAssetsWithVerifiedHash": 0,
+  "verifiedTransforms": 0,
+  "verifiedFacts": 53,
+  "pendingFacts": 87,
+  "researchedBrands": [
+    "sony",
+    "panasonic",
+    "dji",
+    "arri",
+    "red"
+  ],
+  "pendingBrands": [
+    "canon",
+    "fujifilm",
+    "nikon",
+    "blackmagic",
+    "gopro",
+    "insta360",
+    "kinefinity",
+    "zcam",
+    "leica",
+    "sigma",
+    "olympus",
+    "apple"
+  ],
+  "blockers": [
+    "Vendor LUT binary hashes and redistribution licenses are not verified.",
+    "Canon and Blackmagic P0 research remains pending.",
+    "Fujifilm, Nikon, and Apple P1 research remains pending.",
+    "No official mathematical curve implementation was added in this phase."
+  ],
+  "gitCommitted": false,
+  "gitPushed": false
+}
