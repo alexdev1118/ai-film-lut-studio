@@ -1,195 +1,289 @@
-import { previewImages } from "./mockImages";
-import type { LutStyle, StyleCategory } from "../types";
+import type { LutStyle, LutStyleAdjustments, LutStyleProvenanceType, StyleCategory } from "../types";
+
+const compatibility = {
+  inputContract: "bt709-g24-full",
+  outputContract: "bt709-g24-full",
+  cubeSizes: [17, 33, 65],
+  strengths: [35, 50, 70, 100],
+  technicalConversionIncluded: false
+} as const;
+
+const license = {
+  identifier: "PROJECT-ORIGINAL-V1",
+  owner: "AI Film LUT Studio",
+  redistributionAllowed: true,
+  attributionRequired: false,
+  statement: "Original parameter-authored style distributed as part of AI Film LUT Studio; no third-party LUT asset is embedded."
+} as const;
+
+const publicCharacteristicsSources = [
+  "https://github.com/AcademySoftwareFoundation/OpenColorIO",
+  "https://github.com/AcademySoftwareFoundation/OpenColorIO-Config-ACES",
+  "https://github.com/aces-aswf/aces-core"
+] as const;
+
+const originalSources = ["https://github.com/alexdev1118/ai-film-lut-studio"] as const;
+
+const createScenePreviews = (styleId: string, strength: 35 | 50 | 70 | 100) => [
+  { sceneId: "portrait-normal", label: "正常曝光人物", image: `/style-previews/${styleId}-scene-portrait-normal-${strength}.png`, strength, source: "procedural-stress-fixture" },
+  { sceneId: "portrait-close", label: "人物近景", image: `/style-previews/${styleId}-scene-portrait-close-${strength}.png`, strength, source: "procedural-stress-fixture" },
+  { sceneId: "blue-sky", label: "蓝天", image: `/style-previews/${styleId}-scene-blue-sky-${strength}.png`, strength, source: "procedural-stress-fixture" },
+  { sceneId: "blue-sky-greenery", label: "蓝天绿植", image: `/style-previews/${styleId}-scene-blue-sky-greenery-${strength}.png`, strength, source: "procedural-stress-fixture" },
+  { sceneId: "daylight-high-contrast", label: "高反差白天", image: `/style-previews/${styleId}-scene-daylight-high-contrast-${strength}.png`, strength, source: "procedural-stress-fixture" },
+  { sceneId: "saturated-red", label: "高饱和红色", image: `/style-previews/${styleId}-scene-saturated-red-${strength}.png`, strength, source: "procedural-stress-fixture" }
+] as const;
+
+const createStyle = (input: {
+  readonly id: string;
+  readonly name: string;
+  readonly englishName: string;
+  readonly category: Exclude<StyleCategory, "全部">;
+  readonly keywords: readonly string[];
+  readonly suitableFor: string;
+  readonly recommendedIntensity: 35 | 50 | 70 | 100;
+  readonly description: string;
+  readonly adjustments: LutStyleAdjustments;
+  readonly provenanceType: LutStyleProvenanceType;
+  readonly provenanceStatement: string;
+  readonly riskLevel: "low" | "medium" | "high";
+  readonly risks: readonly string[];
+}): LutStyle => ({
+  id: input.id,
+  name: input.name,
+  englishName: input.englishName,
+  category: input.category,
+  keywords: input.keywords,
+  suitableFor: input.suitableFor,
+  recommendedIntensity: input.recommendedIntensity,
+  previewImage: `url('/style-previews/${input.id}-${input.recommendedIntensity}.png') center/cover`,
+  description: input.description,
+  adjustments: input.adjustments,
+  provenance: {
+    type: input.provenanceType,
+    author: "AI Film LUT Studio",
+    statement: input.provenanceStatement,
+    sourceUrls: input.provenanceType === "inspired-by-public-characteristics" ? publicCharacteristicsSources : originalSources
+  },
+  license,
+  compatibility,
+  riskProfile: {
+    level: input.riskLevel,
+    risks: input.risks,
+    safeguards: ["Hue-preserving gamut compression", "Continuous highlight and shadow chroma roll-off", "Shared preview and Cube RGB core"]
+  },
+  previewSet: {
+    generatedLocally: true,
+    generatedFromFinalCube: true,
+    cacheKey: `${input.id}-v1-${input.recommendedIntensity}-17pt`,
+    calibration: `/style-previews/${input.id}-${input.recommendedIntensity}.png`,
+    portrait: `/style-previews/${input.id}-scene-portrait-normal-${input.recommendedIntensity}.png`,
+    skyGreenery: `/style-previews/${input.id}-scene-blue-sky-greenery-${input.recommendedIntensity}.png`,
+    saturatedRed: `/style-previews/${input.id}-scene-saturated-red-${input.recommendedIntensity}.png`,
+    scenes: createScenePreviews(input.id, input.recommendedIntensity)
+  },
+  validation: {
+    proceduralSixScenesPassed: true,
+    monotonicStrengthPassed: true,
+    supportedCubeSizesValidated: [17, 33, 65],
+    realDavinciStatus: "shared-core-validated",
+    validationVersion: "S17.1-v1"
+  },
+  version: "1.0.0"
+});
 
 export const styleCategories: readonly StyleCategory[] = [
   "全部",
   "电影感",
-  "人像摄影",
-  "城市夜景",
-  "复古胶片",
-  "商业广告",
-  "赛博风格"
+  "人像",
+  "商业",
+  "纪录片",
+  "美食",
+  "旅行",
+  "夜景",
+  "复古",
+  "黑白",
+  "实验性"
 ];
 
 export const lutStyles: readonly LutStyle[] = [
-  {
-    id: "cinematic-teal-orange",
-    name: "青橙电影感",
+  createStyle({
+    id: "print-2383-inspired",
+    name: "2383 打印胶片启发",
+    englishName: "Print 2383 Inspired",
     category: "电影感",
-    keywords: ["青色阴影", "橙色肤色", "高光克制"],
-    suitableFor: "旅行短片、剧情片静帧、城市人物素材",
-    recommendedIntensity: 72,
-    previewImage: previewImages.tealOrange,
-    description: "用青色暗部和暖橙肤色建立电影化对比，适合需要快速提升叙事感的画面。"
-  },
-  {
-    id: "cinematic-cool-low-saturation",
-    name: "低饱和冷调",
+    keywords: ["打印密度", "暖中间调", "高光收束"],
+    suitableFor: "剧情片、品牌短片、已还原 Rec.709 素材",
+    recommendedIntensity: 50,
+    description: "原创数字解释，强调打印感密度、克制高光与温暖主体；不是 Kodak 官方 LUT。",
+    adjustments: { intensity: 50, contrast: 14, saturation: 4, temperature: 0, tint: 0, shadowMatch: 45, midtoneMatch: 56, highlightMatch: 60, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "inspired-by-public-characteristics",
+    provenanceStatement: "Original digital interpretation of general film-print characteristics. Not an official Kodak LUT and not a photochemical measurement.",
+    riskLevel: "medium",
+    risks: ["Strong daylight highlights may feel denser", "Uncorrected Log input is unsupported"]
+  }),
+  createStyle({
+    id: "soft-film-print",
+    name: "柔和电影打印",
+    englishName: "Soft Film Print",
     category: "电影感",
-    keywords: ["冷调", "低饱和", "柔和反差"],
-    suitableFor: "纪录片、室内自然光、阴天外景",
-    recommendedIntensity: 58,
-    previewImage: previewImages.coolLowSat,
-    description: "降低整体饱和度并压住暖色，让画面更安静、克制、耐看。"
-  },
-  {
-    id: "cinematic-black-gold-night",
-    name: "黑金夜景",
+    keywords: ["柔和反差", "平滑高光", "低色噪"],
+    suitableFor: "人物叙事、室内自然光、婚礼与生活方式内容",
+    recommendedIntensity: 50,
+    description: "降低硬反差并保留中间调层次的原创柔和打印方向。",
+    adjustments: { intensity: 50, contrast: -8, saturation: -5, temperature: 0, tint: 0, shadowMatch: 54, midtoneMatch: 49, highlightMatch: 62, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original parameter-authored soft print look created with the project RGB core.",
+    riskLevel: "low",
+    risks: ["Already-flat footage may appear too soft"]
+  }),
+  createStyle({
+    id: "faded-negative",
+    name: "褪色负片",
+    englishName: "Faded Negative",
+    category: "复古",
+    keywords: ["抬黑", "褪色", "暖旧感"],
+    suitableFor: "旅行记录、家庭影像、怀旧叙事",
+    recommendedIntensity: 50,
+    description: "以柔黑、低饱和和轻微暖偏构成原创负片老化观感。",
+    adjustments: { intensity: 50, contrast: -18, saturation: -12, temperature: 0, tint: 0, shadowMatch: 65, midtoneMatch: 47, highlightMatch: 55, skinToneProtection: true, preserveLuma: false, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original faded-negative interpretation; no scanned film profile or third-party asset is embedded.",
+    riskLevel: "medium",
+    risks: ["Low-contrast footage may lose separation"]
+  }),
+  createStyle({
+    id: "warm-drama",
+    name: "暖调剧情",
+    englishName: "Warm Drama",
     category: "电影感",
-    keywords: ["深黑", "金色高光", "夜景"],
-    suitableFor: "夜景街拍、车流、商业氛围片",
-    recommendedIntensity: 66,
-    previewImage: previewImages.blackGold,
-    description: "保留暗部厚度，突出金色灯光层次，适合夜间高质感素材。"
-  },
-  {
-    id: "portrait-korean-cream",
-    name: "韩系奶油",
-    category: "人像摄影",
-    keywords: ["奶油肤色", "柔和", "低对比"],
-    suitableFor: "人像写真、生活方式内容、室内窗光",
-    recommendedIntensity: 54,
-    previewImage: previewImages.creamPortrait,
-    description: "柔化反差并提亮肤色，让人像呈现干净温柔的奶油质感。"
-  },
-  {
-    id: "portrait-japanese-clear",
-    name: "日系清透",
-    category: "人像摄影",
-    keywords: ["清透", "浅青", "明亮"],
-    suitableFor: "户外人像、校园感短片、自然光照片",
-    recommendedIntensity: 49,
-    previewImage: previewImages.cleanJapan,
-    description: "提升明度并控制色彩重量，形成轻盈、透明、呼吸感更强的画面。"
-  },
-  {
-    id: "portrait-warm-film",
-    name: "暖调胶片",
-    category: "人像摄影",
-    keywords: ["暖调", "胶片颗粒感", "肤色友好"],
-    suitableFor: "情侣写真、日落人像、复古生活记录",
-    recommendedIntensity: 63,
-    previewImage: previewImages.warmFilm,
-    description: "用暖色中间调和柔和高光塑造亲近感，适合强调情绪的人像素材。"
-  },
-  {
-    id: "night-harbor-neon",
-    name: "港风霓虹",
-    category: "城市夜景",
-    keywords: ["霓虹", "青红对比", "湿润街景"],
-    suitableFor: "城市夜景、店招灯光、街头短片",
-    recommendedIntensity: 70,
-    previewImage: previewImages.neonHarbor,
-    description: "强化霓虹色彩和湿润反光，让城市夜景更具港风氛围。"
-  },
-  {
-    id: "night-rain-street",
-    name: "雨夜街头",
-    category: "城市夜景",
-    keywords: ["雨夜", "反光", "低照度"],
-    suitableFor: "雨天街拍、车窗素材、暗光城市片段",
-    recommendedIntensity: 62,
-    previewImage: previewImages.rainyStreet,
-    description: "压暗环境并拉出反光层次，让雨夜画面更有空间和情绪。"
-  },
-  {
-    id: "night-casino-city",
-    name: "赛博都市",
-    category: "城市夜景",
-    keywords: ["蓝紫", "都市", "高反差"],
-    suitableFor: "夜景延时、未来感街拍、电子音乐视觉",
-    recommendedIntensity: 76,
-    previewImage: previewImages.cyberCity,
-    description: "用蓝紫阴影和高亮霓虹制造强烈都市未来感。"
-  },
-  {
-    id: "retro-classic-film",
-    name: "复古胶片",
-    category: "复古胶片",
-    keywords: ["复古", "柔和黑位", "暖色偏移"],
-    suitableFor: "家庭影像、旅行记录、怀旧主题短片",
-    recommendedIntensity: 57,
-    previewImage: previewImages.warmFilm,
-    description: "柔化黑位并加入暖色偏移，保留胶片式的时间感。"
-  },
-  {
-    id: "retro-hk-90s",
-    name: "90年代港片",
-    category: "复古胶片",
-    keywords: ["港片", "浓郁", "暖绿阴影"],
-    suitableFor: "街头人像、复古剧情、室内钨丝灯",
-    recommendedIntensity: 69,
-    previewImage: previewImages.neonHarbor,
-    description: "带有轻微偏绿暗部和浓郁暖光，适合复古叙事画面。"
-  },
-  {
-    id: "retro-warm-brown",
-    name: "暖棕胶片",
-    category: "复古胶片",
-    keywords: ["暖棕", "柔和", "低饱和"],
-    suitableFor: "咖啡馆、手作内容、秋冬生活片",
-    recommendedIntensity: 52,
-    previewImage: previewImages.warmFilm,
-    description: "用暖棕色统一画面情绪，让素材更安静、复古、耐看。"
-  },
-  {
-    id: "commercial-premium-gray",
-    name: "高级灰广告",
-    category: "商业广告",
-    keywords: ["高级灰", "干净", "品牌质感"],
-    suitableFor: "产品短片、品牌视觉、空间展示",
-    recommendedIntensity: 55,
-    previewImage: previewImages.coolLowSat,
-    description: "控制色彩噪音并强化灰阶层次，适合现代商业广告质感。"
-  },
-  {
-    id: "commercial-high-contrast",
-    name: "高反差质感",
-    category: "商业广告",
-    keywords: ["高反差", "锐利", "质感"],
-    suitableFor: "运动产品、汽车细节、科技类素材",
-    recommendedIntensity: 68,
-    previewImage: previewImages.blackGold,
-    description: "提高明暗分离和局部质感，让产品轮廓更清晰有力。"
-  },
-  {
-    id: "commercial-clean-bright",
-    name: "干净通透",
-    category: "商业广告",
-    keywords: ["通透", "明亮", "低杂色"],
-    suitableFor: "美妆、家居、食品与生活方式内容",
-    recommendedIntensity: 47,
-    previewImage: previewImages.cleanJapan,
-    description: "提亮画面并减少色偏，适合需要清爽可信的商业内容。"
-  },
-  {
-    id: "cyber-punk",
-    name: "赛博朋克",
-    category: "赛博风格",
-    keywords: ["赛博", "霓虹", "强色彩"],
-    suitableFor: "音乐视觉、夜景人像、游戏向短片",
-    recommendedIntensity: 82,
-    previewImage: previewImages.cyberCity,
-    description: "强化蓝紫和洋红霓虹，制造高能量的未来城市氛围。"
-  },
-  {
-    id: "cyber-blue-purple-neon",
-    name: "蓝紫霓虹",
-    category: "赛博风格",
-    keywords: ["蓝紫", "霓虹边缘", "冷暖对撞"],
-    suitableFor: "直播封面、夜店视觉、电子产品短片",
-    recommendedIntensity: 74,
-    previewImage: previewImages.neonHarbor,
-    description: "用蓝紫色主导暗部，让高光霓虹更跳跃、更有速度感。"
-  },
-  {
-    id: "cyber-future-city",
-    name: "未来都市",
-    category: "赛博风格",
-    keywords: ["未来感", "冷色", "金属"],
-    suitableFor: "科技城市、建筑外立面、概念视觉",
-    recommendedIntensity: 71,
-    previewImage: previewImages.cyberCity,
-    description: "保留冷色金属质感，并让亮部形成清晰的未来城市秩序。"
-  }
+    keywords: ["暖主体", "厚暗部", "叙事反差"],
+    suitableFor: "人物剧情、室内灯光、日落外景",
+    recommendedIntensity: 50,
+    description: "温暖中间调配合有重量的暗部，保留肤色稳定。",
+    adjustments: { intensity: 50, contrast: 18, saturation: 2, temperature: 0, tint: 0, shadowMatch: 43, midtoneMatch: 58, highlightMatch: 62, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original warm narrative look authored from structured project parameters.",
+    riskLevel: "medium",
+    risks: ["Tungsten footage should be white-balanced before use"]
+  }),
+  createStyle({
+    id: "cool-neo-noir",
+    name: "冷调新黑色",
+    englishName: "Cool Neo Noir",
+    category: "夜景",
+    keywords: ["冷暗部", "低饱和", "硬轮廓"],
+    suitableFor: "夜景街头、悬疑剧情、工业空间",
+    recommendedIntensity: 50,
+    description: "冷色暗部与克制饱和构成的原创新黑色电影方向。",
+    adjustments: { intensity: 50, contrast: 22, saturation: -10, temperature: 0, tint: 0, shadowMatch: 38, midtoneMatch: 54, highlightMatch: 57, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original cool neo-noir look; it does not reproduce a named film or production LUT.",
+    riskLevel: "medium",
+    risks: ["Underexposed shadows may become dense", "Warm practical lights remain intentionally separated"]
+  }),
+  createStyle({
+    id: "natural-skin",
+    name: "自然肤色",
+    englishName: "Natural Skin",
+    category: "人像",
+    keywords: ["肤色保护", "中性", "轻反差"],
+    suitableFor: "人物近景、采访、婚礼与生活方式人像",
+    recommendedIntensity: 35,
+    description: "以低风险微调保持肤色 Hue 与亮度结构的自然人像风格。",
+    adjustments: { intensity: 35, contrast: 4, saturation: 0, temperature: 0, tint: 0, shadowMatch: 51, midtoneMatch: 53, highlightMatch: 55, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original low-risk portrait look authored for stable skin hue and luminance.",
+    riskLevel: "low",
+    risks: ["Does not replace exposure or white-balance correction"]
+  }),
+  createStyle({
+    id: "clean-commercial",
+    name: "干净商业",
+    englishName: "Clean Commercial",
+    category: "商业",
+    keywords: ["中性", "轮廓清晰", "品牌安全"],
+    suitableFor: "产品、美妆、家居、企业品牌内容",
+    recommendedIntensity: 35,
+    description: "干净中性、适度分离产品轮廓的低风险商业风格。",
+    adjustments: { intensity: 35, contrast: 10, saturation: -2, temperature: 0, tint: 0, shadowMatch: 47, midtoneMatch: 52, highlightMatch: 58, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original commercial look authored for neutral product color and controlled contrast.",
+    riskLevel: "low",
+    risks: ["Brand-critical colors still require reference monitoring"]
+  }),
+  createStyle({
+    id: "natural-documentary",
+    name: "自然纪录",
+    englishName: "Natural Documentary",
+    category: "纪录片",
+    keywords: ["克制", "自然光", "真实色彩"],
+    suitableFor: "纪录片、采访、自然环境与观察式影像",
+    recommendedIntensity: 35,
+    description: "降低色彩重量并保留曝光结构的克制纪录片方向。",
+    adjustments: { intensity: 35, contrast: 4, saturation: -8, temperature: 0, tint: 0, shadowMatch: 50, midtoneMatch: 50, highlightMatch: 56, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original restrained documentary look with no named-film emulation claim.",
+    riskLevel: "low",
+    risks: ["Low-saturation source footage may appear too restrained"]
+  }),
+  createStyle({
+    id: "food-warm-natural",
+    name: "美食暖自然",
+    englishName: "Food Warm Natural",
+    category: "美食",
+    keywords: ["暖食物", "自然绿色", "高光安全"],
+    suitableFor: "餐饮、美食制作、咖啡与生活方式内容",
+    recommendedIntensity: 50,
+    description: "温暖食物色彩，同时对高饱和红色和绿色保持连续保护。",
+    adjustments: { intensity: 50, contrast: 8, saturation: 7, temperature: 0, tint: 0, shadowMatch: 49, midtoneMatch: 56, highlightMatch: 58, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original food look authored with red and green gamut safeguards.",
+    riskLevel: "medium",
+    risks: ["Mixed lighting should be neutralized before applying the look"]
+  }),
+  createStyle({
+    id: "travel-vivid-safe",
+    name: "旅行鲜活安全",
+    englishName: "Travel Vivid Safe",
+    category: "旅行",
+    keywords: ["天空保护", "绿植安全", "鲜活"],
+    suitableFor: "旅行、蓝天绿植、城市与户外记录",
+    recommendedIntensity: 50,
+    description: "提升旅行画面的鲜活感，同时约束天空与绿植的 Hue 漂移。",
+    adjustments: { intensity: 50, contrast: 8, saturation: 9, temperature: 0, tint: 0, shadowMatch: 47, midtoneMatch: 55, highlightMatch: 56, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original travel look authored with sky, greenery, and saturated-color safety tests.",
+    riskLevel: "medium",
+    risks: ["Already-vivid sources may need 35 percent strength"]
+  }),
+  createStyle({
+    id: "bleach-bypass",
+    name: "漂白旁路启发",
+    englishName: "Bleach Bypass Inspired",
+    category: "黑白",
+    keywords: ["低彩度", "高反差", "金属感"],
+    suitableFor: "工业、动作、历史与高质感黑白倾向画面",
+    recommendedIntensity: 50,
+    description: "依据公开的一般漂白旁路视觉特征原创实现，不是实验室工艺复刻。",
+    adjustments: { intensity: 50, contrast: 25, saturation: -50, temperature: 0, tint: 0, shadowMatch: 40, midtoneMatch: 58, highlightMatch: 60, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "inspired-by-public-characteristics",
+    provenanceStatement: "Original digital interpretation of general bleach-bypass characteristics; not a laboratory process match.",
+    riskLevel: "high",
+    risks: ["Strong contrast may require exposure correction", "Not suitable for color-critical product work"]
+  }),
+  createStyle({
+    id: "neon-night",
+    name: "霓虹夜色",
+    englishName: "Neon Night",
+    category: "夜景",
+    keywords: ["蓝紫", "霓虹", "高饱和保护"],
+    suitableFor: "夜店、城市霓虹、音乐视觉与科技内容",
+    recommendedIntensity: 50,
+    description: "蓝紫氛围和受控霓虹饱和度构成的原创夜景风格。",
+    adjustments: { intensity: 50, contrast: 18, saturation: 12, temperature: 0, tint: 0, shadowMatch: 42, midtoneMatch: 60, highlightMatch: 55, skinToneProtection: true, preserveLuma: true, preventOversaturation: true },
+    provenanceType: "original-authored",
+    provenanceStatement: "Original neon-night look authored with hue-preserving gamut compression.",
+    riskLevel: "high",
+    risks: ["Strong magenta practicals may require 35 percent strength", "Daylight footage is outside the primary use case"]
+  })
 ];

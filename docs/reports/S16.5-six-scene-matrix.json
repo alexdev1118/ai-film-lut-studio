@@ -1,0 +1,421 @@
+{
+  "schemaVersion": 1,
+  "sampleSource": "procedural-stress-fixtures-not-user-media",
+  "strengths": [
+    35,
+    50,
+    70,
+    100
+  ],
+  "scenes": [
+    {
+      "sceneId": "portrait-normal",
+      "label": "正常曝光人物",
+      "source": "procedural-stress-fixture",
+      "monotonic": true,
+      "results": [
+        {
+          "strength": 35,
+          "averageRgbDistance": 0.05069484657834306,
+          "maximumRgbDistance": 0.07200627511685559,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.25,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.7149623200143154,
+            "skinHueError": 0.7149623200143154,
+            "maximumChromaReduction": 0.1439026083227074
+          }
+        },
+        {
+          "strength": 50,
+          "averageRgbDistance": 0.07242120939763298,
+          "maximumRgbDistance": 0.10286610730979369,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.25,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.741573592774003,
+            "skinHueError": 0.741573592774003,
+            "maximumChromaReduction": 0.1439026083227074
+          }
+        },
+        {
+          "strength": 70,
+          "averageRgbDistance": 0.10138969315668614,
+          "maximumRgbDistance": 0.14401255023371118,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.25,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.5646662143313534,
+            "skinHueError": 0.5646662143313534,
+            "maximumChromaReduction": 0.1439026083227074
+          }
+        },
+        {
+          "strength": 100,
+          "averageRgbDistance": 0.14484241879526594,
+          "maximumRgbDistance": 0.2057322146195874,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.25,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.22124567201358758,
+            "skinHueError": 0.22124567201358758,
+            "maximumChromaReduction": 0.1439026083227074
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "portrait-close",
+      "label": "人物近景",
+      "source": "procedural-stress-fixture",
+      "monotonic": true,
+      "results": [
+        {
+          "strength": 35,
+          "averageRgbDistance": 0.05970464296276175,
+          "maximumRgbDistance": 0.08667537561887763,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.375,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.7816702667924247,
+            "skinHueError": 0.7816702667924247,
+            "maximumChromaReduction": 0.04471540150324242
+          }
+        },
+        {
+          "strength": 50,
+          "averageRgbDistance": 0.08529234708965965,
+          "maximumRgbDistance": 0.12382196516982513,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.375,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.8125389828988432,
+            "skinHueError": 0.8125389828988432,
+            "maximumChromaReduction": 0.04471540150324242
+          }
+        },
+        {
+          "strength": 70,
+          "averageRgbDistance": 0.11940928592552348,
+          "maximumRgbDistance": 0.17335075123775526,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.375,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.6069697625466048,
+            "skinHueError": 0.6069697625466048,
+            "maximumChromaReduction": 0.04471540150324242
+          }
+        },
+        {
+          "strength": 100,
+          "averageRgbDistance": 0.17058469417931926,
+          "maximumRgbDistance": 0.24764393033965035,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.375,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 0.7859288740603922,
+            "skinHueError": 0.7859288740603922,
+            "maximumChromaReduction": 0.04471540150324242
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "blue-sky",
+      "label": "蓝天",
+      "source": "procedural-stress-fixture",
+      "monotonic": true,
+      "results": [
+        {
+          "strength": 35,
+          "averageRgbDistance": 0.05992999809290624,
+          "maximumRgbDistance": 0.10766364744660409,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 1.4839309326341663,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.15908821890100538
+          }
+        },
+        {
+          "strength": 50,
+          "averageRgbDistance": 0.08561428298986608,
+          "maximumRgbDistance": 0.1538052106380059,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 2.318935079158109,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.15908821890100538
+          }
+        },
+        {
+          "strength": 70,
+          "averageRgbDistance": 0.11985999618581245,
+          "maximumRgbDistance": 0.21532729489320815,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 3.677357003230725,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.15908821890100538
+          }
+        },
+        {
+          "strength": 100,
+          "averageRgbDistance": 0.17122856597973207,
+          "maximumRgbDistance": 0.3076104212760117,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 6.406988399327531,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.15908821890100538
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "blue-sky-greenery",
+      "label": "蓝天绿植",
+      "source": "procedural-stress-fixture",
+      "monotonic": true,
+      "results": [
+        {
+          "strength": 35,
+          "averageRgbDistance": 0.050548518874892694,
+          "maximumRgbDistance": 0.08092783237250789,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.875,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 1.5082267794795712,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.13162708648670954
+          }
+        },
+        {
+          "strength": 50,
+          "averageRgbDistance": 0.07221216982127532,
+          "maximumRgbDistance": 0.1156111891035828,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.875,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 2.025950721828991,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.13162708648670954
+          }
+        },
+        {
+          "strength": 70,
+          "averageRgbDistance": 0.10109703774978544,
+          "maximumRgbDistance": 0.1618556647450159,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.875,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 2.864241910654414,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.13162708648670954
+          }
+        },
+        {
+          "strength": 100,
+          "averageRgbDistance": 0.14442433964255064,
+          "maximumRgbDistance": 0.2312223782071656,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.875,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 4.449914772395971,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.13162708648670954
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "daylight-high-contrast",
+      "label": "高反差白天",
+      "source": "procedural-stress-fixture",
+      "monotonic": true,
+      "results": [
+        {
+          "strength": 35,
+          "averageRgbDistance": 0.024229918646328313,
+          "maximumRgbDistance": 0.04747312245200371,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.625,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0.006805733363812443,
+            "hueDriftP95": 0,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.0333640103264112
+          }
+        },
+        {
+          "strength": 50,
+          "averageRgbDistance": 0.03461416949475473,
+          "maximumRgbDistance": 0.0678187463600053,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.625,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0.007151047662589241,
+            "hueDriftP95": 0,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.0333640103264112
+          }
+        },
+        {
+          "strength": 70,
+          "averageRgbDistance": 0.04845983729265664,
+          "maximumRgbDistance": 0.09494624490400741,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.625,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0.007611466727624923,
+            "hueDriftP95": 0,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.0333640103264112
+          }
+        },
+        {
+          "strength": 100,
+          "averageRgbDistance": 0.06922833898950947,
+          "maximumRgbDistance": 0.1356374927200106,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 0.625,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0.08333333333333333,
+            "neutralAxisError": 0.0083051306089641,
+            "hueDriftP95": 0,
+            "skinHueError": 0,
+            "maximumChromaReduction": 0.0333640103264112
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "saturated-red",
+      "label": "高饱和红色物体",
+      "source": "procedural-stress-fixture",
+      "monotonic": true,
+      "results": [
+        {
+          "strength": 35,
+          "averageRgbDistance": 0.15861754125639074,
+          "maximumRgbDistance": 0.3422452449338223,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 4.140588922080941,
+            "skinHueError": 1.8601427213776098,
+            "maximumChromaReduction": 0.5312681364792468
+          }
+        },
+        {
+          "strength": 50,
+          "averageRgbDistance": 0.22659648750912964,
+          "maximumRgbDistance": 0.488921778476889,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 6.245543155931639,
+            "skinHueError": 2.6993848696702543,
+            "maximumChromaReduction": 0.5312681364792468
+          }
+        },
+        {
+          "strength": 70,
+          "averageRgbDistance": 0.3172350825127815,
+          "maximumRgbDistance": 0.6844904898676446,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 9.340815657775163,
+            "skinHueError": 2.907474775975949,
+            "maximumChromaReduction": 0.5312681364792468
+          }
+        },
+        {
+          "strength": 100,
+          "averageRgbDistance": 0.45319297501825934,
+          "maximumRgbDistance": 0.977843556953778,
+          "diagnostics": {
+            "sampleCount": 8,
+            "preCompressionOutOfGamutRatio": 1,
+            "postCompressionOutOfGamutRatio": 0,
+            "clippedChannelRatio": 0,
+            "neutralAxisError": 0,
+            "hueDriftP95": 14.543671061643668,
+            "skinHueError": 2.5654014043637225,
+            "maximumChromaReduction": 0.5312681364792468
+          }
+        }
+      ]
+    }
+  ],
+  "allScenesMonotonic": true
+}
