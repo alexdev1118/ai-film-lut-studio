@@ -1,5 +1,7 @@
-import type { ColorPreviewResult, GenerateColorPreviewParams, RgbColor } from "../types";
-import { applyColorPipelineToRgb } from "./cubeCompose";
+import type { ColorPreviewResult, GenerateColorPreviewParams, ImageColorInterpretation, RgbColor } from "../types";
+import { getColorEncodingProfile } from "../data/colorEncodingProfiles";
+import { evaluateCubeLut } from "./cubeEvaluator";
+import { defaultSrgbInterpretation, expandSignalRange, inputColorToRec709Gamma24, rec709Gamma24ToDisplaySrgb } from "./colorSpace";
 
 interface LoadedImage {
   readonly image: HTMLImageElement;
@@ -87,7 +89,7 @@ const drawScaledImage = (loadedImage: LoadedImage, maxSize: number): { readonly 
   return { canvas, context };
 };
 
-const calculateAverageColor = (imageData: ImageData, sampleStep = 8): AverageColor => {
+const calculateAverageColor = (imageData: ImageData, interpretation: ImageColorInterpretation, sampleStep = 8): AverageColor => {
   const data = imageData.data;
   let totalR = 0;
   let totalG = 0;
@@ -101,9 +103,13 @@ const calculateAverageColor = (imageData: ImageData, sampleStep = 8): AverageCol
       continue;
     }
 
-    totalR += data[index];
-    totalG += data[index + 1];
-    totalB += data[index + 2];
+    const workingColor = inputColorToRec709Gamma24(
+      { r: data[index] / 255, g: data[index + 1] / 255, b: data[index + 2] / 255 },
+      interpretation
+    );
+    totalR += workingColor.r * 255;
+    totalG += workingColor.g * 255;
+    totalB += workingColor.b * 255;
     count += 1;
   }
 
@@ -118,15 +124,19 @@ const calculateAverageColor = (imageData: ImageData, sampleStep = 8): AverageCol
   };
 };
 
-const loadAverageColor = async (imageUrl: string, maxSize: number): Promise<AverageColor> => {
+const loadAverageColor = async (imageUrl: string, maxSize: number, interpretation: ImageColorInterpretation): Promise<AverageColor> => {
   const loadedImage = await loadImage(imageUrl);
   const scaled = drawScaledImage(loadedImage, Math.min(maxSize, 480));
   const imageData = scaled.context.getImageData(0, 0, scaled.canvas.width, scaled.canvas.height);
-  return calculateAverageColor(imageData, 6);
+  return calculateAverageColor(imageData, interpretation, 6);
 };
 
-export const getAverageColorFromImageUrl = async (imageUrl: string, maxSize = 480): Promise<RgbColor> => {
-  const averageColor = await loadAverageColor(imageUrl, maxSize);
+export const getAverageColorFromImageUrl = async (
+  imageUrl: string,
+  maxSize = 480,
+  interpretation: ImageColorInterpretation = defaultSrgbInterpretation()
+): Promise<RgbColor> => {
+  const averageColor = await loadAverageColor(imageUrl, maxSize, interpretation);
 
   return {
     r: averageColor.r / 255,
@@ -167,51 +177,61 @@ export const revokeColorPreviewUrl = (previewUrl: string | null | undefined): vo
 
 export const generateColorPreview = async ({
   targetImageUrl,
-  referenceImageUrl,
-  adjustments,
+  parsedLut,
+  targetColorInterpretation,
   technicalTransform,
   maxSize = DEFAULT_MAX_SIZE
 }: GenerateColorPreviewParams): Promise<ColorPreviewResult> => {
+  let previewUrl = "";
+  let sourcePreviewUrl = "";
+
   try {
     const loadedTarget = await loadImage(targetImageUrl);
     const { canvas, context } = drawScaledImage(loadedTarget, maxSize);
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    const referenceAverage = referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(referenceImageUrl, maxSize);
-    const pipeline = {
-      ...(technicalTransform === undefined ? {} : { inputTechnicalTransform: technicalTransform }),
-      creativeLookTransform: {
-        adjustments,
-        ...(referenceAverage === undefined ? {} : { referenceAverageColor: referenceAverage })
-      },
-      monitorAdjustment: { brightnessOffsetEv: 0 },
-      rangeMapping: "full" as const
-    };
+    const sourceImageData = context.createImageData(canvas.width, canvas.height);
+    const outputImageData = context.createImageData(canvas.width, canvas.height);
+    const inputData = imageData.data;
+    const sourceData = sourceImageData.data;
+    const outputData = outputImageData.data;
+    const sourceProfile = getColorEncodingProfile(targetColorInterpretation.profileId);
 
-    for (let index = 0; index < data.length; index += 4) {
-      const output = applyColorPipelineToRgb(
-        {
-          r: data[index] / 255,
-          g: data[index + 1] / 255,
-          b: data[index + 2] / 255
-        },
-        pipeline
-      );
+    for (let index = 0; index < inputData.length; index += 4) {
+      const rawColor = { r: inputData[index] / 255, g: inputData[index + 1] / 255, b: inputData[index + 2] / 255 };
+      const workingInput = technicalTransform === undefined
+        ? inputColorToRec709Gamma24(rawColor, targetColorInterpretation)
+        : evaluateCubeLut(technicalTransform.parsedLut, expandSignalRange(rawColor, sourceProfile.range));
+      const sourceDisplay = rec709Gamma24ToDisplaySrgb(workingInput);
+      const outputDisplay = rec709Gamma24ToDisplaySrgb(evaluateCubeLut(parsedLut, workingInput));
 
-      data[index] = clamp(output.r * 255);
-      data[index + 1] = clamp(output.g * 255);
-      data[index + 2] = clamp(output.b * 255);
+      sourceData[index] = clamp(sourceDisplay.r * 255);
+      sourceData[index + 1] = clamp(sourceDisplay.g * 255);
+      sourceData[index + 2] = clamp(sourceDisplay.b * 255);
+      sourceData[index + 3] = inputData[index + 3];
+      outputData[index] = clamp(outputDisplay.r * 255);
+      outputData[index + 1] = clamp(outputDisplay.g * 255);
+      outputData[index + 2] = clamp(outputDisplay.b * 255);
+      outputData[index + 3] = inputData[index + 3];
     }
 
-    context.putImageData(imageData, 0, 0);
-    const previewUrl = await canvasToObjectUrl(canvas);
+    context.putImageData(sourceImageData, 0, 0);
+    sourcePreviewUrl = await canvasToObjectUrl(canvas);
+    context.putImageData(outputImageData, 0, 0);
+    previewUrl = await canvasToObjectUrl(canvas);
 
     return {
       previewUrl,
+      sourcePreviewUrl,
       width: canvas.width,
       height: canvas.height
     };
   } catch (error) {
+    if (previewUrl.length > 0) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    if (sourcePreviewUrl.length > 0) {
+      URL.revokeObjectURL(sourcePreviewUrl);
+    }
     const message = error instanceof Error ? error.message : "Canvas 预览生成失败";
     throw new Error(`预览生成失败，请更换图片或降低图片尺寸。${message}`);
   }

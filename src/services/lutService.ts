@@ -1,8 +1,9 @@
 import { colorAnalysisReport } from "../data/analysis";
 import { previewImages } from "../data/mockImages";
-import { generateColorPreview, getAverageColorFromImageUrl } from "../utils/colorPreview";
+import { getColorEncodingProfile } from "../data/colorEncodingProfiles";
+import { getAverageColorFromImageUrl } from "../utils/colorPreview";
 import { downloadCameraMonitoringLut, generateCameraMonitoringCubeLut } from "../utils/cameraLutExport";
-import { downloadCubeLut, generateCubeLut } from "../utils/cubeExport";
+import { downloadPreparedPostLut, preparePostLut, renderPreparedPostLut } from "./lutRenderService";
 import { validateCubeLut } from "../utils/cubeValidate";
 import type {
   CameraLutExportResult,
@@ -62,35 +63,47 @@ export const generateLocalColorPreview = async (params: GenerateLocalPreviewPara
       throw new Error("缺少目标图片。");
     }
 
-    const colorPreview = await generateColorPreview({
-      targetImageUrl: params.targetImageUrl,
-      referenceImageUrl: params.referenceImageUrl,
-      adjustments: {
-        intensity: params.parameters.intensity,
-        contrast: params.parameters.contrast,
-        saturation: params.parameters.saturation,
-        temperature: params.parameters.temperature,
-        tint: params.parameters.tint,
-        shadowMatch: params.parameters.shadowMatch,
-        midtoneMatch: params.parameters.midtoneMatch,
-        highlightMatch: params.parameters.highlightMatch,
-        skinToneProtection: params.skinToneProtection,
-        preserveLuma: params.preserveLuma,
-        preventOversaturation: params.preventOversaturation
-      },
-      technicalTransform: params.technicalTransform,
-      maxSize: 1600
+    const preparedPostLut = await preparePostLut({
+      lutName: params.lutName,
+      lookName: params.lookName,
+      lutSize: params.lutSize,
+      parameters: params.parameters,
+      skinToneProtection: params.skinToneProtection,
+      preserveLuma: params.preserveLuma,
+      preventOversaturation: params.preventOversaturation,
+      ...(params.referenceImageUrl === undefined ? {} : { referenceImageUrl: params.referenceImageUrl }),
+      inputColorConfig: params.inputColorConfig,
+      referenceColorInterpretation: params.referenceColorInterpretation,
+      targetColorInterpretation: params.targetColorInterpretation
     });
+    const colorPreview = await renderPreparedPostLut(params, preparedPostLut);
+    const targetProfile = getColorEncodingProfile(params.targetColorInterpretation.profileId);
+    const inputReliability: NonNullable<PreviewResult["inputReliability"]> = params.inputColorConfig.inputType === "log"
+      ? params.technicalTransform?.verification === "verified-official"
+        ? "reliable"
+        : params.technicalTransform === undefined
+          ? "unknown"
+          : "experimental"
+      : targetProfile.status === "supported" && params.targetColorInterpretation.confidence === "confirmed"
+        ? "reliable"
+        : targetProfile.status === "warning-only"
+          ? "unknown"
+          : "experimental";
 
     return {
       id: `canvas-preview-${Date.now()}`,
       status: "预览已生成",
       styleName: params.selectedStyleName,
       previewImage: colorPreview.previewUrl,
+      sourcePreviewImage: colorPreview.sourcePreviewUrl,
       generatedAt: new Date().toISOString(),
       width: colorPreview.width,
       height: colorPreview.height,
-      isCanvasPreview: true
+      isCanvasPreview: true,
+      preparedPostLut,
+      configurationSignature: params.configurationSignature,
+      inputReliability,
+      inputInterpretationHash: preparedPostLut.inputInterpretationHash
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown local preview generation failure";
@@ -120,43 +133,9 @@ export const exportLutMock = async (params: ExportLutParams): Promise<ExportLutR
 
 export const exportCubeLut = async (params: ExportCubeLutParams): Promise<CubeExportResult> => {
   try {
-    const referenceAverageColor =
-      params.referenceAverageColor ?? (params.referenceImageUrl === undefined ? undefined : await getAverageColorFromImageUrl(params.referenceImageUrl));
-    const result = generateCubeLut({
-      lutName: params.lutName,
-      lookName: params.lookName,
-      lutSize: params.lutSize,
-      adjustments: {
-        intensity: params.parameters.intensity,
-        contrast: params.parameters.contrast,
-        saturation: params.parameters.saturation,
-        temperature: params.parameters.temperature,
-        tint: params.parameters.tint,
-        shadowMatch: params.parameters.shadowMatch,
-        midtoneMatch: params.parameters.midtoneMatch,
-        highlightMatch: params.parameters.highlightMatch,
-        skinToneProtection: params.skinToneProtection,
-        preserveLuma: params.preserveLuma,
-        preventOversaturation: params.preventOversaturation
-      },
-      referenceAverageColor,
-      inputColorConfig: params.inputColorConfig
-    });
-    const validation = validateCubeLut(result.content);
-
-    if (!validation.isValid) {
-      throw new Error(`LUT 文件校验失败，请检查参数后重试：${validation.errors.join(" ")}`);
-    }
-
-    const validatedResult: CubeExportResult = {
-      ...result,
-      dataLineCount: validation.dataLineCount,
-      isValid: validation.isValid,
-      validationErrors: validation.errors,
-      validationWarnings: validation.warnings
-    };
-    downloadCubeLut(validatedResult);
-    return validatedResult;
+    const prepared = await preparePostLut(params);
+    await downloadPreparedPostLut(prepared);
+    return prepared.cubeResult;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown cube export failure";
     throw new Error(message.startsWith("LUT 文件校验失败") ? message : `LUT 导出失败，请稍后重试。${message}`);

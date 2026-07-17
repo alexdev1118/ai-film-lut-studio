@@ -87,11 +87,11 @@ export const generatePostLutName = ({ lookName, lutSize, namingMode, inputColorC
     const gamma = compactNamePart(inputColorConfig.gamma ?? "Unknown");
 
     return sanitizeLutName(
-      ["POST", "Rec709", `SRC-${brand || "Unknown"}-${gamma || "Unknown"}`, resolvedLookName, `${lutSize}pt`, `v${version}`].join("_")
+      ["POST", "BT709", "G24", "FULL", `SRC-${brand || "Unknown"}-${gamma || "Unknown"}`, resolvedLookName, `${lutSize}pt`, `v${version}`].join("_")
     );
   }
 
-  return sanitizeLutName(["POST", "Rec709", resolvedLookName, `${lutSize}pt`, `v${version}`].join("_"));
+  return sanitizeLutName(["POST", "BT709", "G24", "FULL", resolvedLookName, `${lutSize}pt`, `v${version}`].join("_"));
 };
 
 export const formatEvForName = (value: number): string => {

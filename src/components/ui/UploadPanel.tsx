@@ -8,7 +8,9 @@ interface UploadPanelProps {
   readonly accept?: string;
   readonly icon?: ReactNode;
   readonly inputMode?: "file" | "text";
-  readonly onFileChange?: (file: File) => void;
+  readonly isProcessing?: boolean;
+  readonly processingStatus?: string;
+  readonly onFileChange?: (file: File) => void | Promise<void>;
   readonly onFileNameChange?: (fileName: string) => void;
 }
 
@@ -20,6 +22,8 @@ export const UploadPanel = ({
   accept = "image/jpeg,image/png,image/webp,image/tiff,.jpg,.jpeg,.png,.webp,.tif,.tiff",
   icon,
   inputMode = "text",
+  isProcessing = false,
+  processingStatus = "",
   onFileChange,
   onFileNameChange
 }: UploadPanelProps) => {
@@ -31,7 +35,7 @@ export const UploadPanel = ({
       return;
     }
 
-    onFileChange?.(selectedFile);
+    void onFileChange?.(selectedFile);
   };
 
   return (
@@ -41,9 +45,10 @@ export const UploadPanel = ({
       <span className="upload-description">{description}</span>
       {inputMode === "file" ? (
         <>
-          <span className="upload-chooser">选择图片</span>
-          <input className="upload-file-input" aria-label={title} accept={accept} type="file" onChange={handleFileInputChange} />
+          <span className="upload-chooser">{isProcessing ? "正在处理" : "选择素材"}</span>
+          <input className="upload-file-input" aria-label={title} accept={accept} disabled={isProcessing} type="file" onChange={handleFileInputChange} />
           {fileName.length > 0 ? <span className="upload-file-name">{fileName}</span> : null}
+          {processingStatus.length > 0 ? <span className="upload-processing-status" role="status">{processingStatus}</span> : null}
         </>
       ) : (
         <input

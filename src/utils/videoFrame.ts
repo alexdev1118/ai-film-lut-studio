@@ -1,4 +1,5 @@
 import type { CapturedFrame, MediaItem, VideoSource } from "../types";
+import { defaultSrgbInterpretation } from "./colorSpace";
 
 const MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024;
 const MAX_CAPTURE_LONG_SIDE = 1920;
@@ -191,6 +192,7 @@ export const capturedFrameToMediaItem = (frame: CapturedFrame): MediaItem => {
     width: frame.width,
     height: frame.height,
     createdAt: new Date().toISOString(),
-    origin: "video-frame"
+    origin: "video-frame",
+    colorInterpretation: defaultSrgbInterpretation()
   };
 };

@@ -8,7 +8,6 @@ interface BeforeAfterPreviewProps {
   readonly afterAlt: string;
   readonly splitPosition: number;
   readonly isWaitingForPreview: boolean;
-  readonly effectFilter?: string;
   readonly imageWidth?: number;
   readonly imageHeight?: number;
   readonly containerRef: RefObject<HTMLDivElement | null>;
@@ -108,7 +107,6 @@ export const BeforeAfterPreview = ({
   afterAlt,
   splitPosition,
   isWaitingForPreview,
-  effectFilter = "none",
   imageWidth,
   imageHeight,
   containerRef,
@@ -132,8 +130,7 @@ export const BeforeAfterPreview = ({
             <div
               className="split-image after"
               style={{
-                clipPath: `inset(0 ${100 - splitPosition}% 0 0)`,
-                filter: effectFilter
+                clipPath: `inset(0 ${100 - splitPosition}% 0 0)`
               }}
             >
               <img src={afterImageUrl} alt={afterAlt} />

@@ -1,7 +1,7 @@
 import type { LutParameters } from "../types";
 
 export const defaultLutParameters: LutParameters = {
-  intensity: 68,
+  intensity: 50,
   contrast: 54,
   saturation: 58,
   temperature: 0,

@@ -1,4 +1,5 @@
 import type { ImageMetadataResult, MediaItem, MediaSourceType, UploadedImage } from "../types";
+import { defaultSrgbInterpretation } from "./colorSpace";
 
 const MAX_IMAGE_SIZE_BYTES = 20 * 1024 * 1024;
 
@@ -118,7 +119,7 @@ export const toUploadedImage = (file: File, metadata: ImageMetadataResult): Uplo
   };
 };
 
-const createMediaId = (sourceType: MediaSourceType): string => {
+export const createMediaId = (sourceType: MediaSourceType): string => {
   try {
     return `${sourceType}-${crypto.randomUUID()}`;
   } catch (error) {
@@ -139,7 +140,8 @@ export const toUploadedMediaItem = (file: File, metadata: ImageMetadataResult, s
     width: metadata.width,
     height: metadata.height,
     createdAt: new Date().toISOString(),
-    origin: "upload"
+    origin: "upload",
+    colorInterpretation: defaultSrgbInterpretation()
   };
 };
 
@@ -175,6 +177,8 @@ export const getReadableImageType = (mimeType: string): string => {
       return "WebP";
     case "image/tiff":
       return "TIFF";
+    case "image/x-dpx":
+      return "DPX";
     default:
       return mimeType.length > 0 ? mimeType : "未知格式";
   }
@@ -192,7 +196,7 @@ export const revokeUploadedImage = (image: UploadedImage | null): void => {
 
 export const revokeMediaItem = (item: MediaItem | null | undefined): void => {
   try {
-    if (item !== null && item !== undefined && (item.origin === "upload" || item.origin === "video-frame")) {
+    if (item !== null && item !== undefined && (item.origin === "upload" || item.origin === "video-frame" || item.origin === "dpx-preview")) {
       URL.revokeObjectURL(item.url);
     }
   } catch (error) {

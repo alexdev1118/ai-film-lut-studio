@@ -4,3 +4,7 @@ dist/
 __pycache__/
 *.pyc
 .tmp-lut-tests/
+.tmp-dpx-tests/
+.tmp-color-analysis-tests/
+config/validation-scenes.local.json
+local-test-assets/

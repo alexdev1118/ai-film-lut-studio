@@ -8,14 +8,33 @@ export type RoutePath =
   | "/tutorial"
   | "/export";
 
-export type StyleCategory =
-  | "全部"
-  | "电影感"
-  | "人像摄影"
-  | "城市夜景"
-  | "复古胶片"
-  | "商业广告"
-  | "赛博风格";
+export type StyleCategory = import("./lutStyles").LutStyleCategory;
+export type LutStyle = import("./lutStyles").LutStyleDefinition;
+export type {
+  FootageAppearance,
+  PostExportGuard,
+  PostExportGuardInput,
+  ProductExperienceMode,
+  ProductTermDefinition,
+  QuickIntensityPreset,
+  QuickWorkflowPreferences,
+  StyleAcquisitionMode,
+  TargetEditor,
+  TargetEditorGuide,
+  TermOwnership
+} from "./productWorkflow";
+export type {
+  LutStyleAdjustments,
+  LutStyleCompatibility,
+  LutStyleDefinition,
+  LutStyleLicense,
+  LutStylePreviewSet,
+  LutStyleProvenance,
+  LutStyleProvenanceType,
+  LutStyleRiskLevel,
+  LutStyleRiskProfile,
+  LutStyleValidationSummary
+} from "./lutStyles";
 
 export type ColorSpace = "Rec.709" | "S-Log3" | "D-Log M" | "C-Log3" | "V-Log" | "F-Log" | "不确定";
 
@@ -110,17 +129,6 @@ export interface NavigationItem {
   readonly label: string;
   readonly path: RoutePath;
   readonly tooltip: string;
-}
-
-export interface LutStyle {
-  readonly id: string;
-  readonly name: string;
-  readonly category: Exclude<StyleCategory, "全部">;
-  readonly keywords: readonly string[];
-  readonly suitableFor: string;
-  readonly recommendedIntensity: number;
-  readonly previewImage: string;
-  readonly description: string;
 }
 
 export interface CameraProfile {
@@ -268,7 +276,9 @@ export interface UploadedImage {
 
 export type MediaSourceType = "target" | "reference";
 
-export type MediaOrigin = "upload" | "mock" | "style-library" | "video-frame";
+export type MediaOrigin = "upload" | "mock" | "style-library" | "video-frame" | "dpx-preview";
+
+export type MediaPreviewStatus = "native" | "local-preview-no-technical-transform";
 
 export interface MediaItem {
   readonly id: string;
@@ -282,6 +292,19 @@ export interface MediaItem {
   readonly height?: number;
   readonly createdAt: string;
   readonly origin: MediaOrigin;
+  readonly originalFormat?: "DPX";
+  readonly sourceBitDepth?: number;
+  readonly sourceDescriptor?: number;
+  readonly sourcePacking?: number;
+  readonly sourceEncoding?: number;
+  readonly sourceDataSign?: number;
+  readonly sourceTransfer?: number;
+  readonly sourceColorimetric?: number;
+  readonly endian?: "big-endian" | "little-endian";
+  readonly previewConverted?: boolean;
+  readonly colorTransformApplied?: boolean;
+  readonly previewStatus?: MediaPreviewStatus;
+  readonly colorInterpretation?: import("./postLut").ImageColorInterpretation;
 }
 
 export interface VideoSource {
@@ -364,14 +387,15 @@ export interface RgbColor {
 
 export interface GenerateColorPreviewParams {
   readonly targetImageUrl: string;
-  readonly referenceImageUrl?: string;
-  readonly adjustments: ColorPreviewAdjustments;
+  readonly parsedLut: import("./colorPipeline").ParsedCubeLut;
+  readonly targetColorInterpretation: import("./postLut").ImageColorInterpretation;
   readonly technicalTransform?: import("./colorPipeline").TechnicalTransformBinding;
   readonly maxSize?: number;
 }
 
 export interface ColorPreviewResult {
   readonly previewUrl: string;
+  readonly sourcePreviewUrl: string;
   readonly width: number;
   readonly height: number;
 }
@@ -385,6 +409,15 @@ export interface GenerateLocalPreviewParams {
   readonly preserveLuma: boolean;
   readonly preventOversaturation: boolean;
   readonly technicalTransform?: import("./colorPipeline").TechnicalTransformBinding;
+  readonly targetColorInterpretation: import("./postLut").ImageColorInterpretation;
+  readonly referenceColorInterpretation: import("./postLut").ImageColorInterpretation;
+  readonly targetMaterialName: string;
+  readonly referenceMaterialName: string;
+  readonly configurationSignature: string;
+  readonly lutName: string;
+  readonly lookName: string;
+  readonly lutSize: number;
+  readonly inputColorConfig: InputColorConfig;
 }
 
 export interface LutExportOptions {
@@ -394,6 +427,9 @@ export interface LutExportOptions {
   readonly adjustments: ColorPreviewAdjustments;
   readonly referenceAverageColor?: RgbColor;
   readonly inputColorConfig?: InputColorConfig;
+  readonly parameterHash?: string;
+  readonly sourceInputProfileId?: import("./colorContracts").ColorEncodingProfileId;
+  readonly inputInterpretationHash?: string;
 }
 
 export interface CameraLutExportOptions {
@@ -461,6 +497,16 @@ export interface CubeExportResult {
   readonly technicalTransformSourceId?: string;
   readonly technicalTransformSourceTitle?: string;
   readonly technicalTransformVerification?: import("./colorPipeline").TechnicalTransformVerification;
+  readonly parameterHash?: string;
+  readonly cubeHash?: string;
+  readonly inputInterpretationHash?: string;
+  readonly inputProfileId?: import("./colorContracts").ColorEncodingProfileId;
+  readonly outputProfileId?: "bt709-g24-full";
+  readonly previewDisplayTransformId?: "bt709-g24-to-browser-srgb";
+  readonly consistencyDiagnostics?: import("./postLut").LutConsistencyDiagnostics;
+  readonly targetMaterialName?: string;
+  readonly referenceMaterialName?: string;
+  readonly targetWasReanalyzed?: boolean;
 }
 
 export interface ExportCubeLutParams {
@@ -474,6 +520,9 @@ export interface ExportCubeLutParams {
   readonly referenceImageUrl?: string;
   readonly referenceAverageColor?: RgbColor;
   readonly inputColorConfig?: InputColorConfig;
+  readonly referenceColorInterpretation: import("./postLut").ImageColorInterpretation;
+  readonly targetColorInterpretation?: import("./postLut").ImageColorInterpretation;
+  readonly sourceInputProfileId?: import("./colorContracts").ColorEncodingProfileId;
 }
 
 export interface PreviewResult {
@@ -485,6 +534,11 @@ export interface PreviewResult {
   readonly width?: number;
   readonly height?: number;
   readonly isCanvasPreview?: boolean;
+  readonly sourcePreviewImage?: string;
+  readonly preparedPostLut?: import("./postLut").PostLutPreparedData;
+  readonly configurationSignature?: string;
+  readonly inputReliability?: "reliable" | "experimental" | "unknown";
+  readonly inputInterpretationHash?: string;
 }
 
 export interface ExportLutParams {
@@ -558,6 +612,14 @@ export interface ExportHistoryRecord {
   readonly dataLineCount: number;
   readonly createdAt: string;
   readonly status: "已导出" | "可重新生成";
+  readonly parameterHash?: string;
+  readonly cubeHash?: string;
+  readonly inputInterpretationHash?: string;
+  readonly inputProfileId?: import("./colorContracts").ColorEncodingProfileId;
+  readonly outputProfileId?: "bt709-g24-full";
+  readonly targetMaterialName?: string;
+  readonly referenceMaterialName?: string;
+  readonly targetWasReanalyzed?: boolean;
 }
 
 export interface TutorialStep {
@@ -580,3 +642,70 @@ export type {
   TechnicalTransformRegistryMatch,
   TechnicalTransformVerification
 } from "./colorPipeline";
+
+export type {
+  ColorContainer,
+  ColorConversionResult,
+  ColorEncodingProfile,
+  ColorEncodingProfileId,
+  ColorPrimaries,
+  ColorProfileSource,
+  ColorProfileStatus,
+  DaVinciColorSettings,
+  MatrixCoefficients,
+  PostLutContract,
+  PreviewDisplayTransform,
+  RoundTripComparisonResult,
+  RoundTripDiagnosis,
+  SignalRange,
+  TransferFunction
+} from "./colorContracts";
+
+export type {
+  AnalysisParameterSnapshot,
+  AutoAnalysisInput,
+  AutoColorAnalysisResult,
+  AutoColorSuggestion,
+  ImageColorStatistics,
+  InputReadinessResult,
+  LutAnalysisConfidence,
+  LutInputReadiness,
+  LutValidationAssetRole,
+  LutValidationReport,
+  LutValidationSceneId,
+  SceneMaterialRecord,
+  SuggestedLutParameters,
+  ValidationScene
+} from "./lutValidation";
+
+export type {
+  CubeDownloadArtifact,
+  CubeDownloadStatus,
+  ImageColorInterpretation,
+  InterpretationConfidence,
+  LutConsistencyDiagnostics,
+  LutStressTestReport,
+  PostLutColorContract,
+  PostLutPreparedData,
+  PostLutStressTestAsset,
+  SceneStressConclusion,
+  SceneStressMetrics,
+  SceneStressResult
+} from "./postLut";
+
+export type {
+  RoundTripAssetDecodeStatus,
+  RoundTripAssetRole,
+  RoundTripAssetSummary,
+  RoundTripCubeContract,
+  RoundTripDiagnostic,
+  RoundTripDirectionalComparison,
+  RoundTripDpxSummary,
+  RoundTripPixelFrame,
+  RoundTripSameFrameAssessment,
+  RoundTripSameFrameStatus,
+  RoundTripValidationInput,
+  RoundTripValidationResult,
+  RoundTripVerdict,
+  RoundTripWorkflowCategory
+} from "./roundTripValidation";

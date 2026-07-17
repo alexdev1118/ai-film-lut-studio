@@ -8,11 +8,21 @@
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview",
     "validate:camera-data": "node scripts/validate-camera-data.mjs",
-    "test:lut-pipeline": "node scripts/run-lut-pipeline-tests.mjs"
+    "test:lut-pipeline": "node scripts/run-lut-pipeline-tests.mjs",
+    "test:dpx": "node scripts/run-dpx-tests.mjs",
+    "test:color-analysis": "node scripts/run-color-analysis-tests.mjs",
+    "test:round-trip": "node scripts/run-roundtrip-validation-tests.mjs",
+    "test:product-workflow": "node scripts/run-product-workflow-tests.mjs",
+    "validate:lut-strength": "node scripts/run-s16-5-report.mjs",
+    "validate:styles": "node scripts/validate-style-library.mjs",
+    "audit:style-resources": "node scripts/audit-style-library-resources.mjs",
+    "verify:download-artifact": "node scripts/run-download-artifact-verification.mjs",
+    "verify:downloaded-cube": "node scripts/run-downloaded-cube-verification.mjs",
+    "generate:style-previews": "node scripts/generate-style-library-previews.mjs",
+    "generate:camera-evidence": "node scripts/generate-camera-evidence-reports.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "6.0.3",
-    "lucide-react": "^1.23.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "lucide-react": "1.23.0",
