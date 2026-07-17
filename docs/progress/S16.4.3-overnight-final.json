@@ -1,0 +1,148 @@
+{
+  "task": "S16.4.3-OVERNIGHT-MASTER",
+  "generatedAt": "2026-07-15T18:56:49.932Z",
+  "testA": {
+    "executed": true,
+    "passed": true,
+    "profile": "BT.709 / Gamma 2.4 / Full",
+    "keyOutputGain": 1,
+    "metrics": {
+      "originalRgbMae": 0.00068203663358289,
+      "hueSafetyV2RgbMae": 0.0005271717905264668,
+      "hueSafetyV2P95": 0.00392156862745098,
+      "hueSafetyV2Maximum": 0.0039215686274510775
+    }
+  },
+  "testB": {
+    "executed": true,
+    "passed": true,
+    "source": "Sony S-Gamut3.Cine / S-Log3",
+    "cstOutput": "Rec.709 / Gamma 2.4",
+    "toneMapping": "None",
+    "gamutMapping": "None",
+    "keyOutputGain": 1,
+    "metrics": {
+      "originalRgbMae": 0.0012311611393517733,
+      "hueSafetyV2RgbMae": 0.0009388364399249412,
+      "hueSafetyV2P95": 0.003921568627450994,
+      "hueSafetyV2P999": 0.01568627450980392,
+      "hueSafetyV2Maximum": 0.05098039215686276,
+      "hueSafetyV2ChannelsAbove008": 0
+    }
+  },
+  "s16_5": {
+    "started": true,
+    "passed": true,
+    "zeroPercentIdentity": true,
+    "strengthsMonotonic": true,
+    "testedStrengths": [
+      35,
+      50,
+      70,
+      100
+    ],
+    "proceduralSixSceneMatrixPassed": true,
+    "realUserSixSceneMediaLoaded": false,
+    "realDavinciRetestPassed": true,
+    "hueSafetyV2RetestPassed": true,
+    "modifiedCoreLutAlgorithm": true,
+    "coreFixes": [
+      "Excluded highly saturated red from warm-skin classification.",
+      "Applied hue protection using the stronger of absolute OKLab chroma and relative channel saturation."
+    ]
+  },
+  "styleLibrary": {
+    "started": true,
+    "implementedStyles": 12,
+    "localCubeFirstPreviews": 48,
+    "proceduralStylesPassed": 12,
+    "passed": true,
+    "validationBoundary": "The shared RGB core and all 12 styles passed deterministic six-scene stress validation. Per-style real-media DaVinci review remains pending.",
+    "styleSpecificRealMediaDavinciReview": "pending"
+  },
+  "cameraEvidence": {
+    "started": true,
+    "officialSources": 28,
+    "officialAssets": 7,
+    "officialAssetsWithVerifiedHash": 0,
+    "verifiedFacts": 53,
+    "pendingFacts": 87,
+    "verifiedTransforms": 0,
+    "researchedBrands": [
+      "Sony",
+      "Panasonic",
+      "DJI",
+      "ARRI",
+      "RED"
+    ],
+    "passed": false,
+    "status": "evidence-baseline-generated-priority-research-pending"
+  },
+  "openSourceProjectsReviewed": [
+    {
+      "repository": "AcademySoftwareFoundation/OpenColorIO",
+      "license": "BSD-3-Clause",
+      "adoption": "architecture-reference-only"
+    },
+    {
+      "repository": "AcademySoftwareFoundation/OpenColorIO-Config-ACES",
+      "license": "BSD-3-Clause",
+      "adoption": "technical-transform-organization-reference-only"
+    },
+    {
+      "repository": "colour-science/colour",
+      "license": "BSD-3-Clause",
+      "adoption": "color-science-reference-only"
+    },
+    {
+      "repository": "AcademySoftwareFoundation/OpenImageIO",
+      "license": "Apache-2.0",
+      "adoption": "image-io-reference-only"
+    },
+    {
+      "repository": "aces-aswf/aces-core",
+      "license": "Apache-2.0",
+      "adoption": "technical-reference-only"
+    }
+  ],
+  "dependenciesAdded": [],
+  "licensesReviewed": [
+    "BSD-3-Clause",
+    "Apache-2.0",
+    "MIT",
+    "GPL-3.0",
+    "AGPL-3.0"
+  ],
+  "browserQa": {
+    "desktopStyleLibraryPassed": true,
+    "workspaceStrengthHandoffPassed": true,
+    "projectConsoleErrorsObserved": false,
+    "externalPluginWarningObserved": "Statsig request timeout from the Chrome plugin runtime, not the project application.",
+    "responsive390StaticRulesVerified": true,
+    "responsive390LiveViewportCaptured": false
+  },
+  "regression": {
+    "buildPassed": true,
+    "typescriptPassed": true,
+    "colorAnalysisTests": "11/11 passed",
+    "dpxTests": "13 passed, 1 real-file fixture skipped because DPX_REAL_FILE was not configured",
+    "lutPipelineTests": "48/48 passed",
+    "roundTripTests": "13/13 passed",
+    "lutStrengthValidationPassed": true,
+    "cameraDataValidation": "17 brands, 11 models, 28 official sources, 53 verified facts, 87 pending facts, 7 asset metadata records, 0 warnings, 0 errors",
+    "gitDiffCheckPassed": true
+  },
+  "modifiedCoreLutAlgorithm": true,
+  "allExecutedTestsPassed": true,
+  "nextTaskReady": false,
+  "blockers": [
+    "The six user-owned real scene files were not available for the full real-media matrix.",
+    "Each formal style still requires a separate real-media DaVinci review before the library can be called fully production-validated.",
+    "Vendor LUT binary hashes and redistribution licenses remain unverified.",
+    "Canon and Blackmagic P0 official evidence research remains pending.",
+    "Fujifilm, Nikon, and Apple P1 official evidence research remains pending.",
+    "No official mathematical camera transfer function or verified vendor technical transform was added."
+  ],
+  "gitCommitted": false,
+  "gitPushed": false
+}

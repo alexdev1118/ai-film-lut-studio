@@ -1,0 +1,105 @@
+{
+  "task": "S16.4.1",
+  "generatedAt": "2026-07-15T07:10:52.8349909Z",
+  "status": "blocked-real-cube-missing",
+  "searchedLocations": [
+    "<local-user-desktop>",
+    "<local-user-downloads>",
+    "<project-root>",
+    "<project-root>/local-test-assets"
+  ],
+  "usedFiles": [
+    {
+      "role": "unclassified-dpx-a",
+      "path": "<local-user-asset>/unclassified-dpx-a.dpx",
+      "size": 49774592,
+      "sha256": "31F5FC43B93F2714BC72103CC60A3024D9CCCAD76A563EBF8E3759C3CBA20C88",
+      "createdAt": "2026-07-15T05:58:52Z",
+      "modifiedAt": "2026-07-15T05:58:52Z",
+      "header": {
+        "magic": "SDPX",
+        "endianness": "big-endian",
+        "resolution": "3840x2160",
+        "bitDepth": 16,
+        "descriptor": 50,
+        "packing": 0,
+        "encoding": 0,
+        "dataSign": 0,
+        "transferCharacteristic": 1,
+        "colorimetricSpecification": 2,
+        "orientation": 0,
+        "linePadding": 0,
+        "imagePadding": 0
+      },
+      "decode": {
+        "status": "passed",
+        "previewResolution": "2048x1152",
+        "rgbMinimum": [17, 17, 17],
+        "rgbMaximum": [212, 204, 194],
+        "unexpectedAlphaPixelCount": 0
+      }
+    },
+    {
+      "role": "unclassified-dpx-b",
+      "path": "<local-user-asset>/unclassified-dpx-b.dpx",
+      "size": 49774592,
+      "sha256": "D40E2AA658ED2BA3AAC98D6B678132942B31B305C21BC5FF6CB502B7FEBDF2D1",
+      "createdAt": "2026-07-15T06:01:08Z",
+      "modifiedAt": "2026-07-15T06:01:08Z",
+      "header": {
+        "magic": "SDPX",
+        "endianness": "big-endian",
+        "resolution": "3840x2160",
+        "bitDepth": 16,
+        "descriptor": 50,
+        "packing": 0,
+        "encoding": 0,
+        "dataSign": 0,
+        "transferCharacteristic": 1,
+        "colorimetricSpecification": 2,
+        "orientation": 0,
+        "linePadding": 0,
+        "imagePadding": 0
+      },
+      "decode": {
+        "status": "passed",
+        "previewResolution": "2048x1152",
+        "rgbMinimum": [0, 0, 0],
+        "rgbMaximum": [235, 230, 220],
+        "unexpectedAlphaPixelCount": 0
+      }
+    }
+  ],
+  "missingFiles": [
+    "POST_BT709_G24_FULL_SRC-Sony-SLog3_CustomL16.444_33pt_v1(1).cube"
+  ],
+  "prePostInference": "not-assigned-from-filenames",
+  "sameFrame": {
+    "status": "same-frame",
+    "dimensionsMatch": true,
+    "edgeMeanAbsoluteError": 0.010382989696720583,
+    "edgeStructureSimilarity": 0.9896170103032794,
+    "threshold": 0.18
+  },
+  "directionalComparison": {
+    "preToPost": null,
+    "postToPre": null,
+    "doubleLut": null
+  },
+  "cubeContract": {
+    "status": "not-run-no-cube",
+    "currentWorkspaceHashMatch": "not-run"
+  },
+  "thresholds": {
+    "rgbMaeMaximum": 0.012,
+    "p95Maximum": 0.025,
+    "channelMaximum": 0.08,
+    "sameFrameEdgeMaeMaximum": 0.18
+  },
+  "diagnosis": {
+    "category": "undetermined",
+    "websiteAlgorithmBug": "no-evidence",
+    "codeModification": "Only the real DPX regression expectation changed from 10-bit/Packing 1 to the observed 16-bit/Packing 0. LUT RGB mapping, cube sampling, and trilinear interpolation were not changed."
+  },
+  "nextAction": "Supply the actual Cube and run the three-slot PRE/POST/Cube wizard."
+}

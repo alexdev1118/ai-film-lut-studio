@@ -1,0 +1,38 @@
+{
+  "task": "S16.4",
+  "passed": false,
+  "nextTaskReady": false,
+  "blockers": [
+    "尚未提供 DaVinci Resolve 按规定节点顺序实际渲染的 PNG、TIFF 或 DPX 回读文件，无法完成真实 round-trip 数值验收。",
+    "当前内置浏览器控制接口不能设置本地 file input，JPG、PNG、TIFF、DPX 的逐格式 Profile 切换与真实 Render 上传需要人工完成。"
+  ],
+  "tests": [
+    "npm run build: passed",
+    "npx tsc --noEmit: passed",
+    "npm run test:color-analysis: 11 passed",
+    "npm run test:dpx: 13 passed, 1 skipped because DPX_REAL_FILE is not configured",
+    "npm run test:lut-pipeline: 38 passed",
+    "npm run validate:camera-data: 0 errors, 0 warnings",
+    "git diff --check: passed with line-ending notices only",
+    "browser workspace/export/history navigation and state retention: passed",
+    "browser application console error/warn audit: passed"
+  ],
+  "colorContracts": [
+    "srgb-full",
+    "bt709-g24-full",
+    "bt709-g24-legal",
+    "bt709-g22-full",
+    "dci-p3-g26-full (experimental preview only)",
+    "display-p3-srgb-full (experimental preview only)",
+    "unknown-manual (warning only)",
+    "camera-log-unconverted (warning only)"
+  ],
+  "roundTripStatus": "Pure comparator passed identity, Gamma mismatch, and Range mismatch tests. The portal-based UI, Expected Output binding, controlled Profile selector, metrics layout, and POST export metadata were verified in the browser. A real DaVinci Render comparison remains pending.",
+  "unfinished": [
+    "Run a real DaVinci Resolve render with POST LUT Key Output 1.000 and upload the exported still to the round-trip panel.",
+    "Confirm actual round-trip thresholds against PNG, browser-decodable 16-bit TIFF, and supported uncompressed RGB DPX.",
+    "Complete manual file-upload QA for long names and each supported input container.",
+    "Confirm calibration PNG download in a normal browser; the in-app browser did not expose a Blob download event.",
+    "The current Canvas comparator is 8-bit RGBA and does not preserve 16-bit TIFF precision."
+  ]
+}

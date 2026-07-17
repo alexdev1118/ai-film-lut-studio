@@ -1,0 +1,166 @@
+{
+  "task": "S17.3-RC-VALIDATION",
+  "completedAt": "2026-07-16T07:29:49+08:00",
+  "testA": {
+    "passed": true,
+    "sameFrameVerified": true,
+    "keyOutputGain": 1,
+    "cubeSha256": "4f21dc979e5196577fbabe201bd2973bc05de86471c05d8a72df2b70c9db3507",
+    "metrics": {
+      "rgbMae": 0.000031354797062861946,
+      "linearMae": 0.000012370504019923007,
+      "p95": 0,
+      "max": 0.003921568627451022
+    }
+  },
+  "testB": {
+    "passed": true,
+    "sameFrameVerified": true,
+    "keyOutputGain": 1,
+    "cubeSha256": "4f21dc979e5196577fbabe201bd2973bc05de86471c05d8a72df2b70c9db3507",
+    "metrics": {
+      "rgbMae": 0.000946395545871842,
+      "linearMae": 0.00022308891188465422,
+      "p95": 0.003921568627450994,
+      "max": 0.027450980392156862,
+      "channelsAbove008": 0
+    }
+  },
+  "realScenes": {
+    "count": 6,
+    "sameFrameVerified": true,
+    "manifest": "local-test-assets/S17.3/real-scenes/scene-manifest.json",
+    "sceneIds": [
+      "portrait-normal",
+      "portrait-close",
+      "blue-sky",
+      "blue-sky-greenery",
+      "daylight-high-contrast",
+      "saturated-red"
+    ]
+  },
+  "styleLibrary": {
+    "totalStyles": 12,
+    "totalRealDaVinciRenders": 84,
+    "technicalRoundTripsPassed": 84,
+    "passed": 7,
+    "warning": 5,
+    "failed": 0,
+    "pending": 0,
+    "passStyles": [
+      "漂白旁路启发",
+      "干净商业",
+      "冷调新黑色",
+      "褪色负片",
+      "自然纪录",
+      "自然肤色",
+      "柔和电影打印"
+    ],
+    "warningStyles": [
+      "美食暖自然",
+      "霓虹夜色",
+      "2383 打印胶片启发",
+      "旅行鲜活安全",
+      "暖调剧情"
+    ],
+    "warningReason": "The deterministic calibration chart contains a large high-saturation red stress region; all six real-scene records for every style passed.",
+    "strengthPreviewImages": 48,
+    "proceduralScenePreviewImages": 72,
+    "previewImagesTotal": 120
+  },
+  "strengthValidation": {
+    "realDaVinciRenders": 60,
+    "groups": 12,
+    "identityGroupsPassed": 12,
+    "monotonic": true,
+    "seventyVsHundredDistinct": true,
+    "cubeHashesDistinct": true,
+    "keyOutputGain": 1
+  },
+  "browserQa": {
+    "desktopPassed": true,
+    "mobile390Passed": true,
+    "consoleClean": true,
+    "mobileViewport": "390x844",
+    "horizontalOverflowDetected": false,
+    "favoritePersistencePassed": true,
+    "recentUsePersistencePassed": true,
+    "tagSearchPassed": true,
+    "workspaceRouteStatePassed": true,
+    "screenshots": [
+      "local-test-assets/S17.3/screenshots/desktop/styles-home.png",
+      "local-test-assets/S17.3/screenshots/desktop/style-detail.png",
+      "local-test-assets/S17.3/screenshots/desktop/workspace-after-style.png",
+      "local-test-assets/S17.3/screenshots/desktop/export-settings.png",
+      "local-test-assets/S17.3/screenshots/desktop/round-trip.png",
+      "local-test-assets/S17.3/screenshots/desktop/export-result.png",
+      "local-test-assets/S17.3/screenshots/desktop/history.png",
+      "local-test-assets/S17.3/screenshots/390/styles-home.png",
+      "local-test-assets/S17.3/screenshots/390/style-detail.png",
+      "local-test-assets/S17.3/screenshots/390/style-detail-six-scenes.png",
+      "local-test-assets/S17.3/screenshots/390/workspace-top.png",
+      "local-test-assets/S17.3/screenshots/390/workspace-parameters.png",
+      "local-test-assets/S17.3/screenshots/390/export-settings.png",
+      "local-test-assets/S17.3/screenshots/390/round-trip.png",
+      "local-test-assets/S17.3/screenshots/390/export-result.png",
+      "local-test-assets/S17.3/screenshots/390/history.png"
+    ]
+  },
+  "cameraEvidence": {
+    "brands": 17,
+    "models": 11,
+    "officialSources": 28,
+    "verifiedFacts": 53,
+    "pendingFacts": 87,
+    "officialAssetMetadata": 7,
+    "officialAssetsWithVerifiedHash": 0,
+    "verifiedTransforms": 0,
+    "claimsHonest": true,
+    "cammonOrder": ["technical", "creative", "monitor", "range"]
+  },
+  "bundle": {
+    "beforeBytes": 563800,
+    "afterBytes": 244510,
+    "beforeGzipBytes": 165910,
+    "afterGzipBytes": 77380,
+    "workspaceChunkBytes": 220680,
+    "styleLibraryChunkBytes": 80470,
+    "chunkWarningRemoved": true
+  },
+  "automatedTests": {
+    "build": "passed",
+    "tsc": "passed",
+    "colorAnalysis": "11/11 passed",
+    "dpx": "13 passed, 1 optional real-file environment test skipped",
+    "lutPipeline": "48/48 passed",
+    "roundTrip": "13/13 passed",
+    "cameraData": "0 warnings, 0 errors",
+    "lutStrength": "passed",
+    "styleLibrary": "12 styles, 48 strength previews, 72 scene previews passed",
+    "diffCheck": "passed with line-ending conversion notices only"
+  },
+  "changeAudit": {
+    "trackedModifiedFiles": 23,
+    "trackedAddedLines": 5366,
+    "trackedDeletedLines": 2170,
+    "untrackedFiles": 205,
+    "trackedUserMediaOrVendorLutBinaries": 0,
+    "duplicateRgbCore": false,
+    "duplicateWorkspaceStrengthState": false,
+    "cssImageColorFilter": false,
+    "unsafeTypes": false,
+    "legacyPostRec709Naming": false,
+    "packageJsonDuplicateKeys": false
+  },
+  "allAutomatedTestsPassed": true,
+  "releaseCandidateReady": true,
+  "recommendedNextTask": "S17.3-SAVE",
+  "blockers": [],
+  "releaseBoundaries": [
+    "No vendor technical LUT binary has a verified local hash or redistribution clearance.",
+    "verified technical transforms remains zero; local user-supplied transforms remain experimental.",
+    "The optional DPX_REAL_FILE test is skipped unless a real file path is explicitly configured."
+  ],
+  "gitCommitted": false,
+  "gitPushed": false
+}

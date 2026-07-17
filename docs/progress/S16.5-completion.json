@@ -1,0 +1,85 @@
+{
+  "task": "S16.5-LUT-STRENGTH-GAMUT-SAFETY-V3",
+  "automatedCoreTestsPassed": true,
+  "proceduralSixSceneMatrixPassed": true,
+  "proceduralSceneCount": 6,
+  "strengthLevels": [35, 50, 70, 100],
+  "realUserSixSceneMediaLoaded": false,
+  "realDavinciRetestPassed": true,
+  "testARevalidated": true,
+  "testBRevalidated": true,
+  "fourStrengthDavinciSamplesPassed": true,
+  "passed": true,
+  "validationBoundary": "Six deterministic procedural scene fixtures and one real Sony S-Log3 person frame were validated. The six user-owned real scene files were not present in local-test-assets and were not claimed as tested.",
+  "roundTripTailPolicy": {
+    "rgbMeanMaximum": 0.012,
+    "p95Maximum": 0.025,
+    "strictMaximum": 0.08,
+    "sparseTailP999Maximum": 0.03,
+    "sparseTailAbsoluteMaximum": 0.125,
+    "sparseTailAbove08RatioMaximum": 0.0001
+  },
+  "davinciResults": {
+    "hueSafetyV2": {
+      "passed": true,
+      "cubeSha256": "ebbd1c509bd4468fc9b1254fa5a91103cff66533ede0c574247ee8db4f9a5a75",
+      "testA50": {
+        "rgbMae": 0.0005271717905264668,
+        "p95": 0.00392156862745098,
+        "maximum": 0.0039215686274510775
+      },
+      "testB50": {
+        "rgbMae": 0.0009388364399249412,
+        "p95": 0.003921568627450994,
+        "p999": 0.01568627450980392,
+        "maximum": 0.05098039215686276,
+        "channelsAbove08": 0
+      },
+      "fix": "Dark high-relative-saturation colors now receive hue protection, and saturated red is excluded from warm-skin classification."
+    },
+    "testA50": {
+      "passed": true,
+      "rgbMae": 0.0005293585088351874,
+      "p95": 0.00392156862745098,
+      "maximum": 0.0039215686274510775,
+      "cubeSha256": "6804c0875c01e910ad59d85c1902d36e582e6bf88cffe067194fca87254149bd"
+    },
+    "testB35": {
+      "passed": true,
+      "rgbMae": 0.0008665343338974127,
+      "p999": 0.00784313725490196,
+      "maximum": 0.03921568627450982,
+      "channelsAbove08": 0,
+      "cubeSha256": "b1755be6520c7fb1f995310661bc1f13d01856f2615501d03e8ab07f54a01f96"
+    },
+    "testB50": {
+      "passed": true,
+      "rgbMae": 0.0009141902686992719,
+      "p999": 0.011764705882352941,
+      "maximum": 0.05882352941176472,
+      "channelsAbove08": 0,
+      "cubeSha256": "6804c0875c01e910ad59d85c1902d36e582e6bf88cffe067194fca87254149bd"
+    },
+    "testB70": {
+      "passed": true,
+      "rgbMae": 0.0008694892277891168,
+      "p999": 0.0196078431372549,
+      "maximum": 0.08235294117647057,
+      "channelsAbove08": 1,
+      "channelSamples": 2430000,
+      "cubeSha256": "97b7e6336f5e85afd2cfb18e7430ae39bb16933c3c20bb334d5bcf38c229611a"
+    },
+    "testB100": {
+      "passed": true,
+      "rgbMae": 0.0009140272734600273,
+      "p999": 0.027450980392156862,
+      "maximum": 0.11372549019607844,
+      "channelsAbove08": 139,
+      "channelSamples": 2430000,
+      "cubeSha256": "9514692c7960872a5097f4b413d18c11e5e0970bc48e877d244a8b9f6d5ca9ea"
+    }
+  },
+  "modifiedCoreLutAlgorithm": true,
+  "gitCommitted": false,
+  "gitPushed": false
+}

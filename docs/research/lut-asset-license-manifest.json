@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-15T00:00:00.000Z",
+  "task": "S17.1-STYLE-LIBRARY",
+  "externalCreativeLutAssetsEmbedded": false,
+  "vendorBinaryAssetsEmbedded": false,
+  "projectAuthoredStyleCount": 12,
+  "projectLicenseIdentifier": "PROJECT-ORIGINAL-V1",
+  "reviewedProjects": [
+    {
+      "repository": "AcademySoftwareFoundation/OpenColorIO",
+      "url": "https://github.com/AcademySoftwareFoundation/OpenColorIO",
+      "license": "BSD-3-Clause",
+      "adopted": false,
+      "usage": "architecture-reference-only"
+    },
+    {
+      "repository": "AcademySoftwareFoundation/OpenColorIO-Config-ACES",
+      "url": "https://github.com/AcademySoftwareFoundation/OpenColorIO-Config-ACES",
+      "license": "BSD-3-Clause",
+      "adopted": false,
+      "usage": "technical-transform-organization-reference-only"
+    },
+    {
+      "repository": "colour-science/colour",
+      "url": "https://github.com/colour-science/colour",
+      "license": "BSD-3-Clause",
+      "adopted": false,
+      "usage": "color-science-reference-only"
+    },
+    {
+      "repository": "AcademySoftwareFoundation/OpenImageIO",
+      "url": "https://github.com/AcademySoftwareFoundation/OpenImageIO",
+      "license": "Apache-2.0",
+      "adopted": false,
+      "usage": "image-io-reference-only"
+    },
+    {
+      "repository": "aces-aswf/aces-core",
+      "url": "https://github.com/aces-aswf/aces-core",
+      "license": "Apache-2.0",
+      "adopted": false,
+      "usage": "technical-reference-only"
+    },
+    {
+      "repository": "cedeber/hald-clut",
+      "url": "https://github.com/cedeber/hald-clut",
+      "license": "GPL-3.0",
+      "adopted": false,
+      "usage": "excluded-copyleft-review-required"
+    },
+    {
+      "repository": "ryancara/Spektrafilm-LUT-Generator",
+      "url": "https://github.com/ryancara/Spektrafilm-LUT-Generator",
+      "license": "GPL-3.0",
+      "adopted": false,
+      "usage": "excluded-copyleft-review-required"
+    },
+    {
+      "repository": "shenmintao/Raw-Alchemy",
+      "url": "https://github.com/shenmintao/Raw-Alchemy",
+      "license": "AGPL-3.0",
+      "adopted": false,
+      "usage": "excluded-network-copyleft"
+    },
+    {
+      "repository": "changyun233/Lumix-V-log-LUTs",
+      "url": "https://github.com/changyun233/Lumix-V-log-LUTs",
+      "license": "MIT",
+      "adopted": false,
+      "usage": "excluded-community-technical-transform"
+    }
+  ]
+}

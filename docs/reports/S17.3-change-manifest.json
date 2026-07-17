@@ -1,0 +1,58 @@
+{
+  "task": "S17.3-RC-VALIDATION",
+  "generatedAt": "2026-07-16T07:29:49+08:00",
+  "branch": "main",
+  "aheadOfOriginMain": 2,
+  "trackedModifiedFiles": 23,
+  "trackedAddedLines": 5366,
+  "trackedDeletedLines": 2170,
+  "untrackedFiles": 205,
+  "untrackedTextLines": 33245,
+  "estimatedAuditLineScope": 40781,
+  "categories": [
+    { "name": "lut-core", "files": 6, "estimatedLines": 1393 },
+    { "name": "cube-parser-evaluator-round-trip-contracts", "files": 15, "estimatedLines": 2385 },
+    { "name": "dpx", "files": 9, "estimatedLines": 1167 },
+    { "name": "automatic-analysis", "files": 6, "estimatedLines": 947 },
+    { "name": "style-library", "files": 60, "estimatedLines": 6248 },
+    { "name": "camera-evidence", "files": 4, "estimatedLines": 2588 },
+    { "name": "ui-and-app", "files": 24, "estimatedLines": 3034 },
+    { "name": "tests-and-scripts", "files": 8, "estimatedLines": 776 },
+    { "name": "documentation", "files": 13, "estimatedLines": 1251 },
+    { "name": "other", "files": 2, "estimatedLines": 11 }
+  ],
+  "findings": {
+    "duplicateRgbCore": false,
+    "duplicateWorkspaceStrengthState": false,
+    "duplicatePreviewRgbPath": false,
+    "cssImageColorFilter": false,
+    "legacyPostRec709Naming": false,
+    "unsafeTypes": false,
+    "temporaryScriptsInsideSource": false,
+    "trackedCubeOrUserMedia": false,
+    "packageJsonDuplicateKeys": false,
+    "experimentalStylesInFormalCatalog": false,
+    "distinctSixScenePreviewsPerStyle": true,
+    "localAbsolutePathsInUntrackedHistoricalReports": [],
+    "sanitizedHistoricalReports": [
+      "docs/progress/S16.4.1-round-trip-validation.json",
+      "docs/progress/S16.4.1-round-trip-validation.md"
+    ],
+    "expectedConsoleUsage": "CLI result output and explicit caught-error diagnostics only",
+    "lineEndingStatus": "git diff --check passed with CRLF conversion notices only"
+  },
+  "generatedOrLocalBoundaries": {
+    "ignoredDirectories": ["dist", "node_modules", "local-test-assets", "__pycache__"],
+    "projectAuthoredPreviewImages": 120,
+    "strengthPreviewImages": 48,
+    "proceduralScenePreviewImages": 72,
+    "trackedVendorLutBinaries": 0,
+    "trackedUserMediaFiles": 0
+  },
+  "riskSummary": [
+    "The working tree is intentionally large and uncommitted; no destructive Git operation is allowed.",
+    "All real DaVinci renders and source-media references remain ignored under local-test-assets.",
+    "Historical local paths were sanitized; future reports must continue using project-relative or symbolic local paths.",
+    "Vendor LUT asset hashes and redistribution rights remain unverified; verified technical transforms stay at zero."
+  ]
+}

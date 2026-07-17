@@ -1,0 +1,43 @@
+{
+  "task": "S16.4.2-CU-RECOVERY",
+  "computerUseRuntimeHealthy": true,
+  "browserUsedDuringDavinciValidation": false,
+  "davinciControlled": true,
+  "davinciProject": "AI_LUT_AUTOTEST_S16_4_2",
+  "testA": {
+    "executed": true,
+    "passed": true,
+    "rgbMeanAbsoluteError": 0.00068203663358289,
+    "linearLightMeanAbsoluteError": 0.0002179223774768199,
+    "p95Error": 0.00392156862745098,
+    "maximumError": 0.0039215686274510775,
+    "sameFrameStructureSimilarity": 0.9932652925273638
+  },
+  "testB": {
+    "executed": true,
+    "passed": true,
+    "source": "Sony S-Gamut3.Cine / S-Log3",
+    "cstOutput": "Rec.709 / Gamma 2.4",
+    "toneMapping": "None",
+    "gamutMapping": "None",
+    "keyOutputGain": 1.0,
+    "rgbMeanAbsoluteError": 0.0012311611393517733,
+    "linearLightMeanAbsoluteError": 0.00029295208516778246,
+    "p95Error": 0.003921568627450994,
+    "maximumError": 0.06274509803921569,
+    "sameFrameStructureSimilarity": 0.9934243080245307
+  },
+  "cube": {
+    "path": "local-test-assets/S16.4.2/cube/POST_BT709_G24_FULL_S16_4_2_AUTOTEST_33pt_v1.cube",
+    "sha256": "3a0d84e3c1da145098b88583d9c9b8dd8223dac5ba057081a0bd7fe5ab3cc7e6",
+    "lutSize": 33,
+    "dataLineCount": 35937,
+    "validated": true
+  },
+  "gammaOrRangeIssueFound": false,
+  "websiteEvaluatorBugFound": false,
+  "coreLutAlgorithmModified": false,
+  "s16_5Gate": "open",
+  "gitCommitted": false,
+  "gitPushed": false
+}

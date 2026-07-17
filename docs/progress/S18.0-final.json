@@ -1,0 +1,115 @@
+{
+  "task": "S18.0-DESKTOP-MARKET-PRODUCT-RESET",
+  "baselineProtected": true,
+  "externalBackup": "E:\\LUT小工具箱-backups\\S18.0-PRE-MARKET-20260716-145515",
+  "checkpointBranch": "",
+  "checkpointBranchStatus": "pending-invalid-github-cli-authentication",
+  "downloadValidation": {
+    "artifactVerified": true,
+    "browserDownloadRequested": true,
+    "browserEventCaptured": false,
+    "osFileLandingVerified": false,
+    "blockingCoreDevelopment": false,
+    "pendingReason": "Computer Use and Chrome URL policy limitation"
+  },
+  "marketResearch": {
+    "competitorsReviewed": 21,
+    "userEvidenceItems": 42,
+    "recentEvidenceItems": 29,
+    "beginnerEvidenceItems": 16,
+    "chineseEvidenceItems": 9,
+    "professionalEvidenceItems": 10,
+    "researchComplete": true
+  },
+  "strategy": {
+    "primarySegment": "缺少色彩科学基础、但需要在桌面剪辑软件中可靠使用 LUT 的个人创作者",
+    "secondarySegments": [
+      "使用无反相机 Log 的个人视频创作者",
+      "摄影与视频混合创作者",
+      "小型商业和新媒体团队",
+      "有基础的 DaVinci Resolve 或 Premiere Pro 用户"
+    ],
+    "positioning": "以素材状态解释和可验证导出为核心的桌面 LUT 工作台，让创作者先走对色彩链，再选择和生成风格。",
+    "topOpportunities": [
+      "快速模式与专业模式共用单一 LUT Core",
+      "素材状态引导和 Log 直接套 POST 的主动拦截",
+      "同素材多风格比较",
+      "按目标软件生成导出与使用指南",
+      "术语归属和中文解释",
+      "可离线加载的确定性示例项目",
+      "Preview、Artifact 和下载 Hash 一致性",
+      "本地处理和隐私承诺",
+      "相机资料证据与未核验边界",
+      "面向插件的静帧与 LUT 交接"
+    ],
+    "antiGoals": [
+      "继续堆积大量相似风格",
+      "把未核验相机目录宣传为官方技术转换",
+      "用黑箱 AI 取代可解释的输入契约",
+      "重做完整 DaVinci Resolve",
+      "把手机端作为当前发布门禁",
+      "上传用户媒体到云端",
+      "引入来源或许可不明的厂商 LUT",
+      "建立快速模式的第二套参数或算法",
+      "默认暴露开发诊断指标",
+      "用 DaVinci Key Output 掩盖 LUT 强度问题"
+    ],
+    "complete": true
+  },
+  "implementation": {
+    "quickModeImplemented": true,
+    "professionalModePreserved": true,
+    "styleCompareImplemented": true,
+    "exportGuidanceImplemented": true,
+    "terminologyImproved": true,
+    "logPostPreventionImplemented": true,
+    "demoProjectImplemented": true,
+    "desktopOnlyFocus": true
+  },
+  "qa": {
+    "desktop1366Passed": true,
+    "desktop1440Passed": true,
+    "desktop1920Passed": true,
+    "davinciTestAPassed": true,
+    "davinciTestAReusedExistingRender": true,
+    "davinciTestAMetrics": {
+      "rgbMeanAbsoluteError": 0.000031354797062861946,
+      "p95Error": 0,
+      "maximumError": 0.003921568627451022
+    },
+    "davinciTestBPassed": true,
+    "davinciTestBFreshRender": true,
+    "davinciTestBMetrics": {
+      "rgbMeanAbsoluteError": 0.000946395545871842,
+      "linearLightMeanAbsoluteError": 0.00022308891188465422,
+      "p95Error": 0.003921568627450994,
+      "maximumError": 0.027450980392156862,
+      "channelErrorAbove04Count": 0
+    },
+    "consoleClean": true
+  },
+  "automatedTests": {
+    "build": "passed",
+    "typescript": "passed",
+    "productWorkflow": "8/8 passed",
+    "colorAnalysis": "11/11 passed",
+    "dpx": "13 passed, 1 environment-dependent real-file test skipped",
+    "lutPipeline": "54/54 passed",
+    "roundTrip": "13/13 passed",
+    "cameraData": "17 brands, 11 models, 28 official sources, 53 verified facts, 87 unresolved fields, 0 errors",
+    "lutStrength": "passed",
+    "styles": "12 styles, 48 strength previews, 72 scene previews, passed",
+    "downloadArtifact": "passed"
+  },
+  "mobileDevelopmentDeferred": true,
+  "interviewsActuallyCompleted": false,
+  "allTestsPassed": true,
+  "releaseCandidateReady": false,
+  "recommendedNextTask": "S18.0-REAL-DOWNLOAD-AND-CHECKPOINT-SAVE",
+  "blockers": [
+    "A real Windows browser file landing still needs one manual confirmation.",
+    "GitHub CLI authentication must be repaired before creating and pushing checkpoint/s17.3-desktop-rc."
+  ],
+  "gitCommitted": false,
+  "gitPushed": false
+}

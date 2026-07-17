@@ -1,0 +1,15 @@
+{
+  "task": "S17.3.1-STYLE-LIBRARY-HOTFIX",
+  "issueReproduced": true,
+  "styleDefinitionsFound": 12,
+  "stylesWithRealParameters": 12,
+  "previewAssetsExpected": 120,
+  "previewAssetsFound": 120,
+  "workspaceApplyPassed": true,
+  "cubeHashChangesPassed": true,
+  "browserQaPassed": true,
+  "releaseCandidateReady": true,
+  "gitCommitted": false,
+  "gitPushed": false,
+  "blockers": []
+}

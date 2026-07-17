@@ -1,0 +1,73 @@
+{
+  "task": "S17.3.1-STYLE-LIBRARY-HOTFIX",
+  "issueReproduced": true,
+  "rootCause": [
+    "The style-card preview surface was not an actionable control, so clicking the visible image had no effect.",
+    "The style application completed through route state but did not expose a persistent parameter and Cube proof near the workspace preview.",
+    "Preview assets were present; their common procedural calibration composition made the non-actionable cards appear empty or inert."
+  ],
+  "styleDefinitions": 12,
+  "stylesWithRealParameters": 12,
+  "previewAssetsExpected": 120,
+  "previewAssetsFound": 120,
+  "previewAssetsAccessible": true,
+  "styleLibraryUsesStaticCubeFiles": false,
+  "styleLibraryUsesStructuredParameters": true,
+  "runtimeCubeGeneration": true,
+  "workspaceApplyPassed": true,
+  "parameterHashesDistinct": true,
+  "cubeHashesDistinct": true,
+  "browserDesktopPassed": true,
+  "browser390Passed": true,
+  "allTestsPassed": true,
+  "releaseCandidateReady": true,
+  "recommendedNextTask": "S17.3-SAVE after the user completes final visual approval.",
+  "browserEvidence": {
+    "desktopStyleCards": 12,
+    "mobileStyleCards": 12,
+    "desktopHorizontalOverflow": false,
+    "mobileHorizontalOverflow": false,
+    "workspaceHandoffReadyAfterMs": 1200,
+    "projectConsoleEntries": 0,
+    "screenshots": [
+      "local-test-assets/S17.3.1/browser-qa/desktop/print-2383-style-detail.png",
+      "local-test-assets/S17.3.1/browser-qa/desktop/cool-neo-noir-workspace.png",
+      "local-test-assets/S17.3.1/browser-qa/390/style-library-viewport.png",
+      "local-test-assets/S17.3.1/browser-qa/390/workspace-viewport.png"
+    ]
+  },
+  "representativeWorkspaceProofs": [
+    {
+      "styleId": "natural-skin",
+      "strength": 50,
+      "parameterHashPrefix": "77fe2fc74ea3",
+      "cubeHashPrefix": "8469843e00d6"
+    },
+    {
+      "styleId": "print-2383-inspired",
+      "strength": 50,
+      "parameterHashPrefix": "7207d92ff66a",
+      "cubeHashPrefix": "8d279d546935"
+    },
+    {
+      "styleId": "bleach-bypass",
+      "strength": 50,
+      "parameterHashPrefix": "ec28e6079eab",
+      "cubeHashPrefix": "7b74f882a85c"
+    },
+    {
+      "styleId": "cool-neo-noir",
+      "strength": 50,
+      "parameterHashPrefix": "091670da79c0",
+      "cubeHashPrefix": "7047d982dafe"
+    }
+  ],
+  "notes": [
+    "A Cube content hash includes TITLE and metadata comments, so a preview-manifest Cube hash can differ from a workspace export hash while RGB samples remain generated from the same style parameters.",
+    "The regression test fixes the export title and look name, then proves all twelve style parameter and 33-point Cube hashes are distinct and stable.",
+    "No user media, vendor LUT binaries, generated downloads, dist files, or node_modules files are included in the Git change set."
+  ],
+  "gitCommitted": false,
+  "gitPushed": false,
+  "blockers": []
+}
